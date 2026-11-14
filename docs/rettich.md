@@ -19,9 +19,9 @@
 | Plätze mit Foto, Foto gross | 0056, 0082 | übernommen, für Kühlzelle und Posten | Modul «Wo ist was?» |
 | Seitenleiste auf iPad und Rechner, Sheets als Dialoge | 0092, 0093 | übernommen | ADR-0013 |
 | Grundfunktionen und Erweitert | 0095 | übernommen | ADR-0014 |
-| Seitenübergänge wie auf dem iPhone | 0088 | übernehmen | nächster Schritt |
-| Zurückwischen vom linken Rand (installierte App) | 0091 | übernehmen | nächster Schritt |
-| Kurzbefehle am App-Symbol | 0094 | übernehmen: «Wareneingang», «Temperatur», «Abschreiben» | nächster Schritt |
+| Seitenübergänge wie auf dem iPhone | 0088 | übernommen; die Hauptbereiche der Seitenleiste blenden über wie Tabs | 15.11.2026 |
+| Zurückwischen vom linken Rand (installierte App) | 0091 | übernommen | 15.11.2026 |
+| Kurzbefehle am App-Symbol | 0094 | übernommen: «Wareneingang», «Abschreiben», «Temperatur» (Android und Rechner; iOS kennt sie nicht) | 15.11.2026 |
 | Sicherung mit Passwort | 0087 | übernehmen | Modul «Betrieb» |
 | App-Sperre mit Face ID | 0086 | später: sinnvoll, sobald Mitarbeitende dasselbe Gerät nutzen | offen |
 | Quittung lesen (Texterkennung, PDF) | 0027, 0028 | anpassen: Lieferschein und Rechnung des Grosshändlers lesen | nach den Modulen |

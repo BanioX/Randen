@@ -16,6 +16,7 @@ import { styleguideRoutes } from '../features/styleguide/routes';
 import { AppShell } from './AppShell';
 import { NotFoundPage } from './NotFoundPage';
 import { RouteError } from './RouteError';
+import { withPageTransitions } from './page-transition';
 
 /**
  * All pages. Each feature owns its part (`features/<name>/routes.tsx`); this file only puts
@@ -49,5 +50,5 @@ export const routes: RouteObject[] = [
 ];
 
 export function createAppRouter() {
-  return createBrowserRouter(routes);
+  return withPageTransitions(() => createBrowserRouter(routes));
 }

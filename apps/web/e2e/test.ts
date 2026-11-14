@@ -96,9 +96,30 @@ interface Fixtures {
   sameOrigin: undefined;
   /** For tests that ask for it: fails the test on any console error or failed request. */
   errors: ErrorWatch;
+  /** `test.use({ newBusiness: true })`: start like a new business, with the essentials (ADR-0014). */
+  newBusiness: boolean;
+  /**
+   * Every other test sees all functions. Set only when nothing is chosen yet, so a switch flipped
+   * in a test survives the next page load (after Rettich ADR-0095).
+   */
+  allExtras: undefined;
 }
 
 export const test = base.extend<Fixtures>({
+  newBusiness: [false, { option: true }],
+  allExtras: [
+    async ({ context, newBusiness }, provide) => {
+      if (!newBusiness) {
+        await context.addInitScript(() => {
+          if (window.localStorage.getItem('randen:extras') === null) {
+            window.localStorage.setItem('randen:extras', JSON.stringify({ on: true, groups: {} }));
+          }
+        });
+      }
+      await provide(undefined);
+    },
+    { auto: true },
+  ],
   sameOrigin: [
     async ({ context, baseURL }, provide) => {
       if (baseURL === undefined) {

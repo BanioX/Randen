@@ -211,3 +211,74 @@
   font-weight: 700;
   letter-spacing: -0.02em;
 }
+
+/* Page transitions (after Rettich ADR-0088): deeper pages push in from the right and go back to the
+   right, the main areas cross-fade, as on iOS. `<html data-transition>` is set by
+   app/page-transition.ts. The navigation and the status strip keep their place. «Bewegung
+   reduzieren» turns all of it off. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+html[data-transition='forward']::view-transition-old(root),
+html[data-transition='forward']::view-transition-new(root),
+html[data-transition='back']::view-transition-old(root),
+html[data-transition='back']::view-transition-new(root) {
+  mix-blend-mode: normal;
+}
+html[data-transition='forward']::view-transition-old(root) {
+  animation-name: page-out-left;
+}
+html[data-transition='forward']::view-transition-new(root) {
+  animation-name: page-in-right;
+}
+html[data-transition='back']::view-transition-old(root) {
+  z-index: 1;
+  animation-name: page-out-right;
+}
+html[data-transition='back']::view-transition-new(root) {
+  animation-name: page-in-left;
+}
+/* After a swipe from the edge the old page is already gone; the page behind only slides in. */
+html[data-transition='swipe']::view-transition-old(root) {
+  animation: none;
+  opacity: 0;
+}
+html[data-transition='swipe']::view-transition-new(root) {
+  animation-name: page-in-left;
+  mix-blend-mode: normal;
+}
+html[data-transition='tab']::view-transition-old(root),
+html[data-transition='tab']::view-transition-new(root) {
+  animation-duration: 160ms;
+}
+@keyframes page-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes page-out-left {
+  to {
+    transform: translateX(-30%);
+    filter: brightness(0.92);
+  }
+}
+@keyframes page-in-left {
+  from {
+    transform: translateX(-30%);
+    filter: brightness(0.92);
+  }
+}
+@keyframes page-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

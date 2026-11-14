@@ -41,6 +41,13 @@ export default defineConfig({
         // iPhone, iPad upright and on its side, and the browser: no orientation is forced.
         orientation: 'any',
         categories: ['business', 'food', 'productivity'],
+        // Long press on the app icon (Android, desktop): the three things a kitchen does most
+        // (after Rettich ADR-0094). iOS does not offer manifest shortcuts.
+        shortcuts: [
+          { name: 'Wareneingang', short_name: 'Eingang', url: '/stock/receive' },
+          { name: 'Abschreiben', short_name: 'Abschreiben', url: '/stock/waste' },
+          { name: 'Temperatur erfassen', short_name: 'Temperatur', url: '/haccp' },
+        ],
         start_url: '/',
         scope: '/',
         theme_color: '#f9f5f0',

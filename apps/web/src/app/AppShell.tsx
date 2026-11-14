@@ -1,7 +1,9 @@
 import { Plus } from 'lucide-react';
+import { useRef } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import { ToastProvider } from '../ui/Toast';
 import { useBusiness } from './hooks';
+import { useEdgeSwipeBack } from './use-edge-swipe-back';
 import { messages } from './messages';
 import { useExtras } from './extras';
 import { activeItem, businessNavItem, tabItems, visibleNavGroups, type NavItem } from './nav';
@@ -48,6 +50,8 @@ export function AppShell() {
   ];
   const activeSide = activeItem(pathname, sideItems);
   const activeTab = activeItem(pathname, tabItems);
+  const page = useRef<HTMLElement>(null);
+  useEdgeSwipeBack(page);
 
   return (
     <div className="min-h-dvh md:pl-24 lg:pl-64">
@@ -60,14 +64,15 @@ export function AppShell() {
 
       <nav
         aria-label={messages.navLabel}
-        className="fixed inset-y-0 left-0 z-20 hidden w-24 flex-col bg-grape px-2 pt-[calc(0.875rem+env(safe-area-inset-top))] pb-[calc(0.5rem+env(safe-area-inset-bottom))] pl-[calc(0.5rem+env(safe-area-inset-left))] md:flex lg:w-64 lg:px-3 print:hidden"
+        className="fixed inset-y-0 left-0 z-20 hidden w-24 flex-col bg-grape [view-transition-name:side-nav] px-2 pt-[calc(0.875rem+env(safe-area-inset-top))] pb-[calc(0.5rem+env(safe-area-inset-bottom))] pl-[calc(0.5rem+env(safe-area-inset-left))] md:flex lg:w-64 lg:px-3 print:hidden"
       >
         <Link
           to={paths.cockpit()}
-          aria-label={messages.appName}
           className="mb-2.5 flex items-center justify-center gap-3 rounded-xl py-1 lg:justify-start lg:px-3"
         >
           <img src="/icon.svg" alt="" className="h-10 w-10 rounded-[0.65rem] lg:h-9 lg:w-9" />
+          {/* In the narrow rail only the icon shows; its name is the visible text from 1024 px. */}
+          <span className="sr-only lg:hidden">{messages.appName}</span>
           <span className="hidden min-w-0 lg:block">
             <span className="block text-lg leading-tight font-semibold text-white">
               {messages.appName}
@@ -113,10 +118,11 @@ export function AppShell() {
       {/* Content scrolls under a frosted strip behind the status bar of the phone. */}
       <div
         aria-hidden="true"
-        className="sticky top-0 z-10 h-[env(safe-area-inset-top)] bg-ground/80 backdrop-blur print:hidden"
+        className="sticky top-0 z-10 h-[env(safe-area-inset-top)] bg-ground/80 backdrop-blur [view-transition-name:status-strip] print:hidden"
       />
 
       <main
+        ref={page}
         id="content"
         className="mx-auto max-w-xl px-4 pt-5 pr-[max(1rem,env(safe-area-inset-right))] pb-32 pl-[max(1rem,env(safe-area-inset-left))] md:max-w-3xl md:px-6 md:pb-16 lg:max-w-6xl lg:px-8 lg:pt-8 print:max-w-none print:p-0"
       >
@@ -128,7 +134,7 @@ export function AppShell() {
 
       <nav
         aria-label={messages.navLabel}
-        className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden print:hidden"
+        className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur [view-transition-name:tab-bar] md:hidden print:hidden"
       >
         <ul className="mx-auto flex max-w-xl">
           {tabItems.map(({ to, label, icon: Icon, primary = false }) => {
