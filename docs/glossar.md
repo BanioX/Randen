@@ -6,7 +6,8 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | --- | --- | --- |
 | Betrieb | `Business` | Eine Küche mit ihrem Lager, ihren Rezepten und Zahlen. Ein zweiter Standort ist ein zweiter Betrieb |
 | Team, Person | `StaffMember` | Wer auf dem Gerät arbeitet; steht bei jeder Buchung |
-| Lagerbereich | `StorageArea` | Kühlzelle, Tiefkühlzelle, Trockenlager, Bar und Keller; mit Temperaturbereich |
+| Lagerbereich | `StorageArea` | Kühlzelle, Tiefkühlzelle, Trockenlager, Bar und Weinkeller, Posten; mit Temperaturbereich |
+| Posten | `AreaKind 'station'` | Der Kühlschrank und die Ablage einer Station der Küche (Garde-manger, Pâtisserie) mit der Mise en place des Tages |
 | Platz | `StorageSpot` | Ein benannter Ort im Lagerbereich, mit Foto: «Regal 2, oben» |
 | Wo ist was? | `where.search` | Suche nach einem Artikel, zeigt Bereich, Platz und Foto |
 | Rundgang | `tour` | Alle Plätze der Reihe nach, für neue Mitarbeitende |
@@ -16,7 +17,8 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Charge | `StockLot` | Eine Lieferung oder Produktion eines Artikels mit eigenem Datum und Preis |
 | Lagerbewegung | `StockMovement` | Eine Zeile im Journal: Wareneingang, Eigenproduktion, Verbrauch, Abschreiber, Korrektur |
 | Wareneingang | `stock.receive`, `Delivery` | Ware annehmen: Lieferschein, Kontrolle an der Tür, Chargen |
-| Abschreiber | `MovementType 'waste'` | Ware, die nicht verkauft wird: abgelaufen, verdorben, Überproduktion, Rüstabfall, Tellerrest, beschädigt |
+| Abschreiber | `MovementType 'waste'` | Ware, die nicht verkauft wird: abgelaufen, verdorben, Überproduktion, Rüstabfall, Tellerrücklauf, beschädigt |
+| Lagerverlust, Produktionsabfall, Tellerrücklauf | `WasteKind` | Die drei Arten von Abschreibern, nach dem Ort, an dem sie entstehen |
 | Inventur | `InventoryCount` | Zählen, was da ist; Differenzen werden Korrekturen |
 | Mindestbestand, Sollbestand | `minStock`, `targetStock` | Unter dem Mindestbestand erscheint der Artikel im Bestellvorschlag; aufgefüllt wird bis zum Sollbestand |
 | FEFO | `allocateFefo` | First expired, first out: Das früheste Datum geht zuerst |
@@ -36,7 +38,9 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Gästeansicht | `guest` | Die Speisekarte im Vollbild, mit Filter nach Allergenen |
 | Bestellvorschlag, Bestellung | `purchasing.suggestions`, `PurchaseOrder` | Was nachzukaufen ist, nach Lieferant; die Bestellung verschickt die Person selbst |
 | Verkauf | `Sale` | Verkaufte Portionen eines Gerichts an einem Tag, oder Umsatz ohne Rezept |
-| Budget | `Budget` | Was der Betrieb in einem Monat für Ware ausgeben will |
+| Budget | `Budget` | Was der Betrieb in einem Monat für Ware ausgeben will, sein Umsatzziel und seine Fixkosten |
+| Break-even | `breakEven` | Der Umsatz, ab dem der Deckungsbeitrag die Fixkosten deckt: ab hier verdient die Küche Geld |
+| Demo-Betrieb | `demo.load` | Eine eingerichtete Beispielküche zum Ausprobieren, mit erfundenen Namen und Preisen |
 | Gewinner, Renner, Schläfer, Verlierer | `MenuClass` | Die vier Felder des Menu-Engineerings: beliebt und rentabel, beliebt, rentabel, weder noch |
 | Selbstkontrolle | `haccp` | Temperaturen, Reinigungsplan, Wareneingangskontrolle |
 | Richtwert | – | Ein Vorschlag ohne rechtliche Verbindlichkeit, den der Betrieb ändern kann (ADR-0012) |
