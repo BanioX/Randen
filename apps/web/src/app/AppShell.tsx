@@ -79,7 +79,7 @@ export function AppShell() {
         <Link
           to={paths.add()}
           aria-current={pathname === paths.add() ? 'page' : undefined}
-          className="mb-2.5 flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-cork font-semibold text-wine-900 transition-colors select-none hover:bg-white"
+          className="mb-2.5 flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-cork font-semibold text-grape transition-colors select-none hover:bg-white"
         >
           <Plus size={20} strokeWidth={2.25} aria-hidden="true" />
           <span className="sr-only lg:not-sr-only">{messages.nav.add}</span>

@@ -90,6 +90,7 @@ for (const [mode, t, text] of [
   check(mode, 'white on grape (sidebar, dark card)', WHITE, t.get('grape'), 7);
   check(mode, 'cork on grape', t.get('cork'), t.get('grape'), 7);
   check(mode, 'mist on grape', t.get('mist'), t.get('grape'), 4.5);
+  check(mode, 'grape on cork (the Erfassen button)', t.get('grape'), t.get('cork'), 7);
   check(mode, 'wine-700 pill on grape (active entry)', t.get('wine-700'), t.get('grape'), 1.3);
   check(mode, 'white on onyx', WHITE, t.get('onyx'), 7);
   // Tints with their text.

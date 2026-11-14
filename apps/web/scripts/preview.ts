@@ -2,7 +2,8 @@
  * Renders previews of app routes on the devices Randen is made for (ADR-0013), so every visible
  * change can be looked at before it ships.
  *
- * Usage:  pnpm preview:shots [route ...] [--dark] [--only=iphone,ipad,ipad-quer,web]
+ * Usage:  pnpm preview:shots [route ...] [--dark] [--full] [--only=iphone,ipad,ipad-quer,web]
+ *         --full captures the whole page, not only the first screen.
  *         Default routes: / and /styleguide. A route prefixed with `!` is visited but not
  *         captured, e.g. `!/more/demo?load=1` to prepare data first.
  * Output: apps/web/.previews/<timestamp>/sheet.png (routes as rows, devices side by side) plus
@@ -33,6 +34,7 @@ const DEVICES: readonly Device[] = [
 
 const args = process.argv.slice(2);
 const dark = args.includes('--dark');
+const full = args.includes('--full');
 const only = args
   .find((arg) => arg.startsWith('--only='))
   ?.slice('--only='.length)
@@ -112,7 +114,7 @@ try {
         await page.waitForTimeout(1500);
         continue;
       }
-      const png = await page.screenshot();
+      const png = await page.screenshot({ fullPage: full });
       await writeFile(join(outDir, fileName(route, device)), png);
       shots.push({ device, png });
     }
@@ -129,7 +131,7 @@ try {
         `<div style="font:600 15px system-ui;color:${dark ? '#e8d9c0' : '#3f0f1c'};margin:6px 0 10px 2px">${row.route}</div><div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:30px">${row.shots
           .map(
             ({ device, png }) =>
-              `<div><div style="font:500 12px system-ui;color:${dark ? '#c1b6a2' : '#605a50'};margin:0 0 6px 2px">${device.label} · ${String(device.width)} × ${String(device.height)}</div><img src="data:image/png;base64,${png.toString('base64')}" style="display:block;width:${String(device.width * scale)}px;height:${String(device.height * scale)}px;border-radius:12px;box-shadow:0 10px 26px rgb(63 15 28 / .2)"></div>`,
+              `<div><div style="font:500 12px system-ui;color:${dark ? '#c1b6a2' : '#605a50'};margin:0 0 6px 2px">${device.label} · ${String(device.width)} × ${String(device.height)}</div><img src="data:image/png;base64,${png.toString('base64')}" style="display:block;width:${String(device.width * scale)}px;height:${String((png.readUInt32BE(20) / 2) * scale)}px;border-radius:12px;box-shadow:0 10px 26px rgb(63 15 28 / .2)"></div>`,
           )
           .join('')}</div>`,
     )
