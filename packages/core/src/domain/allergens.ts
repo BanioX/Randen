@@ -2,14 +2,17 @@ import { z } from 'zod';
 
 /**
  * The fourteen ingredients that can trigger allergies or other unwanted reactions and must be
- * named in Switzerland (LIV, SR 817.022.16, Anhang 6). The ids are stable and part of the data;
- * `label` is the short word for a badge, `official` follows the wording of the ordinance.
+ * named in Switzerland (LIV, SR 817.022.16, Anhang 6; docs/fakten.md section 1). The ids are
+ * stable and part of the data; `label` is the short word for a badge, `official` is the wording
+ * of the ordinance. The order is the order of the ordinance, so the position plus one is the
+ * number the industry guideline proposes as a short code on menu cards.
  */
 export const ALLERGENS = [
   {
     id: 'gluten',
     label: 'Gluten',
-    official: 'Glutenhaltiges Getreide (Weizen, Roggen, Gerste, Hafer, Dinkel, Kamut)',
+    official:
+      'Glutenhaltiges Getreide, namentlich Weizen, Dinkel, Khorasan-Weizen, Roggen, Gerste, Hafer oder Hybridstämme davon sowie daraus gewonnene Erzeugnisse',
   },
   {
     id: 'crustaceans',
@@ -23,13 +26,13 @@ export const ALLERGENS = [
   {
     id: 'milk',
     label: 'Milch',
-    official: 'Milch und daraus gewonnene Erzeugnisse (einschliesslich Laktose)',
+    official: 'Milch und daraus gewonnene Erzeugnisse, einschliesslich Laktose',
   },
   {
     id: 'nuts',
     label: 'Nüsse',
     official:
-      'Hartschalenobst (Mandeln, Haselnüsse, Walnüsse, Cashewnüsse, Pekannüsse, Paranüsse, Pistazien, Macadamianüsse)',
+      'Hartschalenobst, Schalenfrüchte oder Nüsse: Mandeln, Haselnüsse, Walnüsse, Cashewnüsse, Pecannüsse, Paranüsse, Pistazien, Macadamianüsse oder Queenslandnüsse und daraus gewonnene Erzeugnisse',
   },
   { id: 'celery', label: 'Sellerie', official: 'Sellerie und daraus gewonnene Erzeugnisse' },
   { id: 'mustard', label: 'Senf', official: 'Senf und daraus gewonnene Erzeugnisse' },
@@ -37,7 +40,8 @@ export const ALLERGENS = [
   {
     id: 'sulphites',
     label: 'Sulfite',
-    official: 'Schwefeldioxid und Sulfite (mehr als 10 mg/kg oder 10 mg/l)',
+    official:
+      'Schwefeldioxid und Sulfite in Konzentrationen von mehr als 10 mg/kg oder 10 mg/l, ausgedrückt als SO2',
   },
   { id: 'lupin', label: 'Lupinen', official: 'Lupinen und daraus gewonnene Erzeugnisse' },
   { id: 'molluscs', label: 'Weichtiere', official: 'Weichtiere und daraus gewonnene Erzeugnisse' },

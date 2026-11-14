@@ -27,7 +27,12 @@ interface CategoryInfo {
   label: string;
   /** Where goods of this group usually go at goods receipt. */
   area: AreaKind;
-  /** Typical days until the date on the pack, used only as a first proposal at goods receipt. */
+  /**
+   * Days until the date, used only as a first proposal at goods receipt; the date on the pack
+   * always wins. Fresh goods follow the guideline values of the industry (docs/fakten.md
+   * section 7: raw meat, poultry and fish 3 days, raw vegetables and fruit 10 days, precooked
+   * components production day plus 2), the rest are plain estimates.
+   */
   shelfLifeDays: number;
   dateKind: DateKind;
   diet: Diet;
