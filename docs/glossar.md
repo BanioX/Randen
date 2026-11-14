@@ -21,7 +21,7 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Lagerverlust, Produktionsabfall, Tellerrücklauf | `WasteKind` | Die drei Arten von Abschreibern, nach dem Ort, an dem sie entstehen |
 | Inventur | `InventoryCount` | Zählen, was da ist; Differenzen werden Korrekturen |
 | Mindestbestand, Sollbestand | `minStock`, `targetStock` | Unter dem Mindestbestand erscheint der Artikel im Bestellvorschlag; aufgefüllt wird bis zum Sollbestand |
-| FEFO | `allocateFefo` | First expired, first out: Das früheste Datum geht zuerst |
+| FEFO, FIFO | `allocateFefo`, `fefoOrder` | First expired, first out: Das früheste Datum geht zuerst. Ohne Datum oder bei gleichem Datum gilt first in, first out: die ältere Lieferung zuerst. Was sein Verbrauchsdatum hinter sich hat, wird nie genommen |
 | Mindestens haltbar bis (MHD) | `DateKind 'best_before'` | Oft länger gut; der Entscheid liegt beim Betrieb |
 | Zu verbrauchen bis | `DateKind 'use_by'` | Danach nicht mehr verwenden |
 | Ausbeute | `yieldBps` | Was nach dem Rüsten bleibt, in Prozent |
