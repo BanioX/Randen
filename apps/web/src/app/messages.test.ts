@@ -6,6 +6,11 @@ const featureCatalogs = import.meta.glob<Record<string, unknown>>('../features/*
   eager: true,
 });
 
+/** The catalogs of the UI kit. */
+const kitCatalogs = import.meta.glob<Record<string, unknown>>('../ui/messages*.ts', {
+  eager: true,
+});
+
 /** Every text in a catalog, including the literal parts of message functions. */
 function texts(value: unknown, path: string): [path: string, text: string][] {
   if (typeof value === 'string' || typeof value === 'function') {
@@ -20,6 +25,9 @@ function texts(value: unknown, path: string): [path: string, text: string][] {
 const all = [
   ...texts(messages, 'messages'),
   ...Object.entries(featureCatalogs).flatMap(([file, catalog]) => texts(catalog, file)),
+  ...Object.entries(kitCatalogs)
+    .filter(([file]) => !file.includes('.test.'))
+    .flatMap(([file, catalog]) => texts(catalog, file)),
 ];
 
 describe('texts of the app (de-CH)', () => {

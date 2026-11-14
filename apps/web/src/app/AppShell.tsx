@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react';
 import { Link, Outlet, useLocation } from 'react-router';
+import { ToastProvider } from '../ui/Toast';
 import { useBusiness } from './hooks';
 import { messages } from './messages';
 import { activeItem, businessNavItem, navGroups, tabItems, type NavItem } from './nav';
@@ -88,7 +89,7 @@ export function AppShell() {
           {navGroups.map((group, index) => (
             <div key={group.id}>
               {group.label === undefined ? null : (
-                <p className="hidden px-3 pb-0.5 text-[0.6875rem] font-semibold tracking-wider text-mist/70 uppercase lg:block">
+                <p className="hidden px-3 pb-0.5 text-[0.6875rem] font-semibold tracking-wider text-mist uppercase lg:block">
                   {group.label}
                 </p>
               )}
@@ -118,7 +119,10 @@ export function AppShell() {
         id="content"
         className="mx-auto max-w-xl px-4 pt-5 pr-[max(1rem,env(safe-area-inset-right))] pb-32 pl-[max(1rem,env(safe-area-inset-left))] md:max-w-3xl md:px-6 md:pb-16 lg:max-w-6xl lg:px-8 lg:pt-8 print:max-w-none print:p-0"
       >
-        <Outlet />
+        {/* One calm line of feedback for the whole app: pages call useToast(). */}
+        <ToastProvider>
+          <Outlet />
+        </ToastProvider>
       </main>
 
       <nav

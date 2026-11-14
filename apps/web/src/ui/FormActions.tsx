@@ -17,8 +17,8 @@ export interface FormActionsProps {
   /** The message of a rejected command (`errorText`), read out at once. */
   error?: string | null | undefined;
   /**
-   * `page` (default): on the phone the row sticks above the tab bar while the form scrolls;
-   * from 1024 px it sits at the end of the form. `inline`: always at the end, for a form inside
+   * `page` (default): on the iPhone the row sticks above the tab bar while the form scrolls, on
+   * the iPad upright to the bottom of the screen; from 1024 px it sits at the end of the form. `inline`: always at the end, for a form inside
    * a sheet, a dialog or a card.
    */
   placement?: 'page' | 'inline' | undefined;
@@ -26,12 +26,14 @@ export interface FormActionsProps {
 }
 
 /*
- * The tab bar of the phone is fixed, 4 rem high plus its hairline and the safe area. The row
+ * The tab bar of the iPhone is fixed, 4 rem high plus its hairline and the safe area. The row
  * sticks right above it and gets a ground of its own, so text scrolling underneath stays
- * readable; the negative margin lets that ground reach the edges of the screen.
+ * readable; the negative margin lets that ground reach the edges of the screen. On the iPad
+ * upright there is no tab bar (ADR-0013): the row sticks to the bottom of the screen. From
+ * 1024 px it sits at the end of the form.
  */
 const STICKY =
-  'sticky bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] z-10 -mx-4 bg-ground/95 px-4 py-3 backdrop-blur lg:static lg:mx-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none';
+  'sticky bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] z-10 -mx-4 bg-ground/95 px-4 py-3 backdrop-blur md:bottom-0 md:-mx-6 md:px-6 md:pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:static lg:mx-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none';
 
 /**
  * The actions at the end of a form: one main button in Rotwein (full width on the phone, in

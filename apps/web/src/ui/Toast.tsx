@@ -76,7 +76,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div
         role="status"
         aria-live="polite"
-        className="pointer-events-none fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 flex justify-center lg:inset-x-auto lg:right-8 lg:bottom-8 lg:justify-end print:hidden"
+        className="pointer-events-none fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 flex justify-center md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] lg:inset-x-auto lg:right-8 lg:bottom-8 lg:justify-end print:hidden"
       >
         {shown === null ? null : (
           <div
