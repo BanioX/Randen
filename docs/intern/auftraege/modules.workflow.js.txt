@@ -1,0 +1,478 @@
+export const meta = {
+  name: 'randen-modules',
+  description: 'Build modules of Randen, each in its own worktree: core use cases with tests and the pages',
+  phases: [{ title: 'Build', detail: 'one builder per module, core use cases with tests and the pages' }],
+}
+
+const BASE = args.base
+const ONLY = args.only
+
+const REPORT_SCHEMA = {
+  type: 'object',
+  properties: {
+    branch: { type: 'string' },
+    commit: { type: 'string', description: 'short sha of your final commit' },
+    checks: {
+      type: 'object',
+      properties: {
+        format: { type: 'string' }, lint: { type: 'string' }, typecheck: { type: 'string' },
+        test: { type: 'string' }, build: { type: 'string' },
+      },
+      required: ['format', 'lint', 'typecheck', 'test', 'build'],
+    },
+    operations: { type: 'string', description: 'every operation of your contract with one line on what it does' },
+    pages: { type: 'string', description: 'every route with one line on what the page offers' },
+    requests: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'changes you need OUTSIDE your files (a helper in the core, a UI kit component, a path), each with an exact proposal',
+    },
+    notes: { type: 'string', description: 'decisions, shortcuts (debts), open ends, anything the integrator must know' },
+  },
+  required: ['branch', 'commit', 'checks', 'operations', 'pages', 'requests', 'notes'],
+}
+
+const common = (name, owns) => `You are building one module of "Randen": a premium, local-first PWA for kitchens from the one-person takeaway to the large kitchen, in the colours of red wine (Rotwein, Traube, Kork). It is the business sister of "Rettich" (a household app by the same owner, Alban Hyseni). Randen's repo is /home/user/Randen (private). Rettich's repo is /home/user/FridgeAI: READ ONLY, never change it; you may read it for craft and port ideas (same owner, same stack).
+
+RULES: the CLAUDE.md you were handed at start may belong to Rettich. For this task the rules of Randen apply: read CLAUDE.md and AGENTS.md inside your worktree first.
+
+SETUP, exactly:
+  test -d /home/user/Randen-wt/${name} || git -C /home/user/Randen worktree add /home/user/Randen-wt/${name} -b wt/${name} ${BASE}
+  cd /home/user/Randen-wt/${name} && pnpm install --prefer-offline
+If the worktree already existed, an earlier builder was interrupted: run "git log --oneline -5" and "git status" there, read what is written and continue from it instead of starting over.
+Work ONLY inside /home/user/Randen-wt/${name}. Never edit /home/user/Randen itself, never push, never touch other worktrees. Use absolute paths or cd into your worktree in every shell command.
+SAVE OFTEN: the machine can restart at any time. After every finished piece run: cd /home/user/Randen-wt/${name} && git add -A && git commit -q -m "wip: <what>". Work-in-progress commits are fine; the integrator squashes them.
+
+READ BEFORE YOU WRITE (in your worktree):
+- CLAUDE.md, AGENTS.md, docs/regeln.md (wording, numbers, and section H: the five page patterns every page must follow), docs/design.md and the picture docs/design/entwurf-2026-11-14.png (LOOK at it with your image reader: it is the visual target for density, hierarchy and tone), docs/ui-kit.md (the reference of every UI building block: use them, do not rebuild them), docs/glossar.md, docs/lernbuch.md, docs/adr/0003 to 0008 and 0012.
+- packages/core/src/model/*.ts (every row schema), packages/core/src/domain/*.ts (pure rules: units and prices, expiry, FEFO, costing, declaration, requirements, menu engineering, categories, allergens), packages/core/src/application/command.ts (AppContext, UseCase, CommandError, requireRow, createCommandKit with runCommand, emit, stamps), packages/core/src/application/stock-ledger.ts (the ONLY way to change stock), packages/core/src/ports/storage.ts (Storage, alive).
+- packages/core/src/modules/lookup/contract.ts and use-cases.ts: the reference for how a module is written. packages/core/test/application.test.ts: the reference for tests. packages/core/src/testing/index.ts: createTestContext and seedKitchen (the test kitchen; its doc comments list every value).
+- apps/web/src/app/hooks.ts (useQuery, useQueryResult, useCommand, errorText, isNotFound, useMoney, useToday, useBusiness), app/paths.ts (every address; link only through it), app/test-helpers.tsx (renderApp), app/messages.ts, app/NotFoundPage.tsx, and the style guide pages in features/styleguide for how the kit is used.
+
+YOU OWN exactly these paths and nothing else:
+${owns}
+Everything else is off limits: the core outside your module folder, the UI kit, app/, data/, other features, docs, configs. Modules never call each other's operations: shared things live in the core (model, domain, ledger, lookup.*). If you need a change outside your paths (a helper, a kit component, a new path), do NOT make it: work around it inside your module and list it under "requests" with an exact proposal.
+
+HOW A MODULE IS BUILT:
+- contract.ts: export const ${name}Contract = { 'x.y': query({...}) | command({...}) } as const satisfies ContractFragment. Inputs spread queryBase or commandBase. Outputs are view models for pages: plain data with ids, names and numbers already joined, so a page needs one query, not five. Reuse the row schemas and primitives of the model for fields (nameSchema, QuantitySchema, RappenSchema, UnitPriceSchema, LocalDateSchema ...). Summaries in German (ss) and English. Never use .transform() in a schema (it cannot become JSON Schema); use .overwrite() or plain refinements.
+- use-cases.ts: export function create${name[0].toUpperCase()}${name.slice(1)}UseCases(ctx: AppContext) returning { 'x.y': useCase, ... } with every operation of your contract, each typed UseCase<'x.y'>, each starting with CONTRACT_V1['x.y'].input.parse(raw). Queries never write. Commands run inside runCommand(name, input.commandId, async () => {...}) and call emit(businessId, 'thing.what_happened', {ids and small facts}) at least once. Rows are validated with their schema before every write (XSchema.parse({...})), optional fields are omitted, never set to undefined (exactOptionalPropertyTypes). Deleting is soft (deletedAt + updatedAt); use requireRow for "exists in this business and is not deleted"; names are unique per business without regard to case where two rows of the same name would confuse (CommandError 'duplicate_name'); what is still used is refused with 'in_use'.
+- Only storage calls inside a command (no timers, no network). Money is an integer in Rappen; quantities are base units with at most three decimals (roundQuantity after arithmetic); unit prices are Rappen per 1000 base units (lineValue, valueMilli, unitPriceFromTotal). Stock changes ONLY through createStockLedger(ctx). Allergens, diet, origin, cost and margin are computed with the domain functions, never stored.
+- Tests in packages/core/test/${name}*.test.ts on createTestContext + seedKitchen: every operation with its happy path, its errors, idempotency (the same commandId twice gives the same result and changes nothing), the event it emits, and that another business sees nothing. Compute expected numbers by hand in comments (as costing.test.ts does). Coverage of your module must be at least 90 % of lines.
+- Pages in apps/web/src/features/${name}/: routes.tsx exports ${name}Routes (RouteObject[] with lazy pages; keep the path patterns of app/paths.ts exactly), messages.ts holds every text (export const ${name}Messages; functions for texts with values), one file per page plus small components of the feature. Follow the page patterns H1 to H5 of docs/regeln.md. Read with useQuery / useQueryResult, write with useCommand, show failures with errorText, confirm with a toast (useToast). Money via useMoney().format, quantities via formatQuantity, unit prices via formatUnitPrice, shares via formatPercent, dates via formatSwissDate and relativeDays. Filters live in the URL (useSearchParams).
+- Page tests next to the pages (*.test.tsx) with renderApp(<Page />, { route, path, routes }): the seeded data shows, the main flow works through the UI (type, click, see the result and the stored row), the empty or not-found state shows. Wait with findBy…; wait for the END of an action (its message), not its first sign.
+- Side effects (printing, clipboard, sharing, saving a file, reading a file, localStorage) are registered in docs/nebenwirkungen.md and a test checks the code against it (apps/web/src/side-effects.test.ts). The kinds a module may use are already listed there as «geplant»: window.print, navigator.share, navigator.clipboard, download with createObjectURL, type="file", localStorage with the key randen:last-backup. Use exactly those; anything else (above all any request to a server) is forbidden. If the test asks for a row you do not have, report it under requests.
+- Toasts: useToast() from ui/Toast (the provider is mounted in the app frame; in a page test without the frame it does nothing, so assert on the page, not on the toast, or wrap with ToastProvider).
+- Each builder uses its own scratch folder /tmp/claude-0/-home-user/a01c450d-a381-557b-9e3c-8d8ec7bc0ff6/scratchpad/<module>/ and, if it starts a local server to look at pages, its own port: 4400 + the position of the first letter of the module name in the alphabet times 7 (check that nothing answers there first).
+- UI texts: German (Switzerland), "ss", "du", calm and precise, no exclamation marks, no emojis. The glossary has the words (Wareneingang, Abschreiber, Charge, Inventur, Ausbeute, Wareneinsatz, Deckungsbeitrag ...).
+- Quality bar: this is a premium product for professionals, and it must be usable without training by someone who runs a takeaway alone.
+- ONE APP FOR IPHONE, IPAD AND THE WEB (docs/adr/0013-iphone-ipad-web.md, read it): build and check every page in four views: iPhone 390 x 844 (classes without a prefix; tab bar at the bottom, so the end of the page stays free above it; thumb reach), iPad upright 820 x 1180 (md:, a narrow rail on the left, no tab bar: use two columns and real tables), iPad on its side 1180 x 820 and the web 1440 x 900 (lg:, full sidebar: main and side column, all table columns). Touch targets at least 44 px in ALL views (the iPad on its side shares the layout of the browser), nothing depends on hover, long press or swipe alone, numeric fields open the numeric keyboard (inputMode) and say what Enter does (enterKeyHint), nothing scrolls sideways, light and dark. Every interactive element has a name; every field a label. The page title in the browser tab is set by the PageHeader of the kit if it offers that; otherwise leave it.
+
+FINISH, exactly:
+  cd /home/user/Randen-wt/${name} && pnpm format && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build
+Every step must exit 0; read the real output. A failing test in a file you do not own that passes alone is flaky under load: run it alone three times, then report it; never skip or edit it. Then: git add -A && git commit -q -m "<conventional commit message in English>". Do not push. Return the report object.`
+
+const MODULES = {
+  articles: `${common('articles', `  packages/core/src/modules/articles/**
+  packages/core/test/articles*.test.ts
+  apps/web/src/features/articles/**`)}
+
+YOUR MODULE: the master data of the kitchen. «Artikel» (what is kept in stock) and «Lieferanten» (who delivers it). Tables you write: articles, suppliers.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- articles.list (query): { search?, categoryId?, supplierId?, kind?: 'purchased'|'prepared', filter?: 'all'|'below_min'|'no_price'|'inactive' } → rows { id, name, kind, categoryId, categoryLabel, unit, pricePer1000, supplierName?, areaName?, spotName?, stock, stockValueRappen, minStock?, belowMin, allergens, diet, active, missing: string[] } sorted by name, plus counts per filter. "missing" lists what a professional must still complete: 'price' (no price), 'origin' (meat or fish without a country, see articleCategory().declaresOrigin), 'supplier'.
+- articles.get (query): the article with supplier, area and spot names, stock summary (quantity, value, number of lots, the next date with its expiry status), "usedIn" (recipes that use it: id, name, quantity), price history (the last 12 purchase lots: receivedOn, pricePer1000, quantity, supplier name; newest first) with the change against the previous purchase in basis points, and the same "missing" list. A prepared article says which recipe makes it.
+- articles.create (command): name, categoryId, unit and everything optional of the row. Defaults from the category (articleCategory): diet, dateKind, shelfLifeDays, and the first area of the category's kind. Refuses a duplicate name. Only kind 'purchased' can be created here (components are created by the recipes module).
+- articles.update (command): any field except kind, unit once stock or recipes exist ('not_allowed' with a clear reason), and for prepared articles the fields its recipe owns (name, allergens, traces, diet, recipeId, pricePer1000). Passing null clears an optional field.
+- articles.setActive (command): hide from pickers without losing history.
+- articles.delete (command): soft delete; refused with 'in_use' while it has active stock or is an ingredient or output of a live recipe.
+- articles.importPreview (query) and articles.import (command): «Mehrere auf einmal»: the person pastes lines, one article per line, e.g. "Rindsentrecôte; kg; 62.00; Metzgerei Muster" or tab separated from a spreadsheet (name; unit kg|g|l|dl|ml|Stk; price per unit optional; supplier optional). The preview returns per line: parsed fields, guessed category (a small keyword table per category in your module: Fleisch words → meat, Rahm/Milch/Joghurt → dairy, Mehl/Reis/Pasta → dry ...; unknown → other), problems (duplicate of an existing article, unreadable unit or price). The import creates the valid lines in one command and creates missing suppliers by name.
+- suppliers.list (query): rows with article count and the next order day and delivery day from today's weekday.
+- suppliers.get (query): the supplier with its articles (name, unit, price, stock, belowMin).
+- suppliers.create / suppliers.update / suppliers.delete (commands): delete is refused with 'in_use' while live articles name it.
+
+PAGES (paths from app/paths.ts):
+- /articles (paths.articles()): pattern H1. Search, a segmented filter (Alle · Unter Mindestbestand · Ohne Preis · Inaktiv) with counts, category chips. From md a DataTable (Artikel with category underneath, Bestand, Preis, Lieferant, Platz), on the phone a grouped list (name, stock and price, a calm mark when something is missing). Main action «Artikel erfassen»; a second, quiet action «Mehrere auf einmal».
+- /articles/new and /articles/:articleId/edit: pattern H3. Sections: «Artikel» (name, Warengruppe, Einheit as segmented g/ml/Stk. explained as «Gewicht · Volumen · Stück»), «Preis und Ausbeute» (UnitPriceField, PercentField for the yield with a hint what it does to cost), «Allergene und Herkunft» (AllergenPicker for enthält, a second for Spuren, diet as segmented vegan/vegetarisch/mit Fleisch oder Fisch, CountryPicker shown and required-looking for meat and fish), «Lager und Bestellung» (SupplierPicker, AreaPicker and SpotPicker, Mindestbestand and Sollbestand as QuantityField, order unit: pack size + label, shelf life in days and date kind «mindestens haltbar bis / zu verbrauchen bis»), «Weitere Angaben» (supplier article number, GTIN, note). Choosing a category fills the proposals as long as the person has not changed those fields.
+- /articles/import (add it under your routes; link to it with paths.articles() + '/import'): paste field, live preview table with problems per line, «n Artikel anlegen».
+- /articles/:articleId (paths.article): pattern H2. Key figures (Bestand → link to paths.stockArticle(id), Lagerwert, letzter Preis, nächstes Datum with ExpiryChip), what is missing as calm notices with a link to edit, allergens and diet and origin, price history as a small line chart with the list beside it, «Verwendet in» recipes (links paths.recipe), storage and ordering facts, actions: Bearbeiten, Inaktiv setzen, Löschen.
+- Suppliers have no entry of their own in the navigation (it must fit an iPad on its side): the articles list carries a quiet link «Lieferanten» in its header, and the supplier pages link back to «Artikel».
+- /suppliers (paths.suppliers()), /suppliers/new, /suppliers/:supplierId: list (name, Artikel, nächster Bestelltag), detail with contact (tel: and mailto: links), order and delivery days as weekday chips (Mo Di Mi Do Fr Sa So), minimum order value, note, its articles, edit in a Sheet or on the page, delete with confirm.
+
+ACCEPTANCE:
+- A new article «Kalbsfilet» in Fleisch proposes Kühlzelle, «zu verbrauchen bis», 3 days and «mit Fleisch oder Fisch», and the detail page says the origin is missing until a country is chosen.
+- An egg at CHF 0.45 per piece is stored as 45000 and shown as «CHF 0.45 / Stk.».
+- Pasting 6 lines creates 5 articles and shows the one bad line with its reason; nothing is created for it.
+- Deleting an article with stock is refused in words a cook understands.`,
+
+  areas: `${common('areas', `  packages/core/src/modules/areas/**
+  packages/core/test/areas*.test.ts
+  apps/web/src/features/areas/**`)}
+
+YOUR MODULE: «Wo ist was?». The storage areas of the house, the named spots inside them with photos, the search that shows a new employee where something is, and the tour through the storage for the first day. Tables you write: areas, spots, and on articles only the fields areaId and spotId.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- areas.list (query): areas in order with kind, temperature range, photo, number of spots, number of articles that live there (article.areaId), number of active lots and their value.
+- areas.get (query): one area with its spots (name, note, photo, the articles assigned to the spot with their stock) and the articles of the area without a spot, plus the active lots lying in the area (article name, quantity, expiry) so the page shows what is really there.
+- areas.create / areas.update / areas.delete (commands): name, kind, temperature range (DeciCelsius, both optional; proposals by kind: cold 0 to 5 °C, frozen up to -18 °C, both shown as «Richtwert» the business can change), photo, order. Deleting is refused with 'in_use' while active lots lie in it; it soft-deletes its spots and clears areaId and spotId on its articles.
+- areas.reorder (command): the order of the areas (ids in order).
+- spots.create / spots.update / spots.delete (commands): name, note, photo (null clears), order. Deleting clears spotId on the articles that pointed to it.
+- spots.assign (command): { spotId | null, areaId, articleIds } puts articles on a spot (or into the area without a spot).
+- where.search (query): { text } → hits for articles (name contains each typed word, case and accents ignored: "entrecote" finds «Rindsentrecôte»), each with its usual area and spot (names, the spot's photo), and where stock really lies right now if that differs (area names of its active lots with quantities); also hits for spots and areas by name. Best hits first (starts-with before contains). Empty text → the areas with their spots as a browsable start.
+- tour.get (query): the tour for new staff: every area in order, every spot in order, with photo, note and up to eight article names, and counts «n Plätze, n mit Foto».
+
+PAGES (paths from app/paths.ts):
+- /areas (paths.areas()): pattern H1 with a twist: the search field «Wo ist was?» is the first thing on the page and opens paths.where() with the typed text (?q=). Below it the areas as cards in a grid (photo or a quiet icon tile by kind, AreaBadge, temperature range, «6 Plätze · 42 Artikel»). Actions: «Bereich erfassen», «Rundgang» (paths.tour()).
+- /areas/where?q= (paths.where()): results while typing. Each hit: the article name large, «Kühlzelle · Schublade Fleisch», the spot photo large (DishPhoto ratio wide; tap opens PhotoViewer full screen), stock right now, a link to the area. No hit: a calm sentence and the hint to assign a spot on the article.
+- /areas/:areaId (paths.area): pattern H2. The area photo, kind and range, then the spots as a grid of cards with photo, note and their articles; «Platz erfassen» and editing a spot in a Sheet (name, note, PhotoField); «Artikel zuweisen» in a Sheet with a searchable multi-select of articles (checkbox rows); articles of the area without a spot listed last with a hint. Edit and delete the area.
+- /areas/tour (paths.tour()): «Rundgang»: one spot at a time, large photo, area and spot name, note, what lies there, «Weiter» and «Zurück», progress «3 von 14»; at the end «Rundgang fertig». A print view (window.print) lists all areas and spots with small photos as a handout. Spots without a photo show a quiet prompt «Foto fehlt» with a link to add one.
+
+ACCEPTANCE:
+- Typing «rahm» shows «Vollrahm» with its area; typing «entrecote» finds «Rindsentrecôte» with the photo of «Schublade Fleisch» if that spot has one.
+- A new spot with a photo taken on the phone appears in the tour.
+- Deleting «Kühlzelle» while lots lie in it is refused in clear words.
+- Photos are compressed by the kit's PhotoField; nothing is uploaded anywhere.`,
+
+  stock: `${common('stock', `  packages/core/src/modules/stock/**
+  packages/core/test/stock*.test.ts   (not stock-ledger.test.ts, which exists)
+  apps/web/src/features/stock/**`)}
+
+YOUR MODULE: «Lager». What is in the house, what expires, goods receipt, write-offs, withdrawals, moving, the stock take and the journal. Every change of stock goes through createStockLedger(ctx). Tables you write: deliveries, counts; lots and movements only through the ledger; on orders only status, deliveryId and updatedAt when an order is received; temperatureLogs for the check at the door.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- stock.overview (query): { search?, areaId?, categoryId?, filter?: 'all'|'expiring'|'below_min' } → per article with stock or with a minimum: name, unit, quantity, value, number of lots, area names, the earliest date with expiry status (expiryInfo) and days left, belowMin; totals: stock value, number of articles, value and count of lots that are expired / due today / due within three days / past best-before, number below minimum.
+- stock.expiring (query): { withinDays = 7 } → lots sorted by urgency: article, quantity, value, area and spot name, date, date kind, status, days left; grouped sums per status. Lots past their Verbrauchsdatum come first and say they must be written off.
+- stock.article (query): { articleId } → the article (name, unit, price, min and target stock, yield), its active lots in FEFO order (fefoOrder) with area, date, status, quantity of initial, price, value, supplier name, lot code, received on), the usable quantity (usableQuantity), and its last 30 movements (type, quantity, value, day, who (staff name), reason or purpose, note).
+- stock.receiveDraft (query): { orderId? } → for an order: supplier and lines (article, ordered quantity, price) to prefill; without: the articles' proposals are enough.
+- stock.receive (command): { supplierId?, orderId?, receivedOn, documentNumber?, tempDeciC?, checkOk, note?, lines: [{ articleId, quantity, pricePer1000? or lineTotalRappen?, expiresOn?, lotCode?, areaId }] } → one Delivery row, one lot per line through ledger.receive (origin 'purchase'; a line given as a total derives the unit price with unitPriceFromTotal; a line without any price takes the article's last price), the order (if given and not received) becomes 'received' with the deliveryId, and when a temperature was measured a TemperatureLog of kind 'receiving' (label: supplier name or «Wareneingang», ok = checkOk). Output: deliveryId, lot ids, totalRappen. Events: delivery.received.
+- stock.openingStock (command): the same lines without supplier and delivery, origin 'opening' (the first stock when a business starts): not a purchase.
+- stock.writeOff (command): { lotId, quantity, reason, note? } through ledger.writeOff; stock.writeOffExpired (command): writes off every lot past its Verbrauchsdatum in full with reason 'expired' and returns count and value.
+- stock.withdraw (command): { articleId, quantity, purpose: 'kitchen'|'staff', note? } through ledger.consume (FEFO); a shortage is 'insufficient_stock' here (nothing is booked).
+- stock.move (command): { lotId, areaId, quantity? } through ledger.move.
+- stock.countSheet (query): { areaId? } → the lots to count, grouped by area and ordered by article name, with expected quantity, unit, date.
+- stock.count (command): { countedOn, areaId?, note?, lines: [{ lotId, counted }], found?: [{ articleId, areaId, quantity, expiresOn? }] } → adjustments through ledger.adjust (with the countId), found stock through ledger.receive (origin 'count'), one InventoryCount row with every line (expected, counted, value delta) and the total value delta. Lines whose count equals the expected quantity are part of the record but book nothing.
+- stock.journal (query): { from?, to?, type?, articleId?, limit = 200 } → movements newest first with article name, unit, quantity, value, type, day, who, reason or purpose, note; and sums per type for the period.
+- stock.undoMovement is NOT wanted: a wrong booking is corrected by a counter booking, the journal stays true.
+
+PAGES (paths from app/paths.ts):
+- /stock (paths.stock()) and /stock/expiring (paths.stockExpiring()): pattern H1/H5. Four key figures first (Lagerwert on the one dark card; «Läuft heute ab», «In 3 Tagen», «Unter Mindestbestand» as tiles that set the filter). A segmented control «Bestand · Ablauf». Bestand: search, area chips; from md a DataTable (Artikel, Bestand, Wert, nächstes Datum as ExpiryChip, Bereich), on the phone a grouped list; a row opens paths.stockArticle. Ablauf: the lots by urgency in groups («Nicht mehr verwenden», «Heute», «In 3 Tagen», «Diese Woche», «MHD überschritten»), each with quantity, value, place, and the actions «Abschreiben» (paths.waste(lotId)) and, where it helps, a link to the menu plan (paths.plan()) with the words «Im Menüplan verwerten». A calm notice with one button writes off everything past its Verbrauchsdatum (confirm with count and value).
+- /stock/articles/:articleId (paths.stockArticle): pattern H2. Bestand, Wert, verwendbar; the lots in FEFO order, the first marked «zuerst verbrauchen»; per lot the actions Abschreiben, Entnehmen, Verschieben (Sheets with QuantityField defaulting to the whole lot, reason chips, AreaPicker); the last movements; link to the article's master data (paths.article).
+- /stock/receive (paths.receive(orderId?)): pattern H4, the most used page of the house, so make it fast. Head: SupplierPicker, date (today), delivery note number. Lines: ArticlePicker → the line appears with QuantityField (in the article's display unit), price per unit prefilled from the last price (UnitPriceField) with a switch to «Betrag der Zeile» instead, DateField with the proposal today + shelf life (marked «Vorschlag») and quick chips, area prefilled from the article. «Zeile hinzufügen» keeps the focus in the next article field. A running total. «Kontrolle an der Tür»: temperature (optional) and a switch «Ware in Ordnung» (on), note. With ?order= the lines come from the order. A price that differs more than 10 % from the last one shows a calm hint with the difference. Booking shows «n Chargen, CHF …» first, then a toast and an empty form.
+- /stock/waste (paths.waste(lotId?)): pattern H4. Pick the article, then the lot (FEFO order; with ?lot= prefilled), quantity (the whole rest by default), reason as chips (the seven reasons, wasteReasonLabel), note. Shows the value that is written off before booking.
+- /stock/count (paths.count()): pattern H4, «Inventur». Choose an area or all. The lots as a list with expected quantity and a field for the counted quantity (empty = not counted, a button «stimmt» fills the expected value), a way to add stock that was found («Nicht aufgeführt»), a running summary (n gezählt, Differenz CHF), then «Inventur abschliessen» with a confirm showing the differences. A print view of the empty count sheet (window.print).
+- /stock/journal (paths.journal()): pattern H5. Period (7 Tage · 30 Tage · Monat), type chips, the sums per type as tiles, then the table.
+
+ACCEPTANCE:
+- Receiving 10 kg Entrecôte for CHF 640.00 as a line total stores CHF 64.00 / kg on the lot and on the article, and the page warned that the last price was CHF 62.00.
+- The lot past its Verbrauchsdatum is listed first under «Nicht mehr verwenden» and cannot be withdrawn; writing it off moves its value into the journal as an Abschreiber with the reason.
+- After a count that finds 54 instead of 60 eggs the stock is 54 and the journal holds a correction of -6 Stk. worth CHF -2.70.
+- For every article the lots still add up to the movements (assert it in your tests the way stock-ledger.test.ts does).`,
+
+  recipes: `${common('recipes', `  packages/core/src/modules/recipes/**
+  packages/core/test/recipes*.test.ts
+  apps/web/src/features/recipes/**`)}
+
+YOUR MODULE: «Rezepte». The recipe book of the kitchen with photo and steps, the costing with margin and price proposal, the declaration of allergens and origin derived from the ingredients, components made in house, and the cook view for the pass. Tables you write: recipes, and on articles only the prepared article a component fills (create it, keep its name, unit, recipeId, shelfLifeDays, allergens, traces and diet in step with the recipe).
+
+Use the domain functions, do not re-implement them: recipeCost, effectiveUnitPrice, dishFigures, suggestedPrice, netOfVat, declarationOf, recipeRequirements, usableQuantity, formatQuantity (style 'kitchen' on recipe cards).
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- recipes.list (query): { search?, kind?: 'dish'|'component', course?, filter?: 'all'|'over_target'|'incomplete'|'inactive' } → rows { id, name, kind, course, photo?, portions, priceRappen?, costPerPortionRappen, foodCostBps?, marginRappen?, status (MarginStatus), allergens, diet, incomplete (cost or declaration incomplete), active } and counts per filter. The business target comes from the business row.
+- recipes.get (query): { recipeId, portions? } → the recipe; its ingredient lines joined with the article (name, unit, net quantity, gross quantity, yield, unit price, line cost in Rappen, priceMissing, the article's allergens, whether it is a component with a link to its recipe, usable stock); cost (total, per portion, missing prices by name); for a dish the figures (net price, VAT amount, margin, food cost share, status, suggested price at the business target); the declaration (allergens, traces, diet, origins with country names, incomplete and why); availability: how many portions the usable stock covers (the minimum over all ingredients, by FEFO-usable quantities) and what is short for the asked portions; for a component: the article it fills, the cost per unit of output, and the dishes that use it.
+- recipes.card (query): { recipeId, portions } → the cook view: ingredients scaled to the portions with net quantities formatted for the kitchen, the steps, allergens, diet, the photo.
+- recipes.create / recipes.update (commands): all fields of the row. A component needs an output quantity and unit: the command creates the prepared article (kind 'prepared', category 'prepared', the chosen unit, dateKind 'use_by', name of the recipe) or updates it when the recipe is renamed, and sets recipe.output. A dish has no output; changing kind is 'not_allowed' once the component's article has stock or is used in other recipes. An ingredient must be a live article of the business; a recipe may not contain itself, directly or through components ('invalid' with the loop named). The prepared article's allergens, traces and diet are refreshed from declarationOf after every save of the component.
+- recipes.setPrice (command): { recipeId, priceRappen | null } for the quick «Preisvorschlag übernehmen».
+- recipes.duplicate (command): a copy named «… (Kopie)»; a copied component gets its own article.
+- recipes.setActive (command) and recipes.delete (command): delete is soft and refused with 'in_use' while the recipe is on a menu card (menuCards.sections[].recipeIds), in an open plan entry, or its component article is an ingredient of a live recipe or has stock; it also soft-deletes the component's article when nothing holds it.
+
+PAGES (paths from app/paths.ts):
+- /recipes (paths.recipes()): pattern H1. Segmented «Gerichte · Komponenten», search, course chips, a quiet filter «Über dem Ziel · Unvollständig». A grid of cards (2 columns on the phone, 3 to 4 on wide screens): DishPhoto (ratio card), name, course, price, MarginBadge with the food cost share, a calm mark when incomplete. Components show cost per unit instead of a price. Main action «Rezept erfassen».
+- /recipes/new and /recipes/:recipeId/edit: pattern H3, the heart of the product, so build it with care. «Rezept»: name, kind (segmented Gericht · Komponente), course, portions («Rezept für … Portionen»; for a component «Ein Ansatz ergibt …» with QuantityField and unit, and shelf life in days marked as Richtwert the business sets), description for the menu card, PhotoField («Foto vom fertigen Gericht»). «Zutaten»: rows of ArticlePicker + QuantityField (net, in the article's unit) + short note; each row shows its gross quantity when the yield is below 100 % and its cost; rows can be removed and moved up and down (buttons, keyboard reachable); under the list the running total and cost per portion; an ingredient without a price says so. «Zubereitung»: steps as numbered text areas, add, remove, move. «Preis» (dishes): MoneyField for the menu price with VAT, VAT select from VAT_RATES_CH (default from the business), and live beside it: Nettopreis, Wareneinsatz pro Portion, Deckungsbeitrag, Wareneinsatz in % with MarginBadge against the target, and «Vorschlag CHF 49.50 für 30 %» with a button that takes it. «Deklaration»: the allergens derived from the ingredients shown read-only with the article each comes from, plus AllergenPicker for «Zusätzlich enthalten» and «Spuren», the labels of the dish (Spezialität des Hauses, Regional, Saisonal, Scharf, Neu) as chips. The live figures come from a query on the saved data or from the domain functions on the form state: use the domain functions directly on the lookup data (useQuery('lookup.articles')) so the numbers move while typing.
+- /recipes/:recipeId (paths.recipe): pattern H2. Large photo, name, course, description. The one dark card: Wareneinsatz pro Portion, Preis, Deckungsbeitrag, share with MarginBadge (for components: cost per litre or kilo). Declaration card: AllergenBadges, DietBadge, origin lines «Rindfleisch: Schweiz», and when incomplete a clear notice what is missing. Ingredients as a table (Zutat, Menge netto, brutto, Preis, Kosten) with a portion stepper that rescales. Steps. «Reicht für 12 Portionen» with what runs short first. For components «Verwendet in». Actions: «Kochansicht» (paths.recipeCook), «Produzieren» (paths.productionNew(id)), Bearbeiten, Duplizieren, Inaktiv setzen, Löschen.
+- /recipes/:recipeId/cook (paths.recipeCook): the recipe card for the pass: very large type, portion stepper (- and +, 44 px), ingredients scaled in kitchen units, numbered steps you can tick off, allergens at the top, the photo small. No navigation chrome needed beyond a back link. A print view (window.print) as a clean recipe card on one page.
+
+ACCEPTANCE (the numbers come from the test kitchen; see packages/core/test/costing.test.ts):
+- «Entrecôte mit Rotweinjus und Kartoffelstock» shows Wareneinsatz CHF 13.71 per portion, net price CHF 38.85, Deckungsbeitrag CHF 25.14, 35.3 % «über dem Ziel», proposal CHF 49.50; taking the proposal brings it to 30 %.
+- Its declaration shows Milch and Sulfite (the sulphites come from the wine inside the jus) and «Rindsentrecôte: Schweiz».
+- Raising the butter price changes the cost of the jus and of the dish without touching either recipe.
+- A new component «Kartoffelstock» creates its article; using it in a dish works; deleting the component while the dish uses it is refused.
+- A recipe that would contain itself is refused with a sentence naming the loop.`,
+  production: `${common('production', `  packages/core/src/modules/production/**
+  packages/core/test/production*.test.ts
+  apps/web/src/features/production/**   (the routes under /production and /plan)`)}
+
+YOUR MODULE: «Produktion» and «Menüplan». A recipe is cooked: its ingredients leave the stock first expired first out, a component enters the stock as a new lot with a label. The week is planned, and the plan proposes dishes that use up what expires soon («Reste verwerten»), up to filling a whole week by itself. Tables you write: productions, planEntries; lots and movements only through createStockLedger(ctx).
+
+Read the modules that exist as your reference for style and patterns: packages/core/src/modules/recipes and stock, apps/web/src/features/recipes and stock.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- production.preview (query): { recipeId, portions } → what the run would do: per ingredient (recipeRequirements) the article, needed gross quantity, usable stock (usableQuantity), missing, and the lots it would take in FEFO order (area, date, quantity); lots past their Verbrauchsdatum are listed apart as «nicht mehr verwenden»; the cost at lot prices; for a component the output quantity, the proposed area (the article's) and the proposed date today + shelfLifeDays of the recipe (a Richtwert the business set).
+- production.record (command): { recipeId, portions, producedOn?, planEntryId?, outputAreaId?, outputExpiresOn?, note? } → one Production row; ledger.consumeMany(requirements, { purpose: 'production', productionId }) books what is there and returns shortages (they are stored on the production, nothing blocks: ADR-0007); costRappen is the value consumed. A component: ledger.receive with origin 'production', quantity = output.quantity × portions / recipe.portions, price = unitPriceFromTotal(cost, quantity), dateKind 'use_by', the date given or proposed; with shortages the price is not remembered on the article (updateArticlePrice: false), because the cost is incomplete. A plan entry given is marked produced. Events: production.recorded.
+- production.list (query): { from?, to? } → runs newest first: recipe name, kind, portions, cost, cost per portion, number of shortages, who, the output lot.
+- production.get (query): { productionId } → the run with every lot that went in (article, quantity, value, lot code, supplier, received on, date: from the movements with this productionId) and what came out: the traceability from a component back to its deliveries.
+- production.label (query): { productionId } → the label of the output: name, produced on, to use by, quantity, the allergens (declarationOf), who made it, a short code (first 8 characters of the lot id).
+- plan.week (query): { weekStart } (a Monday) → seven days with their slots (breakfast, lunch, dinner) and entries: recipe name, course, portions, hasPhoto, produced or not, cost per portion and MarginStatus; per day and for the week: portions, expected net revenue, expected cost of goods; and the demand of the open entries against the stock: per article needed, usable stock, missing (sumRequirements).
+- plan.add / plan.update / plan.remove (commands); plan.copyWeek (command): copies the entries of another week into an empty week.
+- plan.suggest (query): { from, days = 7 } → «Reste verwerten»: active dishes ranked by the value of stock they would save. For each lot that expires within the days (use-by before best-before, earliest first), a dish that uses its article gets the value of what it would use; the suggestion says in words what it saves («verwertet 1.5 kg Lachsfilet, läuft heute ab, CHF 57.00»), how many portions use the expiring quantity up (capped by what the other ingredients cover), the latest day to cook it, the dish's margin status. Dishes whose other ingredients are missing rank lower and say what is missing. Put the ranking in a pure function (suggest.ts) with its own tests; no randomness, no network, no model: fixed, documented rules.
+- plan.autoFill (command): { weekStart, slots, dishesPerSlot = 1 } → fills the EMPTY slots of a week: first the suggestions that save expiring stock on days before the stock expires, then dishes by margin and by how often they sold (sales of the last 28 days), never the same dish twice in the week, portions from the average sold per day (default 10). Returns what it planned and why, per entry. Existing entries stay untouched.
+
+PAGES (paths from app/paths.ts):
+- /production (paths.production()): pattern H1. First «Heute im Menüplan» (today's open entries with a button «Produzieren»), then the runs of the last 14 days. Main action «Produktion erfassen».
+- /production/new (paths.productionNew(recipeId?); also reads ?portions= and ?entry=): pattern H4. RecipePicker, portions with a stepper; the preview as a table (Zutat, Bedarf, an Lager, fehlt) with the lots it takes; a calm notice for shortages («2 Zutaten reichen nicht: produzieren und Fehlmenge festhalten»); for a component the output: quantity, AreaPicker, DateField with the proposal marked «Richtwert». «Produzieren» → the result: cost, cost per portion, shortages, and for a component «Etikett drucken».
+- /production/:productionId (paths.productionRun): pattern H2. The run, what went in with the lots (traceability), what came out; the label as a print view (window.print): a small card with name, dates, allergens and code, sized for a label printer or a strip of paper.
+- /plan (paths.plan()): the week. From lg a grid of seven day columns with the slots as rows; on the phone one day after the other. Each entry is a small card (DishPhoto, name, portions, MarginBadge); tap opens a Sheet (portions, note, remove, «Produzieren»). Week navigation (‹ KW 46 ›, «Heute»). Add with a Sheet (RecipePicker for dishes, portions). The card «Reste verwerten» lists the suggestions with what each saves and a button «Einplanen» that puts it on the proposed day. «Woche füllen» runs the auto fill after a confirm and then shows what was planned and why. The card «Bedarf dieser Woche» lists what is missing with a link to paths.purchasing(). A print view of the week (window.print) as a menu plan for the wall.
+
+ACCEPTANCE (test kitchen):
+- Producing 1 batch of «Rotweinjus» takes 200 g onions (170 g net at 85 %), 7.5 dl wine and 50 g butter, costs CHF 7.89, and puts a lot of 1 l jus at CHF 7.89 / l into the Kühlzelle with a date three days ahead; the article's price becomes CHF 7.89 / l.
+- Producing 10 portions of the entrecôte dish without jus in stock books everything else, records 5 dl jus as a shortage and does not fail.
+- The salmon lot expires tomorrow: plan.suggest ranks «Lachs mit Rahmsauce» first and says what it saves; auto fill plans it today or tomorrow, never after the date.
+- For every article the lots still add up to the movements after any run.`,
+
+  menu: `${common('menu', `  packages/core/src/modules/menu/**
+  packages/core/test/menu*.test.ts
+  apps/web/src/features/menu/**   (menuRoutes under /menu and guestRoutes under /guest)`)}
+
+YOUR MODULE: «Speisekarte». The digital menu card for guests: sections with dishes, the photo of the finished dish, description, price, and what a guest with an allergy needs to see: allergens, diet, origin of meat and fish, all derived from the recipes and their ingredients (declarationOf), never typed twice. Table you write: menuCards.
+
+Read docs/fakten.md sections 1 and 2 first (what Swiss law asks of food sold open: written or oral information on allergens, written origin of meat and fish). The card shows more than the minimum; where the declaration of a dish is incomplete it must say so instead of looking complete.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- menu.list (query): the cards with number of sections and dishes, published, and a count of problems (dishes without price, without photo when the card shows photos, inactive or deleted recipes, incomplete declarations, meat or fish without origin).
+- menu.get (query): { cardId } → the card for the editor: sections in order with their dishes (id, name, course, price, hasPhoto, active, problems as words).
+- menu.create / menu.update (name, intro, footer, showPrices, showPhotos) / menu.setPublished / menu.duplicate / menu.delete (soft).
+- menu.setSections (command): the whole list of sections (id, title, recipeIds in order); new sections get an id from ctx.ids; every recipe must be a live dish (kind 'dish') of the business, each dish at most once per card.
+- menu.guest (query): { cardId, preview? } → what a guest sees: business name, card name, intro, sections with dishes: name, description, price (only if showPrices), photo (only if showPhotos), allergens as { id, label, official }, traces, diet, labels, origins as words («Rindsentrecôte: Schweiz»; countryName), incomplete; the footer; which allergens and diets occur on this card (for the filter). Only published cards, unless preview is true (the editor's own view). Inactive or deleted dishes are left out.
+- menu.published (query): the published cards (id, name) for the entry to the guest view.
+- menu.allergenSheet (query): { cardId } → the matrix dish × fourteen allergens (contains, traces, none) plus diet and origin: the written list for the staff.
+- menu.export (query): { cardId } → the guest card as ONE self-contained HTML document (inline CSS in the Randen look, photos as data URLs, no script, no external URL, lang de-CH, noindex meta) that can be saved as a file and opened anywhere.
+
+PAGES:
+- /menu (paths.menu()): pattern H1. The cards with name, «3 Abschnitte · 14 Gerichte», published or draft, problems as a calm mark. Main action «Speisekarte erfassen».
+- /menu/:cardId (paths.menuCard): the editor, pattern H2/H3. Name, intro, footer; switches «Preise zeigen», «Fotos zeigen», «Veröffentlicht». Sections: add, rename, move up and down, remove; in each section the dishes with photo thumb, price and problems; add dishes with a RecipePicker (dishes only) in a Sheet; move and remove. A notice lists what is missing before the card should go to guests. Actions: «Gästeansicht» (paths.guest(id), opens the preview when not published), «Liste für das Personal» (paths.menuAllergens(id)), «Drucken», «Als Datei sichern» (downloads menu.export as speisekarte-<name>.html through a Blob URL), Duplizieren, Löschen.
+- /menu/:cardId/allergens (paths.menuAllergens): the matrix as a real table (dishes as rows, the fourteen allergens as columns with rotated or short headers, a filled dot with the word «enthält» for screen readers, an outline dot for traces), printable on one landscape page.
+- /guest/:cardId (paths.guest; in guestRoutes, OUTSIDE the app frame: no sidebar, no tab bar): the menu as a guest sees it on a tablet at the table, a phone, or a screen at the counter. A cover in Traube with the business name in white and the card name in Kork, like the cover of a wine list. Filter chips that scroll sideways inside their own row: «Alle», «Vegetarisch», «Vegan», and «Ohne …» opening a Sheet with the fourteen allergens to exclude. A dish that contains an excluded allergen disappears; one that only may contain traces stays with a clear mark. Each section with its title; each dish with DishPhoto, name, description, price right-aligned in tabular numbers, allergen pills, diet badge, labels, origin line. Tap opens a Sheet with the large photo and the official names of the allergens. A dish with an incomplete declaration says «Angaben unvollständig, bitte beim Personal nachfragen». At the end the footer of the business and one fixed sentence: «Über Zutaten, die Allergien oder Unverträglichkeiten auslösen können, gibt das Personal gern Auskunft.» A quiet link «Zurück zu Randen» for the staff. Print: a clean card on paper, black on white, photos optional.
+- Look at docs/design/entwurf-2026-11-14.png (right phone) for the look.
+
+ACCEPTANCE (test kitchen):
+- A card with the entrecôte dish shows Milch and Sulfite and «Rindsentrecôte: Schweiz»; changing the wine article to carry no sulphites changes the card without touching the card or the recipe.
+- «Ohne Milch» hides both seeded dishes; «Ohne Fisch» hides the salmon.
+- An unpublished card answers 'not_found' in the guest view without preview.
+- The exported HTML contains no "http" URL except the XML namespace of inline SVG, and no script tag.`,
+
+  purchasing: `${common('purchasing', `  packages/core/src/modules/purchasing/**
+  packages/core/test/purchasing*.test.ts
+  apps/web/src/features/purchasing/**`)}
+
+YOUR MODULE: «Einkauf». The order proposal per supplier from minimum stock and from what the menu plan needs, orders the person sends herself, and a watch on price changes. Table you write: orders. Receiving an order belongs to the stock module: link to paths.receive(orderId). No supplier system is connected (ADR-0011): Randen writes the order, the person copies, shares or prints it.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- purchasing.suggestions (query): { horizonDays = 7 } → per supplier (and one group «Ohne Lieferant»): lines { article, unit, stock, usable stock, minStock, targetStock, onOrder (in open orders: draft or sent), needForPlan (requirements of the open plan entries from today to the horizon, sumRequirements), reason: 'below_min' | 'plan' | 'both', quantity to order, packs (when the article has a pack size the quantity is rounded UP to whole packs: «2 Sack à 10 kg»), estimated value at the last price }. Rule: order when usable stock + on order < minimum, up to the target stock (or twice the minimum when no target is set); and order what the plan needs beyond usable stock + on order. Per supplier: the sum, the minimum order value and whether it is reached, the next order day and the next delivery day from today's weekday.
+- orders.list (query): { status? } → orders newest first with supplier name, number of lines, value, status, ordered on, expected on.
+- orders.get (query): { orderId } → the order with its lines (article name, unit, quantity, packs, price, value, supplier article number), the supplier with contact, and the order as plain text in German, ready to send: greeting line, business name, wanted delivery day, one line per article («2 × Sack à 10 kg Weissmehl, Art.-Nr. 4711»), a closing line; no prices in the text.
+- orders.create (command): { supplierId, lines, expectedOn?, note? }; orders.createFromSuggestions (command): { supplierId } → a draft from the current proposal of that supplier; orders.update (lines, expectedOn, note; drafts only); orders.markSent (status 'sent', orderedOn today); orders.cancel; orders.delete (drafts only, soft).
+- purchasing.priceWatch (query): articles whose last purchase price differs from the purchase before it by at least 5 % (from the lots with origin 'purchase'): old and new unit price, change in basis points, and the dishes that use the article (through components too) with their food cost share before and after. Sorted by the size of the change.
+
+PAGES (paths from app/paths.ts):
+- /purchasing (paths.purchasing()): pattern H5. «Bestellvorschlag» as one card per supplier: its lines with the reason as a chip («Unter Mindestbestand», «Für den Menüplan»), stock and minimum, the quantity editable (QuantityField or a pack stepper), value; the sum with a hint when the minimum order value is not reached; the next order and delivery day; «Bestellung anlegen» creates the draft and opens it. Then «Offene Bestellungen» (drafts and sent) and «Preisänderungen». Empty proposal: a calm sentence that nothing is needed.
+- /purchasing/orders (paths.orders()): pattern H1, a segmented filter by status.
+- /purchasing/orders/:orderId (paths.order): pattern H2. Lines (editable while a draft: quantity, remove, add with ArticlePicker), the text of the order in a readable box, actions: «Kopieren» (navigator.clipboard.writeText with a toast, and a fallback that selects the text), «Teilen» (navigator.share when available), «Drucken» (window.print with a clean order sheet), «Als bestellt markieren», for a sent order «Wareneingang buchen» → paths.receive(orderId), «Stornieren».
+
+ACCEPTANCE (test kitchen):
+- Flour: 3 kg in stock, minimum 5 kg, target 20 kg, pack 10 kg: the proposal is 2 Sack (20 kg), not 17 kg.
+- A plan entry for 30 portions of the salmon dish in three days adds salmon to the proposal for the wholesaler with the reason «Für den Menüplan»; what is already on order is subtracted.
+- The text of an order contains no price and no «ß».
+- Marking an order as sent twice is harmless; receiving is not part of this module.`,
+
+  sales: `${common('sales', `  packages/core/src/modules/sales/**
+  packages/core/test/sales*.test.ts
+  apps/web/src/features/sales/**   (the routes /numbers/sales, /numbers/margins, /numbers/menu-engineering)`)}
+
+YOUR MODULE: «Verkäufe» and what follows from them: the margin of every dish and the menu engineering. Sales are typed in per day (portions per dish, or revenue without a recipe); no till is connected (ADR-0011). Table you write: sales; stock only through createStockLedger(ctx) when a sale books its ingredients.
+
+Use the domain functions: recipeCost, dishFigures, netOfVat, vatIn, analyseMenu, menuClassLabel, menuClassAdvice, recipeRequirements.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- sales.day (query): { date } → the sales of the day (dish or label, portions, gross, net, VAT, whether stock was booked, who), the day's sums (gross, net, cost of goods at today's recipe cost, contribution margin), and the active dishes with price for the quick entry, each with whether it was produced that day (a Production of that recipe on that date): then its ingredients already left the stock.
+- sales.record (command): { soldOn, lines: [{ recipeId?, label?, portions, grossRappen?, vatBps? }], bookStock } → one Sale row per line. A dish line defaults to portions × the recipe's price and its VAT; a line without recipe needs a label and an amount. With bookStock, a dish line that was not produced that day takes its ingredients from stock (ledger.consumeMany with purpose 'sale' and the saleId); shortages never block, they are returned so the page can say what was missing. A dish without a price is refused with 'invalid'.
+- sales.remove (command): soft-deletes a sale that booked no stock; one that booked stock is 'not_allowed' (the stock is corrected by a count; the journal stays true), and the message says so.
+- sales.period (query): { from, to } → per day gross, net, portions; the sums; days without any entry.
+- margins.list (query): { from?, to?, filter? } → per active dish: cost per portion (recipeCost; with missing prices by name), price, net price, contribution margin, food cost share, MarginStatus against the business target, suggested price, portions sold and total contribution in the period; counts per status; sorted worst share first by default.
+- menuEngineering.analyse (query): { from, to } → analyseMenu over the dishes sold in the period (portions and contribution margin per portion): every dish with its class, share of sales, contribution, the thresholds in words («beliebt ab 7 % aller Portionen», «rentabel ab CHF 21.40 Deckungsbeitrag»), the advice per class, and what could not be judged (dishes without price or with incomplete cost).
+
+PAGES (paths from app/paths.ts):
+- /numbers/sales (paths.sales()): pattern H4. The day (today, with ‹ › and a DateField); the dishes as rows with a stepper for portions (- and +, 44 px, and a number field), grouped by course; «Umsatz ohne Rezept» (label and amount, e.g. Getränke); a switch «Zutaten vom Lager abbuchen» with one sentence that explains it (on for dishes cooked to order; dishes produced today are skipped automatically and say so); the running sum gross and net. «Verkäufe buchen» → toast with the sum and, if something was short, a calm notice. Below: what is booked for the day, removable.
+- /numbers/margins (paths.margins()): pattern H5. One sentence first («3 von 9 Gerichten liegen über dem Ziel von 30 %»). A DataTable: Gericht, Preis, Wareneinsatz, Deckungsbeitrag, Anteil with MarginBadge, Vorschlag, verkauft, Beitrag total; a row links to the recipe (paths.recipe). Period control. Dishes with an incomplete cost are marked, never ranked as good.
+- /numbers/menu-engineering (paths.menuEngineering()): pattern H5. The four fields as a 2 × 2 board (Gewinner, Renner, Schläfer, Verlierer) with the dishes placed in them and the advice of each field, then a scatter (popularity against contribution margin) drawn as SVG with the two threshold lines and labelled points (load the dataviz skill if available; colours from the chart tokens; a text summary and a table fallback), then the table. Without sales: an empty state that leads to paths.sales().
+
+ACCEPTANCE (test kitchen, numbers by hand as in packages/core/test/costing.test.ts and menu-engineering.test.ts):
+- 12 portions of «Lachs mit Rahmsauce» at CHF 34.00 give CHF 408.00 gross, CHF 377.43 net (8.1 %); with stock booking 1.92 kg salmon are needed but only 1.5 kg are there: the sale is booked, 420 g are reported as short.
+- The entrecôte dish shows 35.3 % and «über dem Ziel»; the salmon dish 21.3 % and «im Ziel».
+- With two dishes sold 35 and 65 times at the same margin both are Gewinner.`,
+
+  numbers: `${common('numbers', `  packages/core/src/modules/numbers/**
+  packages/core/test/numbers*.test.ts
+  apps/web/src/features/numbers/**   (the routes /numbers, /numbers/budget, /numbers/break-even, /numbers/waste, /numbers/report)`)}
+
+YOUR MODULE: «Zahlen». The money side of the kitchen read from the stock ledger and the sales: purchases, cost of goods, write-offs in francs and kilograms by kind, the budget of the month, the break-even, and the month report. Table you write: budgets. Everything else you only read: movements (the ledger is the source of truth: purchases are movements of type 'receipt', cost of goods is 'consumption', write-offs are 'waste', stock-take differences are 'adjustment'), lots (stock value), sales, articles, recipes. The sales module owns the entry of sales and the margins: link to paths.sales(), paths.margins(), paths.menuEngineering().
+
+Use the domain functions: netOfVat, foodCostBps, breakEven, breakEvenPortions, lineValue, wasteKind, wasteKindLabel, wasteReasonLabel, formatQuantity.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- numbers.overview (query): { from, to } → purchases, cost of goods, write-offs, stock-take differences (each as a positive amount in Rappen), net revenue and gross revenue of the sales, the food cost share (cost of goods ÷ net revenue; undefined without revenue), the contribution; the stock value today and the number of articles; a series per day (purchases, cost of goods, write-offs, net revenue) for charts; the same sums for the period of equal length before, for a comparison; and what makes the numbers incomplete, in data: days without sales entries, consumption without any sale, dishes sold without a cost.
+- budgets.get (query): { month } → the budget row of the month or the proposal copied from the month before, and the last six months each with budget, purchases, net revenue and food cost share.
+- budgets.set (command): { month, purchaseBudgetRappen, revenueTargetRappen?, targetFoodCostBps?, fixedCostsRappen?, note? } → creates or replaces the row of that month (one row per month and business).
+- numbers.budget (query): { month } → budget, spent (purchases of the month), remaining, the share spent against the share of the month that has passed (for the month running; the day comes from ctx.clock.today()), the projection to the end of the month at the pace so far, a status: 'on_track' | 'tight' (projection up to 10 % over) | 'over'; purchases per supplier and per article category.
+- numbers.breakEven (query): { month } → from the month's fixed costs (budget row), net revenue and cost of goods: breakEven(); the average contribution margin per portion sold and breakEvenPortions; the net revenue still needed, per remaining day of the month; undefined parts with the reason in data ('no_fixed_costs', 'no_revenue', 'no_contribution').
+- numbers.waste (query): { from, to } → write-offs by kind (Lagerverlust, Produktionsabfall, Tellerrücklauf, Anderes) and by reason, each in Rappen and in kilograms (grams of articles with unit 'g'; millilitres and pieces are counted apart and named, never converted by guess); the ten articles with the highest value written off; by weekday; the change against the period before; the write-offs as a share of purchases.
+- numbers.monthReport (query): { month } → everything of the above for one month in one view model, plus the business name, the stock value at the end, the stock-take differences, the five dishes with the highest and the lowest contribution (by recipe cost and the sales of the month).
+
+PAGES (paths from app/paths.ts):
+- /numbers (paths.numbers()): pattern H5, the overview. A period control (7 Tage · 30 Tage · Monat, kept in the URL). The one dark card: Wareneinsatz in % against the target, with one sentence («1.2 Punkte über dem Ziel von 30 %»). Tiles: Umsatz netto, Einkauf, Abschreiber, Lagerwert, each with the change against the period before. The budget of the month as a ProgressBar with the marker for today. A chart of net revenue against cost of goods per day. Notices for what is incomplete. A list of doors: Verkäufe erfassen, Margen, Menu-Engineering (sales module), Budget, Break-even, Abschreiber, Monatsbericht.
+- /numbers/budget (paths.budget()): the month (‹ November 2026 ›); the form: Einkaufsbudget, Umsatzziel, Ziel Wareneinsatz, Fixkosten (MoneyField, PercentField) with one sentence each; the progress; purchases per supplier and category; the six months as a table.
+- /numbers/break-even (paths.breakEven()): pattern H5. The answer first in one sentence: «Ab CHF 50’000 Umsatz im Monat verdient die Küche Geld. Es fehlen noch CHF 10’000.» or «Erreicht am 21. November.» A ProgressBar from zero to the break-even with today's revenue. The numbers underneath: Fixkosten, Deckungsbeitrag in %, Umsatz bisher, nötig pro verbleibendem Tag, Portionen bei durchschnittlichem Deckungsbeitrag. The fixed costs editable right here (they are saved in the budget of the month). One paragraph that explains the calculation in plain words. Without fixed costs: an empty state that asks for them.
+- /numbers/waste (paths.wasteReport()): pattern H5. The sum in francs and kilograms, the change against the period before; a chart by kind, a chart by reason, the ten articles, by weekday; a link to paths.journal(). Words from the glossary: Abschreiber, Lagerverlust, Produktionsabfall, Tellerrücklauf.
+- /numbers/report (paths.monthReport()): the month report as a print view (window.print): business and month, Wareneinsatz, Umsatz, Einkauf against budget, Abschreiber in CHF and kg by kind, Inventurdifferenz, Lagerwert, Break-even, the best and the weakest dishes; black on white, tables with hairlines, fits on two pages.
+
+ACCEPTANCE (build the scenario in your tests with the ledger on the test kitchen and compute by hand):
+- After a delivery of CHF 640.00, a production that consumed CHF 133.16 and a write-off of CHF 19.00, the overview shows exactly these three numbers; the seeded opening lots count as purchases of the day before today (they were received as purchases).
+- A budget of CHF 22’000.00 with CHF 14’380.00 spent on day 14 of 30 projects CHF 30’814.29 and is 'over'.
+- Fixed costs of CHF 35’000.00, net revenue CHF 40’000.00 and cost of goods CHF 12’000.00: break-even at CHF 50’000.00, CHF 10’000.00 short.
+- 500 g of salmon written off as spoiled count as Lagerverlust with CHF 19.00 and 0.5 kg.`,
+
+  cockpit: `${common('cockpit', `  packages/core/src/modules/cockpit/**
+  packages/core/test/cockpit*.test.ts
+  apps/web/src/features/cockpit/**   (the routes / and /add)`)}
+
+YOUR MODULE: «Cockpit». The first page: what has to be done today, then how the kitchen stands. It reads everything and writes nothing. And the hub behind «＋ Erfassen» on the phone. For the look, study docs/design/entwurf-2026-11-14.png (left): density, the one dark card, the calm rows.
+
+Read the modules that exist (stock, recipes, numbers, sales, production, haccp, purchasing in packages/core/src/modules and apps/web/src/features) for style, but call none of their operations: compute your view models from the storage and the domain functions.
+
+OPERATIONS:
+- cockpit.today (query): {} → one view model for the whole page:
+  · todo: the things of the day as rows with a count, a value where it helps, and a target address: lots past their Verbrauchsdatum («nicht mehr verwenden»), lots due today, areas with a temperature range that have no measurement today, hygiene tasks due and not done (daily; weekly on its weekday; monthly not yet done this month), sent orders expected today or overdue, today's open plan entries, articles below minimum. Only rows with something to do.
+  · useUp: the lots due within three days by urgency (article, quantity, area and spot, date, expiry status, value), at most eight, and their total value.
+  · figures: stock value and number of articles with stock; the food cost share of the running month against the target (cost of goods from 'consumption' movements ÷ net revenue of the sales; undefined without revenue); write-offs of the last seven days against the seven before; the budget of the month with spent and the share of the month passed.
+  · wasteByKind: write-offs of the last 30 days by kind (wasteKind) in Rappen.
+  · dishes: the three dishes with the highest contribution margin and the three with the worst food cost share (recipeCost, dishFigures), with what is incomplete.
+  · setup: for a young business the first steps with done or not: areas have spots, at least five articles, a first goods receipt, a first recipe with a price, a menu card, a first temperature; and whether the business is still empty (then the page offers the demo business).
+- cockpit.search (query): { text } → articles, recipes, suppliers and spots whose name contains every typed word (case and accents ignored), at most six per kind, each with its target address and one line of context (stock, price, area).
+
+PAGES:
+- / (paths.cockpit(); NOT lazy, it is the first screen): pattern H5. PageHeader «Cockpit» with the date in words («Samstag, 14. November 2026») and the main action «Wareneingang» (paths.receive()). A search field (cockpit.search, results in a list below it while typing). «Heute»: the todo rows as a grouped list, each a link, with a status dot and words; when nothing is due, one calm line «Für heute ist alles erledigt.» The key figures: the dark card «Lagerwert», then Wareneinsatz against target, Abschreiber der Woche against last week, «Läuft heute ab». Two columns from lg: «Heute verwerten» (the lots with ExpiryChip and value, and the link «Im Menüplan verwerten» → paths.plan()) beside «Budget» (ProgressBar with today's marker) and «Abschreiber nach Art» (HBarChart). Then «Gerichte nach Marge» as a small table with MarginBadge and the mark «Beste Marge» (tone grape) on the best. For an empty business instead: «Erste Schritte» as a checklist with links, and a card «Demo-Betrieb laden» (paths.demo()) that explains in one sentence what it does.
+- /add (paths.add()): the capture hub for the phone, pattern H1: large rows with icon, title and one line: Wareneingang (paths.receive()), Abschreiber (paths.waste()), Produktion (paths.productionNew()), Verkäufe (paths.sales()), Temperatur (paths.temperatures()), Inventur (paths.count()), Artikel (paths.articleNew()), Rezept (paths.recipeNew()).
+
+ACCEPTANCE (test kitchen; today is 14.11.2026):
+- The salmon (use by tomorrow) and the entrecôte (in two days) are in «Heute verwerten» with their values CHF 57.00 and CHF 248.00; flour is listed below minimum.
+- One day later with nothing cooked, the salmon is due today; two days later it is under «nicht mehr verwenden».
+- The Kühlzelle has no temperature today: the todo says so and links to paths.temperatures().
+- An empty business (createTestContext without seedKitchen) gets the first steps and the offer of the demo business, no empty charts.`,
+
+  haccp: `${common('haccp', `  packages/core/src/modules/haccp/**
+  packages/core/test/haccp*.test.ts
+  apps/web/src/features/haccp/**`)}
+
+YOUR MODULE: «Selbstkontrolle» (HACCP). Temperatures of the storage areas and of food (core temperature, hot holding, cooling down), the cleaning plan with who did what, and the report a food inspector can read. Tables you write: temperatureLogs, hygieneTasks, hygieneChecks. The goods receipt check is written by the stock module (TemperatureLog of kind 'receiving', and deliveries carry checkOk and tempDeciC): you show it in the report.
+
+READ docs/fakten.md section 4 FIRST. Every limit you put into the code must come from it with its marking: what the ordinance says is a fixed proposal, what a guideline says is a «Richtwert». All limits are proposals the business can overrule (the range of an area is edited in the areas module; for food temperatures keep the proposals in one table in your module with the source as a comment, and store the limits that applied on every log, as the model does). The app is a help, not a proof (ADR-0012): say so once on the report, in calm words.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- haccp.today (query): per area with a range: the last measurement of today (value, ok, when, who) or that none exists; the food measurements of today; the hygiene tasks due today (daily; weekly on its weekday; monthly as long as it is not done in the running month) with done or not, who and when; counts; and the measurements of the last seven days that were out of range.
+- temperatures.record (command): { kind, areaId?, label?, deciC, action? } → ok is computed from the limits (storage: the area's range; the other kinds: your proposals), the limits are stored on the log; out of range needs an action text («Was hast du getan?»), otherwise 'invalid'. kind 'storage' needs an area, the other kinds a label.
+- temperatures.list (query): { from, to, areaId?, kind? } → logs newest first (value, limits, ok, action, who, when, area or label) and per area a series per day for a chart.
+- temperatures.remove (command): soft delete of a log on the day it was made (a typo); later 'not_allowed'.
+- hygiene.tasks (query): the plan: every task with area, frequency, weekday, instructions, active, and when it was last done.
+- hygiene.saveTask (command: create or update), hygiene.removeTask (soft).
+- hygiene.check (command): { taskId, note? } → done today by the acting person; a second check on the same day is harmless (returns the first); hygiene.uncheck (command) removes today's check.
+- hygiene.standardPlan (command): for a business without tasks, a starter plan of typical tasks by frequency (daily: Arbeitsflächen und Schneidbretter reinigen, Böden nass reinigen, Abfall leeren, Handwaschbecken auffüllen; weekly: Kühlzelle auswischen, Dampfabzugfilter reinigen, Trockenlager kontrollieren; monthly: Tiefkühlzelle abtauen und reinigen, Schädlingskontrolle) marked in the instructions as a proposal to adapt.
+- haccp.report (query): { from, to } → for a period: per area and day the measurements (minimum, maximum, out of range with action), the food measurements, the hygiene checks as a matrix task × day with initials, the goods receipts with supplier, temperature and «in Ordnung», days without any measurement, and the staff names behind the initials.
+
+PAGES (paths from app/paths.ts):
+- /haccp (paths.haccp()): pattern H4 on top of H5, made for wet hands and thirty seconds. «Temperaturen heute»: one card per area with its range and either the value of today with a TemperatureBadge or a TemperatureField and one button «Erfassen»; out of range opens a Sheet asking what was done before it saves. «Aufgaben heute»: the due tasks as large checkbox rows with who and when once done. Notices for what is open. Links: Verlauf (paths.temperatures()), Reinigungsplan (paths.hygieneTasks()), Bericht (paths.haccpReport()). A business without tasks gets the offer «Reinigungsplan mit üblichen Aufgaben anlegen».
+- /haccp/temperatures (paths.temperatures()): record any kind (segmented: Lagerung · Kerntemperatur · Heisshalten · Abkühlen) with the proposal limits shown as «Richtwert», then the log: a period control, a LineChart per area with its range as a band or two lines, the table of logs with out-of-range rows marked in words.
+- /haccp/tasks (paths.hygieneTasks()): the plan grouped by frequency; add and edit in a Sheet (name, area, frequency, weekday for weekly, instructions, active).
+- /haccp/report (paths.haccpReport()): a period (this week, last week, this month, last month), the report as described, and a print view (window.print): business, period, tables with hairlines, the names behind the initials, the sentence that this record supports the self-control of the business and does not replace its concept.
+
+ACCEPTANCE (test kitchen):
+- 4.5 °C in the Kühlzelle (range 0 to 5 °C) is in order; 7.5 °C is refused without an action and stored with it as out of range, with the range that applied.
+- After the range of the area changes, the old log still shows the old limits.
+- A weekly task with weekday Monday is due on Monday 16.11.2026 and not on Saturday 14.11.2026; a monthly task is due until it is done once in November.
+- The report of a week lists every day, also the ones without a measurement.`,
+
+  settings: `${common('settings', `  packages/core/src/modules/settings/**
+  packages/core/test/settings*.test.ts
+  apps/web/src/features/settings/**   (the routes under /more, except /more/demo)`)}
+
+YOUR MODULE: «Betrieb». The business itself, the team, and the data: back up everything to one file, bring it back, delete it for good. And «Mehr», the page that reaches every area on the phone. Tables you write: staff; for import and delete every table through storage.purge and the row schemas (TABLE_SCHEMAS, TABLE_NAMES). The demo business is another module: link to paths.demo().
+
+The operations business.get and business.update exist (lookup module): use them.
+
+OPERATIONS (names fixed, refine inputs and outputs as the pages need):
+- staff.list (query): everyone with role, active, and whether it is the person acting now (ctx.actor).
+- staff.save (command: create or update name, role, active); staff.remove (command: soft): refused with 'not_allowed' for the last active person and for the person acting.
+- settings.export (query): {} → the whole business as one document: { format: 'randen-backup', version: 1, exportedAt, app: 'Randen', business, tables: { <table>: rows[] } } with every table of TABLE_NAMES (soft-deleted rows included, so a later sync stays possible), plus counts.
+- settings.importPreview (query): { data } → reads a backup without changing anything: is it a Randen backup of a known version, the business name, the date, counts per table, and problems (rows that do not fit their schema, with table and id; an unknown version).
+- settings.import (command): { data, confirm: true } → replaces what is on the device: every row is validated with its schema FIRST (one bad row refuses the whole import with 'invalid' and nothing changes), then storage.purge(current business), then the business and all rows of the backup are written as they are. The acting person may not exist any more afterwards: return the business id and the id of an active staff member so the page can reload cleanly. No event log entries are imported except those in the backup's rows; append one event «business.imported».
+- settings.deleteAll (command): { confirm: true } → storage.purge of the business. Afterwards the page reloads and the app starts fresh.
+- settings.about (query): counts per table, the oldest and newest movement, the number of photos and their total size in characters.
+
+PAGES (paths from app/paths.ts):
+- /more (paths.more()): pattern H1, built from navGroups in app/nav.ts so that nothing is forgotten when an area is added: the groups Küche, Lager, Kontrolle as grouped lists of links (leave out what the tab bar already has: Cockpit, Lager, Rezepte), then «Betrieb»: Betrieb, Team, Daten und Sicherung, Demo-Betrieb, Über Randen. On top a row «Du arbeitest als …» that opens the team page.
+- /more/business (paths.business()): pattern H3. Name, kind of business (segmented or select: Restaurant, Café, Hotel, Kantine, Catering, Take-away, Bäckerei, Anderes), «Ziel Wareneinsatz» (PercentField, with one sentence what it steers: the status of every dish), «Mehrwertsteuer» as the default for new recipes (select from VAT_RATES_CH plus «Anderer Satz»), the currency read-only with one sentence.
+- /more/team (paths.team()): the team as a grouped list (name, role in German: Inhaber:in, Küchenchef:in, Köch:in, Service, Einkauf, Andere); add and edit in a Sheet; «Als diese Person arbeiten» sets the acting person (useAppData().setStaff) and says so in a toast; one sentence that names are stored on this device only and stand beside bookings so one can ask back, not to rank people.
+- /more/data (paths.data()): «Sicherung»: «Sicherung herunterladen» saves randen-sicherung-<datum>.json through a Blob URL, optionally protected with a password (port apps/web/src/app/backup-crypto.ts and its test from Rettich at /home/user/FridgeAI into your feature folder: AES-GCM with a key from PBKDF2, WebCrypto only, no dependency); the date of the last backup is remembered in localStorage and shown («Letzte Sicherung vor 12 Tagen»), with a calm reminder after 14 days. «Sicherung zurückholen»: choose a file (ask for the password when it is encrypted), show the preview (business, date, counts, problems), confirm in a ConfirmDialog that names what is replaced, import, reload. «Alles löschen»: a danger zone at the end; the ConfirmDialog asks to type the business name before it deletes; then reload. A line on whether the browser keeps the data persistently (navigator.storage.persisted()) and how much space is used (navigator.storage.estimate()).
+- /more/about (paths.about()): what Randen is in two sentences, the counts, the sentence that the data stays on this device, that Randen is a help and does not replace the self-control concept or the advice of a qualified person, the licence line, a link to /styleguide.
+
+ACCEPTANCE (test kitchen):
+- Export, delete everything, import: every table holds the same rows as before (compare with toEqual), and the stock still adds up to the ledger.
+- A backup with one broken row is refused as a whole; nothing on the device changed.
+- A wrong password does not import and says so in calm words; the file itself contains no readable article name when it is protected.
+- The last active person cannot be removed.`,
+
+  demo: `${common('demo', `  packages/core/src/modules/demo/**
+  packages/core/test/demo*.test.ts
+  apps/web/src/features/demo/**   (the route /more/demo)`)}
+
+YOUR MODULE: the «Demo-Betrieb». One tap fills an empty business with a believable kitchen so that a restaurateur who opens Randen for the first time sees, within a minute, what it does for her: a full cockpit, stock with dates, recipes with photos and margins, a menu card, a planned week, eight weeks of numbers. This is the first impression of the product and the content of every preview picture: make it coherent, realistic for Switzerland and beautiful. Tables you write: all of them, rows through their schemas and stock ONLY through createStockLedger(ctx) so the ledger adds up.
+
+Read every model file, the domain functions, the modules that exist (their contracts tell you what each page reads) and docs/design/entwurf-2026-11-14.png (the draft shows the kind of content that works).
+
+HARD RULES for the content:
+- No real person, no real company, no real brand. Suppliers are called like «Metzgerei Muster», «Comestibles Beispiel», «Gemüsehof Probe», «Getränke Demo», «Bäckerei Vorlage»; people «Mara», «Luca», «Ines», «Noah» with roles. The business is «Bistro Beispiel».
+- Prices are plausible Swiss wholesale prices but invented; say so in a comment and in the app («Beispielwerte»).
+- Allergens of every article must be TRUE for that kind of food (flour: gluten; butter, cream, cheese: milk; eggs; salmon, anchovies: fish; mustard; celery in stock and bouillon; sulphites in wine and dried fruit; nuts; sesame; soy sauce: soy and gluten; mayonnaise: eggs, mustard). Meat and fish carry a country of origin. Diets are true.
+- Everything is relative to ctx.clock.today(): the story reads right on any day. Deterministic: no Math.random, no Date.now; variation comes from a small seeded generator in your module (e.g. a linear congruential generator seeded with a constant).
+- Texts in German (Switzerland) with «ss», kitchen words from the glossary.
+
+THE BUSINESS TO BUILD (loadDemo):
+- Areas: Kühlzelle (0 to 5 °C), Tiefkühlzelle (up to -18 °C), Trockenlager, Bar und Weinkeller, Posten Garde-manger (station), each with two to four spots («Regal 1, oben», «Schublade Fisch», «Milchprodukte», «Gemüsekisten» ...). Every spot gets a «photo»: a hand-drawn SVG data URL you generate (a quiet illustration of a shelf, crates, a drawer, bottles: flat shapes in the brand's neutrals, different per spot kind, under 4 KB each).
+- About 45 articles across the categories with units, prices, yields for vegetables, meat and fish (plausible Richtwerte), minimum and target stock for the staples, pack sizes («Sack à 10 kg», «Karton à 12 l»), supplier, area and spot, shelf life.
+- 5 components (Kalbsfond, Rotweinjus, Tomatensauce, Vinaigrette, Kartoffelstock) and 10 dishes across starter, soup, main, dessert (for example Randen-Carpaccio mit Ziegenkäse, Kürbissuppe, Entrecôte mit Rotweinjus und Kartoffelstock, Lachs mit Rahmsauce, Risotto mit Steinpilzen, Älplermagronen, Zürcher Geschnetzeltes mit Rösti, Caesar Salad mit Poulet, Schokoladenmousse, Apfelküchlein), each with real quantities for its portions, three to six steps, a description for the menu card, a price so that most are in the target, two clearly over it, one with an outstanding margin. Every dish gets a «photo»: an SVG data URL of a plate seen from above (round plate on a toned ground, the food as a few layered shapes in fitting colours: a red carpaccio fan, an orange soup with a cream swirl, a browned steak with jus and mash ...), each different and recognisable, under 5 KB.
+- History of 56 days up to yesterday, all through the ledger with the bookings dated on their day (movements carry «on»; create them in date order): two deliveries a week per main supplier with realistic quantities and dates on the lots, a few price changes (butter up 8 % three weeks ago); productions of the components twice a week; daily sales per dish with a weekday pattern (weak Monday, strong Friday and Saturday), booked with their stock consumption; write-offs with every reason spread over the weeks (some expired cream, trimmings, an overproduction, plate returns); one stock take three weeks ago with small differences; temperatures twice a day per cold area, three of them out of range with an action; a cleaning plan with checks, a few missed; budgets for the last and the running month (purchase budget, revenue target, fixed costs) so that the running month is slightly over pace and the break-even is in reach.
+- Today: lots that make the cockpit alive: two due today, three within three days, one past its Verbrauchsdatum, flour and oil below minimum; a planned week with lunch and dinner, today's entries open; one order sent and expected today, one draft; two menu cards («Mittagskarte» published, «Abendkarte» published) with sections; four staff members.
+- Sizes: keep the whole demo under about 6000 movements so loading takes a few seconds on a phone; load in chunks of commands if one transaction gets too large for IndexedDB (each chunk its own storage.transaction; only storage calls inside).
+
+OPERATIONS:
+- demo.status (query): is the business empty (no articles, recipes, lots), is it the demo (business.demo), counts.
+- demo.load (command): { confirm: true } → only into an empty business (otherwise 'not_allowed'): builds the business above, renames the business to «Bistro Beispiel» if it still has the default name, sets business.demo, emits «demo.loaded» with the counts. The acting person stays; the demo staff are added.
+- demo.clear (command): { confirm: true } → only for a business marked demo: storage.purge and a fresh empty business is created by the app on reload.
+
+PAGE:
+- /more/demo (paths.demo()): pattern H2. What the demo business is, in three sentences, with what it contains as a list with counts once loaded. «Demo-Betrieb laden» (main action, with progress while it builds and a toast when done, then a link to the cockpit). For a loaded demo: «Demo-Daten entfernen» with a ConfirmDialog, then reload. For a business with own data: a calm notice that the demo only loads into an empty business, and a link to paths.data() for the backup.
+
+TESTS (required, they are the proof that the first impression is true):
+- After demo.load on an empty test business: for EVERY article the lots add up to the movements in quantity and value; every row of every table fits its schema; no lot has a negative quantity.
+- Every dish has a complete declaration (declarationOf: not incomplete, meat and fish with origin) and a complete cost (no missing prices); the food cost shares spread as designed (count how many are within the target).
+- The cockpit facts hold: at least two lots due today, one past its Verbrauchsdatum, two articles below minimum, entries in today's plan.
+- The same clock gives the same data twice (deterministic); a different day shifts every date with it.
+- No text contains «ß»; no SVG contains a script or an external URL; every photo fits the PhotoSchema.
+- demo.load into a business that has articles is refused; demo.clear on a non-demo business is refused.`,
+}
+
+phase('Build')
+const names = (Array.isArray(ONLY) && ONLY.length > 0 ? ONLY : Object.keys(MODULES)).filter((name) => name in MODULES)
+log(`Building ${names.join(', ')} from ${BASE}`)
+const results = await parallel(
+  names.map((name) => () =>
+    agent(MODULES[name], { label: `build:${name}`, phase: 'Build', schema: REPORT_SCHEMA }).then((report) => ({ name, report })),
+  ),
+)
+return results
