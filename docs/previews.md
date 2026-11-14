@@ -18,14 +18,20 @@ Damit du jeden Stand am Handy und am Tablet anschauen kannst: `main` läuft unte
    | Pfad | leer lassen |
    | Variablen, Secrets | keine |
 
-5. **Vorschau-Builds einschalten:** im Projekt **Settings → Build → Branch control → Enable Preview Builds**.
-6. **Deploy** tippen. Der erste Build dauert ein bis zwei Minuten.
+5. **Deploy** tippen. Der erste Build baut `main`; solange dort nur die Start-Datei liegt, wird er rot. Das ist kein Fehler im Code.
+6. Im Projekt **Settings → Build → Branch control**:
+   - **Production branch** vorläufig auf den Arbeits-Branch `claude/pensive-fermi-n01le6` stellen (Stand 14.11.2026). So läuft unter der festen Adresse immer der neuste Stand.
+   - **Enable Preview Builds** einschalten.
+7. Der nächste Push auf den Arbeits-Branch startet den Build; nach ein bis zwei Minuten läuft Randen.
 
-Danach gibt es `https://randen.<dein-name>.workers.dev` für `main` und pro PR einen Link wie `https://<branch>-randen.<dein-name>.workers.dev`.
+Danach gibt es `https://randen.<dein-name>.workers.dev` (Production) und pro anderem Branch eine eigene Vorschau-Adresse. Die feste Adresse hängt am Projektnamen, nicht am Branch.
+
+**Vor dem ersten Pilotbetrieb** wird `main` zur Production: Den Arbeits-Branch per PR nach `main` bringen und unter **Branch control** wieder `main` wählen. Die Adresse bleibt gleich, das Symbol auf dem Home-Bildschirm passt weiter.
 
 ## So schaust du eine Vorschau an
 
-- Link öffnen. Der Betrieb ist leer: Unter **Mehr → Demo-Betrieb laden** siehst du eine eingerichtete Küche mit Lager, Rezepten, Speisekarte und Zahlen.
+- Link öffnen. Der Betrieb ist leer. Unter **Mehr → Demo-Betrieb laden** gibt es (sobald das Modul gebaut ist) eine eingerichtete Küche mit Lager, Rezepten, Speisekarte und Zahlen.
+- Am iPhone und iPad: **Teilen → Zum Home-Bildschirm**. Dann öffnet sich Randen im Vollbild mit eigenem Symbol.
 - Der Styleguide mit allen Bausteinen liegt unter `/styleguide`.
 - Jede Vorschau-Adresse hat ihren eigenen Speicher im Browser. Nichts geht an einen Server.
 
