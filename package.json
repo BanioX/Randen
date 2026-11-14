@@ -22,7 +22,8 @@
     "preview:shots": "pnpm --filter @randen/web preview:shots",
     "licenses:check": "node scripts/check-licenses.mjs",
     "check": "node scripts/check.mjs",
-    "contrast": "node scripts/check-contrast.mjs"
+    "contrast": "node scripts/check-contrast.mjs",
+    "build:cf": "node scripts/build-cf.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
