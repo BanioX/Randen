@@ -6,7 +6,7 @@ import { routes } from './routes';
 import { renderApp } from './test-helpers';
 
 describe('AppShell', () => {
-  it('offers every area in the sidebar and five tabs on the phone', async () => {
+  it('offers every area in the side navigation and five tabs on the phone', async () => {
     await renderApp(<AppShell />, { route: '/' });
     const [sidebar, tabs] = await screen.findAllByRole('navigation', { name: 'Hauptnavigation' });
     if (sidebar === undefined || tabs === undefined) {
@@ -19,6 +19,11 @@ describe('AppShell', () => {
       );
     }
     expect(within(sidebar).getByText('Testküche')).toBeTruthy();
+    // The one main action is one tap away on the iPad and in the browser too.
+    expect(within(sidebar).getByRole('link', { name: 'Erfassen' })).toHaveProperty(
+      'pathname',
+      '/add',
+    );
     expect(
       within(tabs)
         .getAllByRole('link')

@@ -12,7 +12,6 @@ import {
   ShieldCheck,
   ShoppingCart,
   Tags,
-  Truck,
   type LucideIcon,
 } from 'lucide-react';
 import { messages } from './messages';
@@ -30,20 +29,20 @@ export interface NavItem {
 
 export interface NavGroup {
   id: string;
-  label: string;
+  /** No label: the group needs no heading (the cockpit stands alone). */
+  label?: string;
   items: readonly NavItem[];
 }
 
 const t = messages.nav;
 
 /**
- * The whole app in five groups: the sidebar from tablet width shows them all, «Mehr» on the
- * phone lists what the tab bar has no room for.
+ * The whole app in groups: the rail (iPad upright) and the sidebar (iPad on its side, web) show
+ * them all, «Mehr» on the phone lists what the tab bar has no room for.
  */
 export const navGroups: readonly NavGroup[] = [
   {
     id: 'overview',
-    label: t.groups.overview,
     items: [{ to: paths.cockpit(), label: t.cockpit, icon: LayoutDashboard }],
   },
   {
@@ -63,8 +62,9 @@ export const navGroups: readonly NavGroup[] = [
       { to: paths.stock(), label: t.stock, icon: Package },
       { to: paths.purchasing(), label: t.purchasing, icon: ShoppingCart },
       { to: paths.areas(), label: t.areas, icon: MapPin },
-      { to: paths.articles(), label: t.articles, icon: Tags },
-      { to: paths.suppliers(), label: t.suppliers, icon: Truck },
+      // Suppliers are master data next to the articles: reached from there, not a destination
+      // of their own, so the whole navigation fits an iPad on its side without scrolling.
+      { to: paths.articles(), label: t.articles, icon: Tags, also: [paths.suppliers()] },
     ],
   },
   {

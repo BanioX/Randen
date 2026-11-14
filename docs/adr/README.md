@@ -16,3 +16,4 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | [0010](0010-du-in-a-business-product.md) | «du» auch im Geschäftsprodukt | angenommen (Albans Bestätigung offen) | 2026-11-14 |
 | [0011](0011-no-partner-integrations.md) | Keine Anbindungen an Kasse, Lieferanten und Gäste-Geräte | angenommen | 2026-11-14 |
 | [0012](0012-facts-with-sources.md) | Rechtliche Angaben nur mit Quelle, Richtwerte heissen Richtwerte | angenommen | 2026-11-14 |
+| [0013](0013-iphone-ipad-web.md) | Eine App für iPhone, iPad und Web | angenommen | 2026-11-14 |

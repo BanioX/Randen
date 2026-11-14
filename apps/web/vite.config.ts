@@ -38,6 +38,9 @@ export default defineConfig({
         description: 'Lager, Rezepte, Speisekarte und Zahlen der Küche an einem Ort.',
         lang: 'de-CH',
         display: 'standalone',
+        // iPhone, iPad upright and on its side, and the browser: no orientation is forced.
+        orientation: 'any',
+        categories: ['business', 'food', 'productivity'],
         start_url: '/',
         scope: '/',
         theme_color: '#f9f5f0',

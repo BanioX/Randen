@@ -93,15 +93,17 @@ Systemschrift (SF Pro, Roboto, Segoe UI): Es wird nichts geladen, die Grössen i
 - Bewegung 150 bis 200 ms, ease-out; `prefers-reduced-motion` schaltet sie ab.
 - Symbole: Lucide, Linienstärke 1.75, 20 bis 22 px. Keine Emojis.
 
-## Drei Breiten
+## iPhone, iPad, Web (ADR-0013)
 
-| Breite | Gerät | Rahmen | Inhalt |
+| Gerät | Breite | Rahmen | Inhalt |
 | --- | --- | --- | --- |
-| 390 px | Handy | Tab-Leiste unten mit fünf Zielen: Cockpit, Lager, ＋ Erfassen, Rezepte, Mehr | eine Spalte, höchstens `max-w-xl` |
-| 820 px | Tablet hoch | Tab-Leiste | eine breite Spalte (`max-w-3xl`), Kennzahlen zu viert |
-| ab 1024 px | Tablet quer, Schreibtisch | Seitenleiste in Traube, 256 px, mit allen Bereichen in Gruppen | bis `max-w-6xl`, Karten nebeneinander, Tabellen mit allen Spalten |
+| iPhone | unter 768 px | Tab-Leiste unten mit fünf Zielen: Cockpit, Lager, ＋ Erfassen, Rezepte, Mehr | eine Spalte, höchstens `max-w-xl` |
+| iPad hochkant | 768 bis 1023 px | schmale Leiste in Traube, 96 px: Symbol mit kleinem Wort für jeden Bereich | die volle Breite, Kennzahlen zu viert, Tabellen |
+| iPad quer, Web | ab 1024 px | Seitenleiste in Traube, 256 px, mit allen Bereichen in Gruppen | bis `max-w-6xl`, Karten nebeneinander, Tabellen mit allen Spalten |
 
-Die Seitenleiste gruppiert: Übersicht · Küche (Rezepte, Produktion, Menüplan, Speisekarte) · Lager (Lager, Einkauf, Wo ist was?, Artikel, Lieferanten) · Kontrolle (Zahlen, Selbstkontrolle) · Betrieb.
+Die Seitenleiste gruppiert: Übersicht · Küche (Rezepte, Produktion, Menüplan, Speisekarte) · Lager (Lager, Einkauf, Wo ist was?, Artikel, Lieferanten) · Kontrolle (Zahlen, Selbstkontrolle) · Betrieb. Zuoberst steht «＋ Erfassen» in Kork.
+
+Für Seiten heisst das: Klassen ohne Präfix sind das iPhone, `md:` ist das iPad hochkant, `lg:` das iPad quer und das Web. Ziele sind überall mindestens 44 px, Felder nie kleiner als 16 px, sichere Ränder sind eingerechnet.
 
 ## App-Symbol
 

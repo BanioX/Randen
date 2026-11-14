@@ -147,6 +147,30 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    /* iPhone on its side must not blow the text up. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* iPhone and iPad zoom into a field whose text is smaller than 16 px and stay zoomed.
+     No field of the app may ever be smaller (ADR-0013). */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+
+  /* No 300 ms wait and no double-tap zoom on anything one taps. */
+  a,
+  button,
+  label,
+  summary,
+  [role='button'],
+  [role='tab'],
+  [role='switch'],
+  [role='radio'],
+  [role='checkbox'] {
+    touch-action: manipulation;
   }
 
   body {

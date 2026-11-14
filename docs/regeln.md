@@ -57,7 +57,7 @@ Was über 300 PRs von Rettich darüber gelehrt haben, wie ein Produkt von Alban 
 7. **Listen** sind «inset grouped»: eine weisse, abgerundete Gruppe mit Haarlinien ab dem Text. **Zahlen zum Vergleichen** stehen in einer echten Tabelle.
 8. **Ziele mindestens 44 px**, am Handy das Wichtige unten.
 9. **Sauber ausgerichtet** (Alban, 7.11.2026): eine Achse pro Fläche, Text wird nie angeschnitten; was nicht passt, bricht um oder fällt weg.
-10. **Drei Breiten** (docs/design.md): 390 px ohne seitliches Scrollen, 820 px, ab 1024 px mit Seitenleiste und Spalten. Jede Seite wird in allen drei angeschaut.
+10. **iPhone, iPad, Web** (ADR-0013): Jede Seite wird in vier Ansichten gebaut und angeschaut: iPhone 390 px, iPad hochkant 820 px, iPad quer 1180 px, Web 1440 px. Ohne Präfix ist das iPhone, `md:` das iPad hochkant, `lg:` iPad quer und Web. Nichts scrollt seitwärts, nichts liegt hinter Leisten, kein Feld ist kleiner als 16 px, nichts hängt am Hover.
 11. **Dunkelmodus** folgt dem Gerät; jede Seite stimmt in beiden.
 12. **Keine Emojis**, Symbole aus Lucide in einer Stärke (R-ADR-0080). Fotos nur von echten Dingen: Plätze und Gerichte.
 
@@ -126,7 +126,7 @@ Jede Seite von Randen folgt einem von fünf Mustern. Wer eine Seite baut, wählt
 
 1. `PageHeader` mit Rücklink («‹ Artikel»), Titel und einer Hauptaktion.
 2. Zuoberst das Wichtigste als Kennzahlen (`StatTile`) oder eine Karte; auf Seiten mit einer Leitzahl die eine dunkle Karte (`Card variant="premium"`).
-3. Inhalt in Karten; ab 1024 px zwei Spalten (`lg:grid lg:grid-cols-3 lg:gap-6`, Hauptteil zwei Spalten, Nebenteil eine).
+3. Inhalt in Karten; ab dem iPad hochkant zwei Spalten, wo es dem Lesen dient (`md:grid md:grid-cols-2 md:gap-4`), ab 1024 px Haupt- und Nebenteil (`lg:grid-cols-3`, Hauptteil zwei Spalten).
 4. Weitere Aktionen als ruhige Knöpfe am Ende. Löschen steht zuletzt, ist rot nur im Bestätigungsdialog (`ConfirmDialog`) und sagt, was verloren geht.
 5. Ein Eintrag, den es nicht mehr gibt (`useQueryResult` meldet `not_found`): `NotFoundPage`.
 
@@ -159,6 +159,6 @@ Jede Seite von Randen folgt einem von fünf Mustern. Wer eine Seite baut, wählt
 - Texte nur in `features/<bereich>/messages.ts`. Zahlen, Geld, Mengen und Daten nur über die Helfer (Abschnitt B).
 - Links nur über `paths`. Daten nur über `useQuery` und `useCommand`.
 - Jede Seite hat genau ein `h1` (aus `PageHeader`), danach `h2` in `Section`.
-- Am Handy liegt das Ende jeder Seite frei über der Tab-Leiste; nichts scrollt seitwärts bei 390 px.
+- Am iPhone liegt das Ende jeder Seite frei über der Tab-Leiste; nichts scrollt seitwärts bei 390 px. Ab `md:` gibt es keine Tab-Leiste mehr, sondern die Leiste links.
 - Seiten laden über `lazy` in `routes.tsx`, ausser dem Cockpit.
 - Während eine Abfrage lädt, steht der Kopf der Seite; es flackert kein Ladezeichen.

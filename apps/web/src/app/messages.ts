@@ -25,7 +25,6 @@ export const messages = {
     more: 'Mehr',
     business: 'Betrieb',
     groups: {
-      overview: 'Übersicht',
       kitchen: 'Küche',
       stock: 'Lager',
       control: 'Kontrolle',

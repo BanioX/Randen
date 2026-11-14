@@ -4,7 +4,7 @@ Kurzfassung der Regeln. Karte des Codes: [`AGENTS.md`](AGENTS.md) · Stand: [`do
 
 **Name:** Randen, mit grossem R (Alban, 14.11.2026). Technische Namen (Pakete `@randen/*`, Datenbank `randen`) bleiben klein. Farben: Rotwein `#6D1F2F`, Traube `#3F0F1C`, Kork `#E8D9C0`, Schrift Onyx.
 
-**Produkt:** Local-first PWA für Küchen, vom Imbiss bis zur Grossküche: Lager mit Ablaufdaten, «Wo ist was?» mit Fotos, Rezepte mit Kalkulation und Marge, Produktion, Menüplan, der Reste verwertet, digitale Speisekarte mit Allergenen, Einkauf, Budget, Zahlen und Selbstkontrolle (HACCP). Product Owner: Alban Hyseni. Randen ist die Schwester von Rettich (Haushalte) und übernimmt dessen Architektur und Lektionen.
+**Produkt:** Local-first PWA für iPhone, iPad und Web (ADR-0013), für Küchen vom Imbiss bis zur Grossküche: Lager mit Ablaufdaten, «Wo ist was?» mit Fotos, Rezepte mit Kalkulation und Marge, Produktion, Menüplan, der Reste verwertet, digitale Speisekarte mit Allergenen, Einkauf, Budget, Zahlen und Selbstkontrolle (HACCP). Product Owner: Alban Hyseni. Randen ist die Schwester von Rettich (Haushalte) und übernimmt dessen Architektur und Lektionen.
 
 ## Sprache
 - UI-Texte und Doku: Deutsch (Schweiz), «ss» statt «ß», inklusive Schreibweise (Mitarbeitende, Köch:innen).
@@ -56,6 +56,7 @@ pnpm e2e            # Playwright; lokal PW_CHROMIUM_EXECUTABLE setzen, Port übe
 - [ ] Format, Lint, Typecheck, Unit-Tests, Build und E2E grün
 - [ ] Offline-Verhalten und Kamera-Fallback bedacht
 - [ ] Keine echten Namen in Logs, Fixtures, Commits
-- [ ] UI-Texte de-CH mit «du» und «ss», a11y-Basics (Labels, Kontrast, Fokus, 44 px), bei 390 px kein seitliches Scrollen, hell und dunkel
+- [ ] UI-Texte de-CH mit «du» und «ss», a11y-Basics (Labels, Kontrast, Fokus, 44 px)
+- [ ] iPhone, iPad hochkant, iPad quer und Web angeschaut (ADR-0013): kein seitliches Scrollen, nichts hinter Leisten, kein Feld unter 16 px, hell und dunkel
 - [ ] Neue Funktion auf den Flächen nachgezogen oder bewusst weggelassen (Cockpit, Liste, Detail, Zahlen, Druck/Export, Demo-Daten)
 - [ ] Doku/ADR aktualisiert, Schulden und Nebenwirkungen eingetragen
