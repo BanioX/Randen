@@ -1,8 +1,36 @@
 import type { RouteObject } from 'react-router';
-import { messages } from '../../app/messages';
-import { PlaceholderPage } from '../placeholder/PlaceholderPage';
 
-/** Pages of «stock» inside the app frame. The module replaces this placeholder. */
+/**
+ * Pages of «Lager» inside the app frame, each loaded when it is first opened. «Bestand» and
+ * «Ablauf» are two views of one page; the path patterns are those of `app/paths.ts`.
+ */
 export const stockRoutes: RouteObject[] = [
-  { path: 'stock/*', element: <PlaceholderPage title={messages.nav.stock} /> },
+  {
+    path: 'stock',
+    lazy: async () => ({ Component: (await import('./StockPage')).StockPage }),
+  },
+  {
+    path: 'stock/expiring',
+    lazy: async () => ({ Component: (await import('./StockPage')).StockPage }),
+  },
+  {
+    path: 'stock/articles/:articleId',
+    lazy: async () => ({ Component: (await import('./StockArticlePage')).StockArticlePage }),
+  },
+  {
+    path: 'stock/receive',
+    lazy: async () => ({ Component: (await import('./ReceivePage')).ReceivePage }),
+  },
+  {
+    path: 'stock/waste',
+    lazy: async () => ({ Component: (await import('./WastePage')).WastePage }),
+  },
+  {
+    path: 'stock/count',
+    lazy: async () => ({ Component: (await import('./CountPage')).CountPage }),
+  },
+  {
+    path: 'stock/journal',
+    lazy: async () => ({ Component: (await import('./JournalPage')).JournalPage }),
+  },
 ];
