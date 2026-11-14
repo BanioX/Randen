@@ -137,7 +137,22 @@ export function createStockLedger(ctx: AppContext) {
     );
   }
 
-  /** Goods come in: a new lot and its receipt in the ledger. */
+  /** True if another purchase or production of the article arrived after this lot. */
+  async function hasNewerPriceThan(lot: StockLot): Promise<boolean> {
+    const lots = alive(await storage.lots.ofBusiness(lot.businessId));
+    return lots.some(
+      (other) =>
+        other.id !== lot.id &&
+        other.articleId === lot.articleId &&
+        (other.origin === 'purchase' || other.origin === 'production') &&
+        other.receivedOn > lot.receivedOn,
+    );
+  }
+
+  /**
+   * Goods come in: a new lot and its receipt in the ledger. The price is remembered on the
+   * article as its last price, unless a newer delivery of it is already booked.
+   */
   async function receive(input: ReceiveInput): Promise<StockLot> {
     const article = await requireRow(
       storage.articles,
@@ -186,7 +201,10 @@ export function createStockLedger(ctx: AppContext) {
       }),
     );
     const remember =
-      input.updateArticlePrice ?? (input.origin === 'purchase' || input.origin === 'production');
+      (input.updateArticlePrice ??
+        (input.origin === 'purchase' || input.origin === 'production')) &&
+      // A delivery note booked late must not overwrite the price of a newer delivery.
+      !(await hasNewerPriceThan(lot));
     if (remember && input.pricePer1000 > 0 && input.pricePer1000 !== article.pricePer1000) {
       await storage.articles.put(
         ArticleSchema.parse({ ...article, pricePer1000: input.pricePer1000, updatedAt: now }),

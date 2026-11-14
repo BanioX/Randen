@@ -6,6 +6,7 @@ export const meta = {
 
 const BASE = args.base
 const ONLY = args.only
+const BUILT = Array.isArray(args.built) ? args.built : []
 
 const REPORT_SCHEMA = {
   type: 'object',
@@ -43,7 +44,7 @@ If the worktree already existed, an earlier builder was interrupted: run "git lo
 Work ONLY inside /home/user/Randen-wt/${name}. Never edit /home/user/Randen itself, never push, never touch other worktrees. Use absolute paths or cd into your worktree in every shell command.
 SAVE OFTEN: the machine can restart at any time. After every finished piece run: cd /home/user/Randen-wt/${name} && git add -A && git commit -q -m "wip: <what>". Work-in-progress commits are fine; the integrator squashes them.
 
-READ BEFORE YOU WRITE (in your worktree):
+${BUILT.length > 0 ? `MODULES ALREADY BUILT, read them FIRST as the reference for structure, contract style, tests and page style, and link to their pages instead of rebuilding anything they offer: ${BUILT.join(', ')} (packages/core/src/modules/<name>, packages/core/test/<name>*.test.ts, apps/web/src/features/<name>).\n\n` : ''}READ BEFORE YOU WRITE (in your worktree):
 - CLAUDE.md, AGENTS.md, docs/regeln.md (wording, numbers, and section H: the five page patterns every page must follow), docs/design.md and the picture docs/design/entwurf-2026-11-14.png (LOOK at it with your image reader: it is the visual target for density, hierarchy and tone), docs/ui-kit.md (the reference of every UI building block: use them, do not rebuild them), docs/glossar.md, docs/lernbuch.md, docs/adr/0003 to 0008 and 0012.
 - packages/core/src/model/*.ts (every row schema), packages/core/src/domain/*.ts (pure rules: units and prices, expiry, FEFO, costing, declaration, requirements, menu engineering, categories, allergens), packages/core/src/application/command.ts (AppContext, UseCase, CommandError, requireRow, createCommandKit with runCommand, emit, stamps), packages/core/src/application/stock-ledger.ts (the ONLY way to change stock), packages/core/src/ports/storage.ts (Storage, alive).
 - packages/core/src/modules/lookup/contract.ts and use-cases.ts: the reference for how a module is written. packages/core/test/application.test.ts: the reference for tests. packages/core/src/testing/index.ts: createTestContext and seedKitchen (the test kitchen; its doc comments list every value).

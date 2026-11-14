@@ -66,6 +66,33 @@ describe('stock ledger', () => {
     await expectLedgerBalanced(t);
   });
 
+  it('keeps the newest price when an older delivery note is booked late', async () => {
+    const { t, kitchen, ledger, today } = await setup();
+    // The seeded cream arrived yesterday at CHF 6.40 / l; a note from nine days ago comes in now.
+    await ledger.receive({
+      businessId: t.businessId,
+      articleId: kitchen.articles.cream.id,
+      areaId: kitchen.areas.cold.id,
+      quantity: 2000,
+      pricePer1000: 610,
+      receivedOn: addDays(today, -9),
+      origin: 'purchase',
+    });
+    expect((await t.storage.articles.get(kitchen.articles.cream.id))?.pricePer1000).toBe(640);
+    // A delivery of today sets the price again.
+    await ledger.receive({
+      businessId: t.businessId,
+      articleId: kitchen.articles.cream.id,
+      areaId: kitchen.areas.cold.id,
+      quantity: 1000,
+      pricePer1000: 660,
+      receivedOn: today,
+      origin: 'purchase',
+    });
+    expect((await t.storage.articles.get(kitchen.articles.cream.id))?.pricePer1000).toBe(660);
+    await expectLedgerBalanced(t);
+  });
+
   it('books only bought goods as a purchase', async () => {
     const { t, kitchen, ledger, today } = await setup();
     const base = {
