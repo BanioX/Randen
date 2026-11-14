@@ -70,14 +70,15 @@ export interface TestContext {
 
 /**
  * An empty business with one person on the given storage (default: memory), with a fixed clock
- * and counting ids. `today` defaults to 14.11.2026.
+ * and counting ids. `today` defaults to 14.11.2026. A second business on the same storage needs
+ * its own `idStart`, so the ids do not collide.
  */
 export async function createTestContext(
-  options: { storage?: Storage; today?: string } = {},
+  options: { storage?: Storage; today?: string; idStart?: number } = {},
 ): Promise<TestContext> {
   const storage = options.storage ?? createMemoryStorage();
   const clock = fixedClock(options.today);
-  const ids = sequentialIds();
+  const ids = sequentialIds(options.idStart);
   const now = clock.now();
   const businessId = ids.next();
   const actor = ids.next();

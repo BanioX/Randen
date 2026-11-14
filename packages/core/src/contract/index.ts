@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { areasContract } from '../modules/areas/contract';
 import { articlesContract } from '../modules/articles/contract';
 import { cockpitContract } from '../modules/cockpit/contract';
+import { demoContract } from '../modules/demo/contract';
 import { haccpContract } from '../modules/haccp/contract';
 import { lookupContract } from '../modules/lookup/contract';
 import { menuContract } from '../modules/menu/contract';
@@ -9,6 +10,7 @@ import { numbersContract } from '../modules/numbers/contract';
 import { productionContract } from '../modules/production/contract';
 import { purchasingContract } from '../modules/purchasing/contract';
 import { recipesContract } from '../modules/recipes/contract';
+import { salesContract } from '../modules/sales/contract';
 import { settingsContract } from '../modules/settings/contract';
 import { stockContract } from '../modules/stock/contract';
 
@@ -28,10 +30,12 @@ export const CONTRACT_V1 = {
   ...productionContract,
   ...menuContract,
   ...purchasingContract,
+  ...salesContract,
   ...numbersContract,
   ...cockpitContract,
   ...haccpContract,
   ...settingsContract,
+  ...demoContract,
 } as const;
 
 /** The parts, to check that no two modules define the same operation. */
@@ -44,10 +48,12 @@ export const CONTRACT_FRAGMENTS = {
   production: productionContract,
   menu: menuContract,
   purchasing: purchasingContract,
+  sales: salesContract,
   numbers: numbersContract,
   cockpit: cockpitContract,
   haccp: haccpContract,
   settings: settingsContract,
+  demo: demoContract,
 } as const;
 
 export type ContractV1 = typeof CONTRACT_V1;

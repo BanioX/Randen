@@ -91,6 +91,12 @@ export type Storage = { [TName in TableName]: RecordStore<Tables[TName]> } & {
   events: EventLog;
   commands: CommandLog;
   /**
+   * Removes a business for good: every row of every table, its events and the business itself.
+   * The one hard delete there is; it serves «alles löschen» and the import of a backup, which
+   * replaces what is on the device (ADR-0006).
+   */
+  purge: (businessId: Id) => Promise<void>;
+  /**
    * Runs `work` atomically: all its writes happen or none. Only storage calls may be awaited
    * inside (no network, no timers), because IndexedDB ends a transaction at the first foreign
    * await.

@@ -1,223 +1,947 @@
 <!doctype html>
 <html lang="de-CH">
-<head>
-<meta charset="utf-8" />
-<title>Randen – Entwurf</title>
-<style>
-  :root {
-    --wine-50:#fef3f3; --wine-100:#fde4e6; --wine-200:#f3c4c8; --wine-300:#e79ea6; --wine-600:#953447; --wine-700:#6d1f2f; --wine-800:#571825;
-    --grape:#3f0f1c; --cork:#e8d9c0; --mist:#cfc3ae;
-    --ground:#f9f5f0; --surface:#ffffff; --muted:#f0eadf; --line:#e3dacc; --line-strong:#877f72;
-    --ink:#14161a; --ink-muted:#605a50;
-    --ok:#1f6b41; --ok-bg:#e5f6ea; --soon:#854f06; --soon-bg:#fdf1dc; --danger:#c33701; --today-bg:#ffeee8;
-    --cold:#13676f; --cold-bg:#e2f5f7; --frozen:#315a97; --frozen-bg:#e8f1fe; --dry:#6c5824; --dry-bg:#f6f0e0;
-    --c1:#953447; --c2:#03769e; --c3:#946d03;
-    --shadow: 0 1px 2px rgb(63 15 28 / .05), 0 2px 10px rgb(63 15 28 / .05);
-  }
-  * { box-sizing: border-box; margin: 0; }
-  body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Inter, sans-serif; background: #ece5da; color: var(--ink); font-size: 15px; line-height: 1.4; -webkit-font-smoothing: antialiased; padding: 36px; width: 2300px; }
-  .board { display: flex; gap: 36px; align-items: flex-start; }
-  .caption { font-size: 13px; font-weight: 600; color: var(--ink-muted); margin: 0 0 10px 4px; letter-spacing: .02em; }
-  .num { font-variant-numeric: tabular-nums; }
+  <head>
+    <meta charset="utf-8" />
+    <title>Randen – Entwurf</title>
+    <style>
+      :root {
+        --wine-50: #fef3f3;
+        --wine-100: #fde4e6;
+        --wine-200: #f3c4c8;
+        --wine-300: #e79ea6;
+        --wine-600: #953447;
+        --wine-700: #6d1f2f;
+        --wine-800: #571825;
+        --grape: #3f0f1c;
+        --cork: #e8d9c0;
+        --mist: #cfc3ae;
+        --ground: #f9f5f0;
+        --surface: #ffffff;
+        --muted: #f0eadf;
+        --line: #e3dacc;
+        --line-strong: #877f72;
+        --ink: #14161a;
+        --ink-muted: #605a50;
+        --ok: #1f6b41;
+        --ok-bg: #e5f6ea;
+        --soon: #854f06;
+        --soon-bg: #fdf1dc;
+        --danger: #c33701;
+        --today-bg: #ffeee8;
+        --cold: #13676f;
+        --cold-bg: #e2f5f7;
+        --frozen: #315a97;
+        --frozen-bg: #e8f1fe;
+        --dry: #6c5824;
+        --dry-bg: #f6f0e0;
+        --c1: #953447;
+        --c2: #03769e;
+        --c3: #946d03;
+        --shadow: 0 1px 2px rgb(63 15 28 / 0.05), 0 2px 10px rgb(63 15 28 / 0.05);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          Inter,
+          sans-serif;
+        background: #ece5da;
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.4;
+        -webkit-font-smoothing: antialiased;
+        padding: 36px;
+        width: 2300px;
+      }
+      .board {
+        display: flex;
+        gap: 36px;
+        align-items: flex-start;
+      }
+      .caption {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-muted);
+        margin: 0 0 10px 4px;
+        letter-spacing: 0.02em;
+      }
+      .num {
+        font-variant-numeric: tabular-nums;
+      }
 
-  /* Desktop */
-  .desktop { width: 1280px; height: 880px; background: var(--ground); border-radius: 18px; overflow: hidden; display: flex; box-shadow: 0 20px 50px rgb(63 15 28 / .18); }
-  .side { width: 248px; background: var(--grape); padding: 22px 12px 16px; display: flex; flex-direction: column; color: #fff; }
-  .brand { display: flex; align-items: center; gap: 12px; padding: 0 10px 20px; }
-  .brand .logo { width: 38px; height: 38px; border-radius: 10px; background: var(--wine-700); display: grid; place-items: center; }
-  .brand b { font-size: 18px; display: block; line-height: 1.15; }
-  .brand span { font-size: 12px; color: var(--cork); }
-  .group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(207 195 174 / .7); padding: 14px 12px 6px; }
-  .nav { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 12px; border-radius: 12px; color: var(--mist); font-weight: 500; font-size: 15px; }
-  .nav.active { background: var(--wine-700); color: #fff; font-weight: 600; }
-  .nav i { width: 18px; height: 18px; border: 1.75px solid currentColor; border-radius: 5px; opacity: .9; }
-  .nav i.r { border-radius: 50%; }
-  .spacer { flex: 1; }
-  .main { flex: 1; padding: 30px 36px; min-width: 0; }
-  h1 { font-size: 34px; letter-spacing: -.02em; line-height: 1.15; }
-  .sub { color: var(--ink-muted); margin-top: 2px; }
-  .head { display: flex; align-items: flex-end; justify-content: space-between; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 12px; background: var(--wine-700); color: #fff; font-weight: 600; font-size: 15px; }
-  .btn.ghost { background: transparent; color: var(--wine-800); padding: 0 6px; height: 36px; }
-  .kpis { display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; gap: 16px; margin-top: 22px; }
-  .card { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); padding: 18px 20px; }
-  .card.dark { background: var(--grape); color: #fff; box-shadow: 0 8px 24px rgb(63 15 28 / .22); }
-  .label { font-size: 13px; font-weight: 600; color: var(--ink-muted); }
-  .dark .label { color: var(--cork); }
-  .big { font-size: 30px; font-weight: 700; letter-spacing: -.02em; margin-top: 6px; }
-  .hint { font-size: 13px; color: var(--ink-muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
-  .dark .hint { color: var(--mist); }
-  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-  .cols { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; margin-top: 16px; }
-  h2 { font-size: 13px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .06em; }
-  .cardhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .row { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-top: 1px solid var(--line); }
-  .row:first-of-type { border-top: 0; }
-  .tile { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; font-size: 14px; flex: none; }
-  .t-cold { background: var(--cold-bg); color: var(--cold); } .t-frozen { background: var(--frozen-bg); color: var(--frozen); } .t-dry { background: var(--dry-bg); color: var(--dry); }
-  .row b { font-weight: 600; display: block; } .row small { color: var(--ink-muted); font-size: 13px; }
-  .grow { flex: 1; min-width: 0; }
-  .amount { font-weight: 600; margin-right: 6px; }
-  .chip { display: inline-flex; align-items: center; height: 26px; padding: 0 11px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
-  .c-today { background: var(--today-bg); color: var(--danger); } .c-soon { background: var(--soon-bg); color: var(--soon); } .c-ok { background: var(--ok-bg); color: var(--ok); }
-  .c-grape { background: var(--grape); color: var(--cork); } .c-neutral { background: var(--muted); color: var(--ink-muted); }
-  .bar { height: 12px; border-radius: 999px; background: var(--muted); position: relative; margin-top: 12px; }
-  .bar > span { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--wine-700); }
-  .bar > em { position: absolute; top: -5px; bottom: -5px; width: 2px; background: var(--ink); border-radius: 2px; }
-  .legend { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-muted); margin-top: 8px; }
-  .hbar { display: grid; grid-template-columns: 130px 1fr 78px; align-items: center; gap: 10px; font-size: 13px; padding: 5px 0; }
-  .hbar div { height: 14px; border-radius: 4px; }
-  .hbar span:last-child { text-align: right; font-weight: 600; }
-  table { width: 100%; border-collapse: collapse; margin-top: 4px; }
-  th { text-align: left; font-size: 12px; font-weight: 600; color: var(--ink-muted); padding: 6px 0; border-bottom: 1px solid var(--line); }
-  td { padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
-  tr:last-child td { border-bottom: 0; }
-  .r { text-align: right; }
+      /* Desktop */
+      .desktop {
+        width: 1280px;
+        height: 880px;
+        background: var(--ground);
+        border-radius: 18px;
+        overflow: hidden;
+        display: flex;
+        box-shadow: 0 20px 50px rgb(63 15 28 / 0.18);
+      }
+      .side {
+        width: 248px;
+        background: var(--grape);
+        padding: 22px 12px 16px;
+        display: flex;
+        flex-direction: column;
+        color: #fff;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 10px 20px;
+      }
+      .brand .logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--wine-700);
+        display: grid;
+        place-items: center;
+      }
+      .brand b {
+        font-size: 18px;
+        display: block;
+        line-height: 1.15;
+      }
+      .brand span {
+        font-size: 12px;
+        color: var(--cork);
+      }
+      .group {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgb(207 195 174 / 0.7);
+        padding: 14px 12px 6px;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 42px;
+        padding: 0 12px;
+        border-radius: 12px;
+        color: var(--mist);
+        font-weight: 500;
+        font-size: 15px;
+      }
+      .nav.active {
+        background: var(--wine-700);
+        color: #fff;
+        font-weight: 600;
+      }
+      .nav i {
+        width: 18px;
+        height: 18px;
+        border: 1.75px solid currentColor;
+        border-radius: 5px;
+        opacity: 0.9;
+      }
+      .nav i.r {
+        border-radius: 50%;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .main {
+        flex: 1;
+        padding: 30px 36px;
+        min-width: 0;
+      }
+      h1 {
+        font-size: 34px;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+      .sub {
+        color: var(--ink-muted);
+        margin-top: 2px;
+      }
+      .head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 46px;
+        padding: 0 20px;
+        border-radius: 12px;
+        background: var(--wine-700);
+        color: #fff;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--wine-800);
+        padding: 0 6px;
+        height: 36px;
+      }
+      .kpis {
+        display: grid;
+        grid-template-columns: 1.25fr 1fr 1fr 1fr;
+        gap: 16px;
+        margin-top: 22px;
+      }
+      .card {
+        background: var(--surface);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 18px 20px;
+      }
+      .card.dark {
+        background: var(--grape);
+        color: #fff;
+        box-shadow: 0 8px 24px rgb(63 15 28 / 0.22);
+      }
+      .label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-muted);
+      }
+      .dark .label {
+        color: var(--cork);
+      }
+      .big {
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-top: 6px;
+      }
+      .hint {
+        font-size: 13px;
+        color: var(--ink-muted);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .dark .hint {
+        color: var(--mist);
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .cols {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+      h2 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .cardhead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 11px 0;
+        border-top: 1px solid var(--line);
+      }
+      .row:first-of-type {
+        border-top: 0;
+      }
+      .tile {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 14px;
+        flex: none;
+      }
+      .t-cold {
+        background: var(--cold-bg);
+        color: var(--cold);
+      }
+      .t-frozen {
+        background: var(--frozen-bg);
+        color: var(--frozen);
+      }
+      .t-dry {
+        background: var(--dry-bg);
+        color: var(--dry);
+      }
+      .row b {
+        font-weight: 600;
+        display: block;
+      }
+      .row small {
+        color: var(--ink-muted);
+        font-size: 13px;
+      }
+      .grow {
+        flex: 1;
+        min-width: 0;
+      }
+      .amount {
+        font-weight: 600;
+        margin-right: 6px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 11px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .c-today {
+        background: var(--today-bg);
+        color: var(--danger);
+      }
+      .c-soon {
+        background: var(--soon-bg);
+        color: var(--soon);
+      }
+      .c-ok {
+        background: var(--ok-bg);
+        color: var(--ok);
+      }
+      .c-grape {
+        background: var(--grape);
+        color: var(--cork);
+      }
+      .c-neutral {
+        background: var(--muted);
+        color: var(--ink-muted);
+      }
+      .bar {
+        height: 12px;
+        border-radius: 999px;
+        background: var(--muted);
+        position: relative;
+        margin-top: 12px;
+      }
+      .bar > span {
+        position: absolute;
+        inset: 0 auto 0 0;
+        border-radius: 999px;
+        background: var(--wine-700);
+      }
+      .bar > em {
+        position: absolute;
+        top: -5px;
+        bottom: -5px;
+        width: 2px;
+        background: var(--ink);
+        border-radius: 2px;
+      }
+      .legend {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: var(--ink-muted);
+        margin-top: 8px;
+      }
+      .hbar {
+        display: grid;
+        grid-template-columns: 130px 1fr 78px;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        padding: 5px 0;
+      }
+      .hbar div {
+        height: 14px;
+        border-radius: 4px;
+      }
+      .hbar span:last-child {
+        text-align: right;
+        font-weight: 600;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 4px;
+      }
+      th {
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-muted);
+        padding: 6px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      td {
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 14.5px;
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      .r {
+        text-align: right;
+      }
 
-  /* Phones */
-  .phone { width: 390px; height: 844px; background: var(--ground); border-radius: 44px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgb(63 15 28 / .18); border: 8px solid #1b1415; }
-  .p-main { padding: 54px 16px 0; }
-  .p-main h1 { font-size: 32px; }
-  .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--muted); border-radius: 12px; padding: 3px; margin-top: 14px; font-size: 13px; font-weight: 600; }
-  .seg span { text-align: center; padding: 8px 0; border-radius: 10px; color: var(--ink-muted); }
-  .seg .on { background: var(--wine-700); color: #fff; }
-  .list { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); padding: 2px 14px; margin-top: 14px; }
-  .tabs { position: absolute; left: 0; right: 0; bottom: 0; height: 84px; background: rgb(255 255 255 / .96); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); padding-top: 8px; font-size: 11px; color: var(--ink-muted); font-weight: 500; }
-  .tab { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .tab .pill { width: 54px; height: 30px; border-radius: 999px; display: grid; place-items: center; }
-  .tab .pill i { width: 20px; height: 20px; border: 1.75px solid currentColor; border-radius: 6px; }
-  .tab.on { color: var(--wine-800); font-weight: 600; } .tab.on .pill { background: var(--wine-100); }
-  .tab.plus .pill { background: var(--wine-700); color: #fff; width: 46px; font-size: 22px; font-weight: 500; }
-  .mini { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
-  .mini .card { padding: 12px 14px; } .mini .big { font-size: 19px; white-space: nowrap; }
+      /* Phones */
+      .phone {
+        width: 390px;
+        height: 844px;
+        background: var(--ground);
+        border-radius: 44px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 20px 50px rgb(63 15 28 / 0.18);
+        border: 8px solid #1b1415;
+      }
+      .p-main {
+        padding: 54px 16px 0;
+      }
+      .p-main h1 {
+        font-size: 32px;
+      }
+      .seg {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: var(--muted);
+        border-radius: 12px;
+        padding: 3px;
+        margin-top: 14px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .seg span {
+        text-align: center;
+        padding: 8px 0;
+        border-radius: 10px;
+        color: var(--ink-muted);
+      }
+      .seg .on {
+        background: var(--wine-700);
+        color: #fff;
+      }
+      .list {
+        background: var(--surface);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 2px 14px;
+        margin-top: 14px;
+      }
+      .tabs {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 84px;
+        background: rgb(255 255 255 / 0.96);
+        border-top: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        padding-top: 8px;
+        font-size: 11px;
+        color: var(--ink-muted);
+        font-weight: 500;
+      }
+      .tab {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .tab .pill {
+        width: 54px;
+        height: 30px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+      }
+      .tab .pill i {
+        width: 20px;
+        height: 20px;
+        border: 1.75px solid currentColor;
+        border-radius: 6px;
+      }
+      .tab.on {
+        color: var(--wine-800);
+        font-weight: 600;
+      }
+      .tab.on .pill {
+        background: var(--wine-100);
+      }
+      .tab.plus .pill {
+        background: var(--wine-700);
+        color: #fff;
+        width: 46px;
+        font-size: 22px;
+        font-weight: 500;
+      }
+      .mini {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .mini .card {
+        padding: 12px 14px;
+      }
+      .mini .big {
+        font-size: 19px;
+        white-space: nowrap;
+      }
 
-  /* Guest menu */
-  .menu { background: #fffdf9; }
-  .cover { background: var(--grape); color: #fff; padding: 58px 22px 22px; }
-  .cover small { color: var(--cork); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; font-weight: 600; }
-  .cover h1 { font-size: 30px; margin-top: 4px; }
-  .cover p { color: var(--mist); font-size: 14px; margin-top: 6px; }
-  .filters { display: flex; gap: 8px; padding: 14px 16px 4px; overflow: hidden; }
-  .filters .chip { background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink); font-weight: 500; }
-  .filters .chip.on { background: var(--wine-700); border-color: var(--wine-700); color: #fff; }
-  .course { padding: 14px 18px 4px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--wine-800); }
-  .dish { display: flex; gap: 14px; padding: 12px 18px; border-top: 1px solid var(--line); }
-  .course + .dish { border-top: 0; }
-  .plate { width: 92px; height: 92px; border-radius: 14px; flex: none; position: relative; overflow: hidden; }
-  .plate::after { content: ''; position: absolute; inset: 12px; border-radius: 50%; background: radial-gradient(circle at 50% 50%, var(--a) 0 34%, var(--b) 35% 52%, #fbf7f0 53% 100%); box-shadow: 0 2px 6px rgb(0 0 0 / .18); }
-  .dish h3 { font-size: 16.5px; line-height: 1.25; } .dish p { font-size: 13.5px; color: var(--ink-muted); margin-top: 2px; }
-  .dish .price { font-weight: 700; white-space: nowrap; font-size: 16px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
-  .tag { font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--muted); color: var(--ink-muted); }
-  .tag.veg { background: var(--ok-bg); color: var(--ok); }
-  .origin { font-size: 12px; color: var(--ink-muted); margin-top: 5px; }
-</style>
-</head>
-<body>
-<div class="board">
-  <div>
-    <p class="caption">Cockpit · Tablet quer und Schreibtisch</p>
-    <div class="desktop">
-      <aside class="side">
-        <div class="brand">
-          <div class="logo"><svg width="26" height="26" viewBox="0 0 512 512"><path d="M247 200c-40-14-74-44-86-86 40 4 76 34 86 86z" fill="#e79ea6"/><path d="M265 200c40-14 74-44 86-86-40 4-76 34-86 86z" fill="#e79ea6"/><path d="M256 198c-24-40-24-90 0-128 24 38 24 88 0 128z" fill="#fde4e6"/><path d="M256 190c72 0 126 50 126 116 0 60-48 96-96 108-16 4-24 22-28 44-1 5-3 5-4 0-4-22-12-40-28-44-48-12-96-48-96-108 0-66 54-116 126-116z" fill="#fbf7f0"/><path d="M148 262c18-46 58-72 108-72s90 26 108 72c-32-18-68-26-108-26s-76 8-108 26z" fill="#f3c4c8"/></svg></div>
-          <div><b>Randen</b><span>Bistro Beispiel</span></div>
-        </div>
-        <div class="group">Übersicht</div>
-        <div class="nav active"><i></i>Cockpit</div>
-        <div class="group">Küche</div>
-        <div class="nav"><i></i>Rezepte</div><div class="nav"><i class="r"></i>Produktion</div><div class="nav"><i></i>Menüplan</div><div class="nav"><i></i>Speisekarte</div>
-        <div class="group">Lager</div>
-        <div class="nav"><i></i>Lager</div><div class="nav"><i></i>Einkauf</div><div class="nav"><i class="r"></i>Wo ist was?</div><div class="nav"><i></i>Artikel</div>
-        <div class="group">Kontrolle</div>
-        <div class="nav"><i></i>Zahlen</div><div class="nav"><i class="r"></i>Selbstkontrolle</div>
-        <div class="spacer"></div>
-        <div class="nav"><i class="r"></i>Betrieb</div>
-      </aside>
-      <main class="main">
-        <div class="head">
-          <div><h1>Cockpit</h1><p class="sub">Samstag, 14. November 2026</p></div>
-          <span class="btn">＋ Wareneingang</span>
-        </div>
-        <div class="kpis">
-          <div class="card dark"><div class="label">Lagerwert</div><div class="big num">CHF 18’420.50</div><div class="hint">214 Artikel in 4 Lagerbereichen</div></div>
-          <div class="card"><div class="label">Wareneinsatz November</div><div class="big num">31.2 %</div><div class="hint"><span class="dot" style="background:#c98a1c"></span>Ziel 30 %, knapp darüber</div></div>
-          <div class="card"><div class="label">Abschreiber diese Woche</div><div class="big num">CHF 212.40</div><div class="hint"><span class="dot" style="background:var(--ok)"></span>CHF 61.00 weniger als letzte Woche</div></div>
-          <div class="card"><div class="label">Läuft heute ab</div><div class="big num">6 Chargen</div><div class="hint"><span class="dot" style="background:var(--danger)"></span>Wert CHF 148.20</div></div>
-        </div>
-        <div class="cols">
-          <div class="card">
-            <div class="cardhead"><h2>Heute verwerten</h2><span class="btn ghost">Im Menüplan verwerten ›</span></div>
-            <div class="row"><div class="tile t-cold">K</div><div class="grow"><b>Lachsfilet</b><small>1.5 kg · Kühlzelle · Schublade Fisch</small></div><span class="amount num">CHF 57.00</span><span class="chip c-today">heute</span></div>
-            <div class="row"><div class="tile t-cold">K</div><div class="grow"><b>Kalbsfond, Eigenproduktion</b><small>4 l · Kühlzelle · Regal 2</small></div><span class="amount num">CHF 31.60</span><span class="chip c-today">heute</span></div>
-            <div class="row"><div class="tile t-cold">K</div><div class="grow"><b>Vollrahm</b><small>3 l · Kühlzelle</small></div><span class="amount num">CHF 19.20</span><span class="chip c-soon">in 2 Tagen</span></div>
-            <div class="row"><div class="tile t-dry">T</div><div class="grow"><b>Ciabatta</b><small>18 Stk. · Trockenlager</small></div><span class="amount num">CHF 21.60</span><span class="chip c-soon">morgen</span></div>
-          </div>
-          <div class="card">
-            <div class="cardhead"><h2>Budget November</h2><span class="num" style="font-weight:600">CHF 14’380 von 22’000</span></div>
-            <div class="bar"><span style="width:65.4%"></span><em style="left:46.7%"></em></div>
-            <div class="legend"><span>Tag 14 von 30</span><span>65 % ausgegeben</span></div>
-            <h2 style="margin-top:20px">Abschreiber nach Art, 30 Tage</h2>
-            <div class="hbar" style="margin-top:8px"><span>Lagerverlust</span><div style="background:var(--c1);width:86%"></div><span class="num">CHF 412</span></div>
-            <div class="hbar"><span>Produktionsabfall</span><div style="background:var(--c2);width:52%"></div><span class="num">CHF 248</span></div>
-            <div class="hbar"><span>Tellerrücklauf</span><div style="background:var(--c3);width:31%"></div><span class="num">CHF 149</span></div>
-          </div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="cardhead"><h2>Gerichte nach Marge</h2><span class="btn ghost">Alle anzeigen ›</span></div>
-          <table>
-            <tr><th>Gericht</th><th class="r">Preis</th><th class="r">Wareneinsatz</th><th class="r">Deckungsbeitrag</th><th class="r" style="width:170px">Stand</th></tr>
-            <tr><td><b>Randen-Carpaccio mit Ziegenkäse</b></td><td class="r num">CHF 18.50</td><td class="r num">CHF 3.72</td><td class="r num">CHF 13.39</td><td class="r"><span class="chip c-grape">Beste Marge</span></td></tr>
-            <tr><td><b>Lachs mit Rahmsauce</b></td><td class="r num">CHF 34.00</td><td class="r num">CHF 6.70</td><td class="r num">CHF 24.75</td><td class="r"><span class="chip c-ok">21.3 % im Ziel</span></td></tr>
-            <tr><td><b>Entrecôte mit Rotweinjus</b></td><td class="r num">CHF 42.00</td><td class="r num">CHF 13.71</td><td class="r num">CHF 25.14</td><td class="r"><span class="chip c-today">35.3 % über dem Ziel</span></td></tr>
-          </table>
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <div>
-    <p class="caption">Lager · Handy</p>
-    <div class="phone">
-      <div class="p-main">
-        <h1>Lager</h1>
-        <div class="mini">
-          <div class="card dark"><div class="label">Lagerwert</div><div class="big num">CHF 18’420.50</div></div>
-          <div class="card"><div class="label">Läuft heute ab</div><div class="big num">6</div></div>
-        </div>
-        <div class="seg"><span class="on">Bestand</span><span>Ablauf</span></div>
-        <div class="list">
-          <div class="row"><div class="tile t-cold">K</div><div class="grow"><b>Rindsentrecôte</b><small>4 kg · Kühlzelle</small></div><span class="chip c-soon">in 2 Tagen</span></div>
-          <div class="row"><div class="tile t-cold">K</div><div class="grow"><b>Lachsfilet</b><small>1.5 kg · Kühlzelle</small></div><span class="chip c-today">heute</span></div>
-          <div class="row"><div class="tile t-cold">K</div><div class="grow"><b>Vollrahm</b><small>8 l · 2 Chargen</small></div><span class="chip c-soon">in 2 Tagen</span></div>
-          <div class="row"><div class="tile t-frozen">TK</div><div class="grow"><b>Erbsen</b><small>12 kg · Tiefkühlzelle</small></div><span class="chip c-neutral">bis März</span></div>
-          <div class="row"><div class="tile t-dry">T</div><div class="grow"><b>Weissmehl</b><small>3 kg · Mindestbestand 5 kg</small></div><span class="chip c-soon">nachbestellen</span></div>
-          <div class="row"><div class="tile t-dry">T</div><div class="grow"><b>Risotto-Reis</b><small>25 kg · Trockenlager</small></div><span class="chip c-ok">in Ordnung</span></div>
+      /* Guest menu */
+      .menu {
+        background: #fffdf9;
+      }
+      .cover {
+        background: var(--grape);
+        color: #fff;
+        padding: 58px 22px 22px;
+      }
+      .cover small {
+        color: var(--cork);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .cover h1 {
+        font-size: 30px;
+        margin-top: 4px;
+      }
+      .cover p {
+        color: var(--mist);
+        font-size: 14px;
+        margin-top: 6px;
+      }
+      .filters {
+        display: flex;
+        gap: 8px;
+        padding: 14px 16px 4px;
+        overflow: hidden;
+      }
+      .filters .chip {
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .filters .chip.on {
+        background: var(--wine-700);
+        border-color: var(--wine-700);
+        color: #fff;
+      }
+      .course {
+        padding: 14px 18px 4px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--wine-800);
+      }
+      .dish {
+        display: flex;
+        gap: 14px;
+        padding: 12px 18px;
+        border-top: 1px solid var(--line);
+      }
+      .course + .dish {
+        border-top: 0;
+      }
+      .plate {
+        width: 92px;
+        height: 92px;
+        border-radius: 14px;
+        flex: none;
+        position: relative;
+        overflow: hidden;
+      }
+      .plate::after {
+        content: '';
+        position: absolute;
+        inset: 12px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 50% 50%,
+          var(--a) 0 34%,
+          var(--b) 35% 52%,
+          #fbf7f0 53% 100%
+        );
+        box-shadow: 0 2px 6px rgb(0 0 0 / 0.18);
+      }
+      .dish h3 {
+        font-size: 16.5px;
+        line-height: 1.25;
+      }
+      .dish p {
+        font-size: 13.5px;
+        color: var(--ink-muted);
+        margin-top: 2px;
+      }
+      .dish .price {
+        font-weight: 700;
+        white-space: nowrap;
+        font-size: 16px;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 7px;
+      }
+      .tag {
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--muted);
+        color: var(--ink-muted);
+      }
+      .tag.veg {
+        background: var(--ok-bg);
+        color: var(--ok);
+      }
+      .origin {
+        font-size: 12px;
+        color: var(--ink-muted);
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <div>
+        <p class="caption">Cockpit · Tablet quer und Schreibtisch</p>
+        <div class="desktop">
+          <aside class="side">
+            <div class="brand">
+              <div class="logo">
+                <svg width="26" height="26" viewBox="0 0 512 512">
+                  <path d="M247 200c-40-14-74-44-86-86 40 4 76 34 86 86z" fill="#e79ea6" />
+                  <path d="M265 200c40-14 74-44 86-86-40 4-76 34-86 86z" fill="#e79ea6" />
+                  <path d="M256 198c-24-40-24-90 0-128 24 38 24 88 0 128z" fill="#fde4e6" />
+                  <path
+                    d="M256 190c72 0 126 50 126 116 0 60-48 96-96 108-16 4-24 22-28 44-1 5-3 5-4 0-4-22-12-40-28-44-48-12-96-48-96-108 0-66 54-116 126-116z"
+                    fill="#fbf7f0"
+                  />
+                  <path
+                    d="M148 262c18-46 58-72 108-72s90 26 108 72c-32-18-68-26-108-26s-76 8-108 26z"
+                    fill="#f3c4c8"
+                  />
+                </svg>
+              </div>
+              <div><b>Randen</b><span>Bistro Beispiel</span></div>
+            </div>
+            <div class="group">Übersicht</div>
+            <div class="nav active"><i></i>Cockpit</div>
+            <div class="group">Küche</div>
+            <div class="nav"><i></i>Rezepte</div>
+            <div class="nav"><i class="r"></i>Produktion</div>
+            <div class="nav"><i></i>Menüplan</div>
+            <div class="nav"><i></i>Speisekarte</div>
+            <div class="group">Lager</div>
+            <div class="nav"><i></i>Lager</div>
+            <div class="nav"><i></i>Einkauf</div>
+            <div class="nav"><i class="r"></i>Wo ist was?</div>
+            <div class="nav"><i></i>Artikel</div>
+            <div class="group">Kontrolle</div>
+            <div class="nav"><i></i>Zahlen</div>
+            <div class="nav"><i class="r"></i>Selbstkontrolle</div>
+            <div class="spacer"></div>
+            <div class="nav"><i class="r"></i>Betrieb</div>
+          </aside>
+          <main class="main">
+            <div class="head">
+              <div>
+                <h1>Cockpit</h1>
+                <p class="sub">Samstag, 14. November 2026</p>
+              </div>
+              <span class="btn">＋ Wareneingang</span>
+            </div>
+            <div class="kpis">
+              <div class="card dark">
+                <div class="label">Lagerwert</div>
+                <div class="big num">CHF 18’420.50</div>
+                <div class="hint">214 Artikel in 4 Lagerbereichen</div>
+              </div>
+              <div class="card">
+                <div class="label">Wareneinsatz November</div>
+                <div class="big num">31.2 %</div>
+                <div class="hint">
+                  <span class="dot" style="background: #c98a1c"></span>Ziel 30 %, knapp darüber
+                </div>
+              </div>
+              <div class="card">
+                <div class="label">Abschreiber diese Woche</div>
+                <div class="big num">CHF 212.40</div>
+                <div class="hint">
+                  <span class="dot" style="background: var(--ok)"></span>CHF 61.00 weniger als
+                  letzte Woche
+                </div>
+              </div>
+              <div class="card">
+                <div class="label">Läuft heute ab</div>
+                <div class="big num">6 Chargen</div>
+                <div class="hint">
+                  <span class="dot" style="background: var(--danger)"></span>Wert CHF 148.20
+                </div>
+              </div>
+            </div>
+            <div class="cols">
+              <div class="card">
+                <div class="cardhead">
+                  <h2>Heute verwerten</h2>
+                  <span class="btn ghost">Im Menüplan verwerten ›</span>
+                </div>
+                <div class="row">
+                  <div class="tile t-cold">K</div>
+                  <div class="grow">
+                    <b>Lachsfilet</b><small>1.5 kg · Kühlzelle · Schublade Fisch</small>
+                  </div>
+                  <span class="amount num">CHF 57.00</span><span class="chip c-today">heute</span>
+                </div>
+                <div class="row">
+                  <div class="tile t-cold">K</div>
+                  <div class="grow">
+                    <b>Kalbsfond, Eigenproduktion</b><small>4 l · Kühlzelle · Regal 2</small>
+                  </div>
+                  <span class="amount num">CHF 31.60</span><span class="chip c-today">heute</span>
+                </div>
+                <div class="row">
+                  <div class="tile t-cold">K</div>
+                  <div class="grow"><b>Vollrahm</b><small>3 l · Kühlzelle</small></div>
+                  <span class="amount num">CHF 19.20</span
+                  ><span class="chip c-soon">in 2 Tagen</span>
+                </div>
+                <div class="row">
+                  <div class="tile t-dry">T</div>
+                  <div class="grow"><b>Ciabatta</b><small>18 Stk. · Trockenlager</small></div>
+                  <span class="amount num">CHF 21.60</span><span class="chip c-soon">morgen</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="cardhead">
+                  <h2>Budget November</h2>
+                  <span class="num" style="font-weight: 600">CHF 14’380 von 22’000</span>
+                </div>
+                <div class="bar">
+                  <span style="width: 65.4%"></span><em style="left: 46.7%"></em>
+                </div>
+                <div class="legend"><span>Tag 14 von 30</span><span>65 % ausgegeben</span></div>
+                <h2 style="margin-top: 20px">Abschreiber nach Art, 30 Tage</h2>
+                <div class="hbar" style="margin-top: 8px">
+                  <span>Lagerverlust</span>
+                  <div style="background: var(--c1); width: 86%"></div>
+                  <span class="num">CHF 412</span>
+                </div>
+                <div class="hbar">
+                  <span>Produktionsabfall</span>
+                  <div style="background: var(--c2); width: 52%"></div>
+                  <span class="num">CHF 248</span>
+                </div>
+                <div class="hbar">
+                  <span>Tellerrücklauf</span>
+                  <div style="background: var(--c3); width: 31%"></div>
+                  <span class="num">CHF 149</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-top: 16px">
+              <div class="cardhead">
+                <h2>Gerichte nach Marge</h2>
+                <span class="btn ghost">Alle anzeigen ›</span>
+              </div>
+              <table>
+                <tr>
+                  <th>Gericht</th>
+                  <th class="r">Preis</th>
+                  <th class="r">Wareneinsatz</th>
+                  <th class="r">Deckungsbeitrag</th>
+                  <th class="r" style="width: 170px">Stand</th>
+                </tr>
+                <tr>
+                  <td><b>Randen-Carpaccio mit Ziegenkäse</b></td>
+                  <td class="r num">CHF 18.50</td>
+                  <td class="r num">CHF 3.72</td>
+                  <td class="r num">CHF 13.39</td>
+                  <td class="r"><span class="chip c-grape">Beste Marge</span></td>
+                </tr>
+                <tr>
+                  <td><b>Lachs mit Rahmsauce</b></td>
+                  <td class="r num">CHF 34.00</td>
+                  <td class="r num">CHF 6.70</td>
+                  <td class="r num">CHF 24.75</td>
+                  <td class="r"><span class="chip c-ok">21.3 % im Ziel</span></td>
+                </tr>
+                <tr>
+                  <td><b>Entrecôte mit Rotweinjus</b></td>
+                  <td class="r num">CHF 42.00</td>
+                  <td class="r num">CHF 13.71</td>
+                  <td class="r num">CHF 25.14</td>
+                  <td class="r"><span class="chip c-today">35.3 % über dem Ziel</span></td>
+                </tr>
+              </table>
+            </div>
+          </main>
         </div>
       </div>
-      <div class="tabs">
-        <div class="tab"><span class="pill"><i></i></span>Cockpit</div>
-        <div class="tab on"><span class="pill"><i></i></span>Lager</div>
-        <div class="tab plus"><span class="pill">＋</span>Erfassen</div>
-        <div class="tab"><span class="pill"><i></i></span>Rezepte</div>
-        <div class="tab"><span class="pill"><i style="border-radius:50%"></i></span>Mehr</div>
+
+      <div>
+        <p class="caption">Lager · Handy</p>
+        <div class="phone">
+          <div class="p-main">
+            <h1>Lager</h1>
+            <div class="mini">
+              <div class="card dark">
+                <div class="label">Lagerwert</div>
+                <div class="big num">CHF 18’420.50</div>
+              </div>
+              <div class="card">
+                <div class="label">Läuft heute ab</div>
+                <div class="big num">6</div>
+              </div>
+            </div>
+            <div class="seg"><span class="on">Bestand</span><span>Ablauf</span></div>
+            <div class="list">
+              <div class="row">
+                <div class="tile t-cold">K</div>
+                <div class="grow"><b>Rindsentrecôte</b><small>4 kg · Kühlzelle</small></div>
+                <span class="chip c-soon">in 2 Tagen</span>
+              </div>
+              <div class="row">
+                <div class="tile t-cold">K</div>
+                <div class="grow"><b>Lachsfilet</b><small>1.5 kg · Kühlzelle</small></div>
+                <span class="chip c-today">heute</span>
+              </div>
+              <div class="row">
+                <div class="tile t-cold">K</div>
+                <div class="grow"><b>Vollrahm</b><small>8 l · 2 Chargen</small></div>
+                <span class="chip c-soon">in 2 Tagen</span>
+              </div>
+              <div class="row">
+                <div class="tile t-frozen">TK</div>
+                <div class="grow"><b>Erbsen</b><small>12 kg · Tiefkühlzelle</small></div>
+                <span class="chip c-neutral">bis März</span>
+              </div>
+              <div class="row">
+                <div class="tile t-dry">T</div>
+                <div class="grow"><b>Weissmehl</b><small>3 kg · Mindestbestand 5 kg</small></div>
+                <span class="chip c-soon">nachbestellen</span>
+              </div>
+              <div class="row">
+                <div class="tile t-dry">T</div>
+                <div class="grow"><b>Risotto-Reis</b><small>25 kg · Trockenlager</small></div>
+                <span class="chip c-ok">in Ordnung</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabs">
+            <div class="tab">
+              <span class="pill"><i></i></span>Cockpit
+            </div>
+            <div class="tab on">
+              <span class="pill"><i></i></span>Lager
+            </div>
+            <div class="tab plus"><span class="pill">＋</span>Erfassen</div>
+            <div class="tab">
+              <span class="pill"><i></i></span>Rezepte
+            </div>
+            <div class="tab">
+              <span class="pill"><i style="border-radius: 50%"></i></span>Mehr
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="caption">Speisekarte für Gäste · Handy oder Tablet am Tisch</p>
+        <div class="phone menu">
+          <div class="cover">
+            <small>Speisekarte</small>
+            <h1>Bistro Beispiel</h1>
+            <p>Abendkarte · gültig heute</p>
+          </div>
+          <div class="filters">
+            <span class="chip on">Alle</span><span class="chip">Vegetarisch</span
+            ><span class="chip">Ohne Gluten</span><span class="chip">Ohne Milch</span>
+          </div>
+          <div class="course">Vorspeisen</div>
+          <div class="dish">
+            <div class="plate" style="background: #f3e3e6; --a: #8e2a45; --b: #f6efe6"></div>
+            <div class="grow">
+              <div style="display: flex; justify-content: space-between; gap: 10px">
+                <h3>Randen-Carpaccio mit Ziegenkäse</h3>
+                <span class="price num">18.50</span>
+              </div>
+              <p>Baumnüsse, Honig, junger Spinat</p>
+              <div class="tags">
+                <span class="tag veg">Vegetarisch</span><span class="tag">Milch</span
+                ><span class="tag">Nüsse</span>
+              </div>
+            </div>
+          </div>
+          <div class="course">Hauptgänge</div>
+          <div class="dish">
+            <div class="plate" style="background: #efe2d2; --a: #6b3b2a; --b: #d9b98a"></div>
+            <div class="grow">
+              <div style="display: flex; justify-content: space-between; gap: 10px">
+                <h3>Entrecôte mit Rotweinjus</h3>
+                <span class="price num">42.00</span>
+              </div>
+              <p>Hausgemachter Kartoffelstock</p>
+              <div class="tags"><span class="tag">Milch</span><span class="tag">Sulfite</span></div>
+              <div class="origin">Rindfleisch: Schweiz</div>
+            </div>
+          </div>
+          <div class="dish">
+            <div class="plate" style="background: #f6e6dc; --a: #e58a6a; --b: #f3e7c9"></div>
+            <div class="grow">
+              <div style="display: flex; justify-content: space-between; gap: 10px">
+                <h3>Lachs mit Rahmsauce</h3>
+                <span class="price num">34.00</span>
+              </div>
+              <p>Blattspinat, Salzkartoffeln</p>
+              <div class="tags"><span class="tag">Fisch</span><span class="tag">Milch</span></div>
+              <div class="origin">Lachs: Norwegen, Zucht</div>
+            </div>
+          </div>
+          <div class="dish">
+            <div class="plate" style="background: #e9eedd; --a: #6f8f3a; --b: #f1e6b8"></div>
+            <div class="grow">
+              <div style="display: flex; justify-content: space-between; gap: 10px">
+                <h3>Risotto mit Steinpilzen</h3>
+                <span class="price num">28.00</span>
+              </div>
+              <p>Parmesan, Petersilie</p>
+              <div class="tags">
+                <span class="tag veg">Vegetarisch</span><span class="tag">Milch</span
+                ><span class="tag">Sellerie</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div>
-    <p class="caption">Speisekarte für Gäste · Handy oder Tablet am Tisch</p>
-    <div class="phone menu">
-      <div class="cover"><small>Speisekarte</small><h1>Bistro Beispiel</h1><p>Abendkarte · gültig heute</p></div>
-      <div class="filters"><span class="chip on">Alle</span><span class="chip">Vegetarisch</span><span class="chip">Ohne Gluten</span><span class="chip">Ohne Milch</span></div>
-      <div class="course">Vorspeisen</div>
-      <div class="dish"><div class="plate" style="background:#f3e3e6;--a:#8e2a45;--b:#f6efe6"></div><div class="grow"><div style="display:flex;justify-content:space-between;gap:10px"><h3>Randen-Carpaccio mit Ziegenkäse</h3><span class="price num">18.50</span></div><p>Baumnüsse, Honig, junger Spinat</p><div class="tags"><span class="tag veg">Vegetarisch</span><span class="tag">Milch</span><span class="tag">Nüsse</span></div></div></div>
-      <div class="course">Hauptgänge</div>
-      <div class="dish"><div class="plate" style="background:#efe2d2;--a:#6b3b2a;--b:#d9b98a"></div><div class="grow"><div style="display:flex;justify-content:space-between;gap:10px"><h3>Entrecôte mit Rotweinjus</h3><span class="price num">42.00</span></div><p>Hausgemachter Kartoffelstock</p><div class="tags"><span class="tag">Milch</span><span class="tag">Sulfite</span></div><div class="origin">Rindfleisch: Schweiz</div></div></div>
-      <div class="dish"><div class="plate" style="background:#f6e6dc;--a:#e58a6a;--b:#f3e7c9"></div><div class="grow"><div style="display:flex;justify-content:space-between;gap:10px"><h3>Lachs mit Rahmsauce</h3><span class="price num">34.00</span></div><p>Blattspinat, Salzkartoffeln</p><div class="tags"><span class="tag">Fisch</span><span class="tag">Milch</span></div><div class="origin">Lachs: Norwegen, Zucht</div></div></div>
-      <div class="dish"><div class="plate" style="background:#e9eedd;--a:#6f8f3a;--b:#f1e6b8"></div><div class="grow"><div style="display:flex;justify-content:space-between;gap:10px"><h3>Risotto mit Steinpilzen</h3><span class="price num">28.00</span></div><p>Parmesan, Petersilie</p><div class="tags"><span class="tag veg">Vegetarisch</span><span class="tag">Milch</span><span class="tag">Sellerie</span></div></div></div>
-    </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

@@ -188,6 +188,29 @@ describe('memory storage', () => {
     await expect(t.storage.articles.add(kitchen.articles.eggs)).rejects.toThrow(/exists/);
   });
 
+  it('purges one business for good and leaves the others alone', async () => {
+    const t = await createTestContext();
+    await seedKitchen(t);
+    const other = await createTestContext({ storage: t.storage, idStart: 100_000 });
+    await other.storage.staff.put({
+      id: other.cmd(),
+      businessId: other.businessId,
+      name: 'Zweite Person',
+      role: 'cook',
+      active: true,
+      createdAt: other.clock.now(),
+      updatedAt: other.clock.now(),
+    });
+    await t.storage.purge(t.businessId);
+    expect(await t.storage.businesses.get(t.businessId)).toBeUndefined();
+    for (const name of TABLE_NAMES) {
+      expect(await t.storage[name].ofBusiness(t.businessId), name).toEqual([]);
+    }
+    expect(await t.storage.events.ofBusiness(t.businessId)).toEqual([]);
+    expect(await t.storage.businesses.get(other.businessId)).toBeDefined();
+    expect((await t.storage.staff.ofBusiness(other.businessId)).length).toBe(2);
+  });
+
   it('keeps businesses apart', async () => {
     const t = await createTestContext();
     await seedKitchen(t);

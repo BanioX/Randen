@@ -20,6 +20,8 @@ export const paths = {
   // Artikel und Lieferanten
   articles: () => '/articles',
   articleNew: () => '/articles/new',
+  /** «Mehrere auf einmal»: paste one article per line. */
+  articlesImport: () => '/articles/import',
   article: (articleId: string) => `/articles/${articleId}`,
   articleEdit: (articleId: string) => `/articles/${articleId}/edit`,
   suppliers: () => '/suppliers',
@@ -44,11 +46,15 @@ export const paths = {
   production: () => '/production',
   productionNew: (recipeId?: string) =>
     recipeId ? `/production/new?recipe=${recipeId}` : '/production/new',
+  /** One production run: what went in (traceability) and the label of what came out. */
+  productionRun: (productionId: string) => `/production/${productionId}`,
   plan: () => '/plan',
 
   // Speisekarte
   menu: () => '/menu',
   menuCard: (cardId: string) => `/menu/${cardId}`,
+  /** The list of allergens per dish, for the staff. */
+  menuAllergens: (cardId: string) => `/menu/${cardId}/allergens`,
   /** The guest view: full screen, without the app around it. */
   guest: (cardId: string) => `/guest/${cardId}`,
 
@@ -63,6 +69,8 @@ export const paths = {
   budget: () => '/numbers/budget',
   margins: () => '/numbers/margins',
   menuEngineering: () => '/numbers/menu-engineering',
+  breakEven: () => '/numbers/break-even',
+  wasteReport: () => '/numbers/waste',
   monthReport: () => '/numbers/report',
 
   // HACCP

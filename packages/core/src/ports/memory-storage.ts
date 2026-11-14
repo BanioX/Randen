@@ -113,7 +113,19 @@ export function createMemoryStorage(): Storage {
     TABLE_NAMES.map((name) => [name, recordStore()]),
   ) as unknown as { [TName in TableName]: Storage[TName] };
 
-  return { ...stores, businesses, events, commands, transaction };
+  function purge(businessId: Id): Promise<void> {
+    for (const rows of tables) {
+      for (const [key, value] of rows) {
+        const row = value as { id?: unknown; businessId?: unknown };
+        if (row.businessId === businessId || (rows === businessRows && row.id === businessId)) {
+          rows.delete(key);
+        }
+      }
+    }
+    return Promise.resolve();
+  }
+
+  return { ...stores, businesses, events, commands, purge, transaction };
 }
 
 function copy<TValue extends object>(value: TValue | undefined): TValue | undefined {

@@ -20,3 +20,5 @@ export * from './modules/numbers/contract';
 export * from './modules/cockpit/contract';
 export * from './modules/haccp/contract';
 export * from './modules/settings/contract';
+export * from './modules/sales/contract';
+export * from './modules/demo/contract';

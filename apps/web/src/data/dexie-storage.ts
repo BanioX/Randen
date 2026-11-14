@@ -55,6 +55,15 @@ export function dexieStorage(db: RandenDb): Storage {
         await db.commands.add(entry);
       },
     },
+    purge: async (businessId) => {
+      await db.transaction('rw', db.tables, async () => {
+        for (const name of TABLE_NAMES) {
+          await db.rows(name).where('businessId').equals(businessId).delete();
+        }
+        await db.events.where('businessId').equals(businessId).delete();
+        await db.businesses.delete(businessId);
+      });
+    },
     // All tables: IndexedDB locks them only for the length of one short local command.
     transaction: (work) => db.transaction('rw', db.tables, work),
   };
