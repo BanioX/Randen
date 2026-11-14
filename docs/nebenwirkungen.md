@@ -34,6 +34,7 @@ Kommt eine davon in den Code, braucht ihre Zeile `ja` in «Daten verlassen das G
 | SE-03 | Bitte an den Browser, die Daten bei knappem Platz nicht zu löschen (dauerhafter Speicher), beim Start der App | `storage.persist` | `apps/web/src/data/persistence.ts`, aufgerufen in `apps/web/src/app/AppData.tsx` | nein | ADR-0006 | 14.11.2026 |
 | SE-04 | Cache des Service Workers (Cache Storage, Workbox): die Dateien der App, damit sie ohne Netz läuft. Wird mit jeder neuen Version ersetzt | `serviceWorker` | `apps/web/vite.config.ts` (`VitePWA`) | nein | ADR-0003 | 14.11.2026 |
 | SE-05 | sessionStorage `randen:reloaded-for-update`: Zeitpunkt des letzten Neuladens für eine neue Version, damit die App nicht in einer Schleife neu lädt. Bleibt, bis der Tab zu ist | `sessionStorage` | `apps/web/src/app/new-version.ts` | nein | ADR-0003 | 14.11.2026 |
+| SE-12 | localStorage `randen:last-backup`: der Tag der letzten Sicherung, damit die App nach zwei Wochen ruhig daran erinnert. Kein Inhalt der Sicherung | `localStorage` | Modul Betrieb (noch nicht gebaut) | nein | ADR-0006 | geplant |
 
 ## Funktionen des Geräts
 
