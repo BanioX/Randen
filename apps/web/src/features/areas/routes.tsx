@@ -1,8 +1,24 @@
 import type { RouteObject } from 'react-router';
-import { messages } from '../../app/messages';
-import { PlaceholderPage } from '../placeholder/PlaceholderPage';
 
-/** Pages of «areas» inside the app frame. The module replaces this placeholder. */
+/**
+ * Pages of «Wo ist was?» inside the app frame, each loaded when it is first opened. The path
+ * patterns are those of `app/paths.ts`; the fixed ones (`where`, `tour`) win over an area id.
+ */
 export const areasRoutes: RouteObject[] = [
-  { path: 'areas/*', element: <PlaceholderPage title={messages.nav.areas} /> },
+  {
+    path: 'areas',
+    lazy: async () => ({ Component: (await import('./AreasPage')).AreasPage }),
+  },
+  {
+    path: 'areas/where',
+    lazy: async () => ({ Component: (await import('./WherePage')).WherePage }),
+  },
+  {
+    path: 'areas/tour',
+    lazy: async () => ({ Component: (await import('./TourPage')).TourPage }),
+  },
+  {
+    path: 'areas/:areaId',
+    lazy: async () => ({ Component: (await import('./AreaDetailPage')).AreaDetailPage }),
+  },
 ];

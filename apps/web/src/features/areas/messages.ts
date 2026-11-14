@@ -1,2 +1,241 @@
-/** Texts of «areas» (de-CH, «ss», «du»). The module fills this. */
-export const areasMessages = {} as const;
+/**
+ * Texts of «Wo ist was?» (de-CH, «ss», one person addressed with «du»): calm and exact, the
+ * words of the glossary (Lagerbereich, Platz, Rundgang, Charge). Functions take values that are
+ * already formatted.
+ */
+
+const count = (n: number, one: string, many: string) =>
+  n === 1 ? `1 ${one}` : `${String(n)} ${many}`;
+
+export const areasMessages = {
+  title: 'Wo ist was?',
+  none: '–',
+
+  counts: {
+    areas: (n: number) => count(n, 'Lagerbereich', 'Lagerbereiche'),
+    spots: (n: number) => count(n, 'Platz', 'Plätze'),
+    articles: (n: number) => count(n, 'Artikel', 'Artikel'),
+    lots: (n: number) => count(n, 'Charge', 'Chargen'),
+    withPhoto: (n: number) => `${String(n)} mit Foto`,
+    and: (a: string, b: string) => `${a} · ${b}`,
+  },
+
+  range: {
+    both: (min: string, max: string) => `${min} bis ${max}`,
+    min: (min: string) => `mindestens ${min}`,
+    max: (max: string) => `höchstens ${max}`,
+    none: 'ohne Temperaturbereich',
+    proposal: 'Richtwert',
+    own: 'vom Betrieb festgelegt',
+  },
+
+  list: {
+    search: 'Wo ist was?',
+    searchPlaceholder: 'Zum Beispiel Rahm',
+    searchButton: 'Suchen',
+    create: 'Bereich erfassen',
+    tour: 'Rundgang',
+    areas: 'Lagerbereiche',
+    reorder: 'Reihenfolge ändern',
+    subtitle: (areas: string, spots: string, withPhoto: string) =>
+      `${areas} · ${spots}, ${withPhoto}`,
+    emptyTitle: 'Noch keine Lagerbereiche',
+    emptyText:
+      'Ein Lagerbereich ist eine Kühlzelle, ein Tiefkühler, ein Trockenlager oder ein Posten. Mit Plätzen und Fotos findet jede neue Person, was sie sucht.',
+    stock: (lots: string, value: string) => `${lots} · ${value}`,
+    noStock: 'keine Charge',
+    priceMissing: 'Preis fehlt bei einer Charge',
+    unplaced: (articles: string) => `${articles} ohne Lagerbereich.`,
+    unplacedLink: 'Zu den Artikeln',
+  },
+
+  form: {
+    titleCreate: 'Bereich erfassen',
+    titleEdit: 'Bereich bearbeiten',
+    name: 'Name',
+    namePlaceholder: 'Kühlzelle, Tiefkühler, Economat',
+    kind: 'Art',
+    range: 'Temperaturbereich',
+    min: 'Tiefste Temperatur',
+    max: 'Höchste Temperatur',
+    proposalHint: (kind: string, range: string) =>
+      `Richtwert für ${kind}: ${range}. Passe ihn an dein Selbstkontrollkonzept an.`,
+    noProposalHint:
+      'Für diese Art schlägt Randen keinen Bereich vor. Trag einen ein, wenn du die Temperatur kontrollierst.',
+    upsideDown: 'Die tiefste Temperatur liegt über der höchsten.',
+    photo: 'Foto des Bereichs',
+    photoHint: 'Ein Foto der Tür oder des Raums hilft beim ersten Rundgang.',
+    duplicate: 'Diesen Namen trägt schon ein Lagerbereich.',
+    save: 'Sichern',
+    cancel: 'Abbrechen',
+    created: (name: string) => `${name} erfasst`,
+    saved: 'Gesichert',
+  },
+
+  reorder: {
+    title: 'Reihenfolge der Bereiche',
+    hint: 'In dieser Reihenfolge stehen die Bereiche in Listen, in der Suche und im Rundgang.',
+    up: 'Nach oben',
+    down: 'Nach unten',
+    position: (n: number) => `${String(n)}.`,
+    save: 'Sichern',
+    cancel: 'Abbrechen',
+    saved: 'Reihenfolge gesichert',
+  },
+
+  detail: {
+    back: 'Wo ist was?',
+    addSpot: 'Platz erfassen',
+    stockValue: 'Lagerwert',
+    noLots: 'keine Charge',
+    spots: 'Plätze',
+    articles: 'Artikel',
+    unplacedCount: (n: number) => `${String(n)} ohne Platz`,
+    allPlaced: 'alle mit Platz',
+    temperature: 'Temperatur',
+    noRange: 'kein Bereich',
+    photo: (name: string) => `Foto von ${name}`,
+    spotsHint: 'Ein Tipp auf ein Foto zeigt es gross.',
+    spotsEmpty:
+      'Noch keine Plätze. Ein Platz ist eine Stelle mit Namen und Foto, zum Beispiel «Regal 2, oben» oder «Schublade Fisch».',
+    addPhoto: 'Foto hinzufügen',
+    nothingAssigned: 'Noch nichts zugewiesen.',
+    noStockHere: 'nichts hier',
+    editSpot: 'Bearbeiten',
+    assign: 'Artikel zuweisen',
+    unplacedTitle: 'Ohne festen Platz',
+    unplacedHint:
+      'Gehören hierher, haben aber keinen Platz. Mit Platz finden neue Mitarbeitende sie.',
+    unplacedEmpty: 'Jeder Artikel dieses Bereichs hat einen Platz.',
+    lotsTitle: 'Was gerade hier liegt',
+    lotsHint: 'Die Chargen in diesem Bereich, das früheste Datum zuerst.',
+    lotsEmpty: 'Hier liegt gerade keine Charge.',
+    lotsCaption: 'Chargen in diesem Bereich',
+    columns: { article: 'Artikel', quantity: 'Menge', date: 'Datum', value: 'Wert' },
+    noDate: 'ohne Datum',
+    awayFrom: (area: string) => `Lagerort sonst: ${area}`,
+    awayNoHome: 'ohne festen Lagerort',
+    total: (lots: string) => `Total ${lots}`,
+    priceMissing: 'Preis fehlt',
+    edit: 'Bereich bearbeiten',
+    remove: 'Bereich löschen',
+    removeTitle: (name: string) => `${name} löschen?`,
+    removeText: (spots: string, articles: string) =>
+      `Der Bereich und seine ${spots} mit Fotos verschwinden. ${articles} verlieren ihren Lagerort; die Artikel selbst bleiben.`,
+    removed: (name: string) => `${name} gelöscht`,
+    blockedTitle: (name: string) => `${name} lässt sich noch nicht löschen`,
+    blockedText: (lots: string, value: string) =>
+      `Darin liegen noch ${lots} im Wert von ${value}. Buche sie zuerst in einen anderen Bereich um, verbrauche sie oder schreib sie ab.`,
+    blockedGeneric:
+      'In diesem Bereich liegen noch Chargen. Buche sie zuerst um, verbrauche sie oder schreib sie ab.',
+    toStock: 'Zum Lager',
+    close: 'Schliessen',
+  },
+
+  spot: {
+    titleCreate: 'Platz erfassen',
+    titleEdit: 'Platz bearbeiten',
+    name: 'Name',
+    namePlaceholder: 'Regal 2, oben',
+    note: 'Notiz',
+    notePlaceholder: 'Rechts neben der Tür, zweites Brett',
+    photo: 'Foto des Platzes',
+    photoHint: 'Fotografiere den Platz so, wie ihn jemand Neues zum ersten Mal sieht.',
+    position: 'Stelle im Rundgang',
+    positionOption: (n: number, total: number) => `${String(n)}. von ${String(total)}`,
+    duplicate: 'Diesen Platz gibt es in diesem Bereich schon.',
+    save: 'Sichern',
+    cancel: 'Abbrechen',
+    remove: 'Platz löschen',
+    removeTitle: (name: string) => `${name} löschen?`,
+    removeText: (articles: string) =>
+      `Der Platz und sein Foto verschwinden. ${articles} bleiben im Bereich, ohne Platz.`,
+    removeTextEmpty: 'Der Platz und sein Foto verschwinden.',
+    created: (name: string) => `${name} erfasst`,
+    saved: 'Gesichert',
+    removed: (name: string) => `${name} gelöscht`,
+  },
+
+  assign: {
+    titleSpot: (spot: string) => `Artikel für ${spot}`,
+    titleArea: (area: string) => `${area}: Artikel ohne Platz`,
+    search: 'Artikel suchen',
+    hintSpot: 'Hak an, was hier liegt. Was du abhakst, bleibt im Bereich, aber ohne Platz.',
+    hintArea:
+      'Hak an, was in diesen Bereich gehört. Was du hier abhakst, verliert seinen Lagerort.',
+    place: (area: string, spot: string) => `${area} · ${spot}`,
+    areaOnly: (area: string) => `${area}, ohne Platz`,
+    noPlace: 'noch kein Lagerort',
+    checked: (articles: string) => `${articles} angehakt`,
+    noneChecked: 'Nichts angehakt',
+    save: 'Zuweisen',
+    cancel: 'Abbrechen',
+    done: (target: string, articles: string) => `${target}: ${articles}`,
+    unchanged: 'Nichts geändert',
+    noMatch: 'Kein Artikel passt.',
+    empty: 'Noch keine Artikel. Erfasse zuerst Artikel, dann weist du ihnen hier einen Platz zu.',
+    loading: 'Artikel werden geladen …',
+  },
+
+  where: {
+    title: 'Suche',
+    back: 'Wo ist was?',
+    search: 'Wo ist was?',
+    placeholder: 'Artikel, Platz oder Bereich',
+    startHint: 'Tipp ein, was du suchst, oder schau dich in den Bereichen um.',
+    articles: 'Artikel',
+    spots: 'Plätze',
+    areas: 'Lagerbereiche',
+    place: (area: string, spot: string) => `${area} · ${spot}`,
+    areaOnly: (area: string) => `${area}, ohne festen Platz`,
+    noPlace: 'Noch kein Lagerort.',
+    noSpot: 'Noch kein fester Platz.',
+    setPlace: 'Platz eintragen',
+    photo: (spot: string, area: string) => `${spot}, ${area}`,
+    stock: (quantity: string) => `${quantity} an Lager`,
+    noStock: 'nichts an Lager',
+    liesNow: (places: string) => `Liegt gerade: ${places}`,
+    placeQuantity: (area: string, quantity: string) => `${area} ${quantity}`,
+    openArea: (area: string) => `${area} öffnen`,
+    spotMeta: (area: string, articles: string) => `${area} · ${articles}`,
+    wholeArea: 'Ganzer Bereich',
+    noSpots: 'Noch keine Plätze',
+    noHits: (text: string) => `Nichts gefunden für «${text}».`,
+    noHitsHint:
+      'Hat ein Artikel noch keinen Platz, trag ihn beim Artikel unter «Lagerbereich» und «Platz» ein.',
+    toArticles: 'Zu den Artikeln',
+  },
+
+  tour: {
+    title: 'Rundgang',
+    back: 'Wo ist was?',
+    subtitle: (spots: string, withPhoto: string) => `${spots}, ${withPhoto}`,
+    progress: 'Fortschritt',
+    progressText: (n: number, total: number) => `${String(n)} von ${String(total)}`,
+    progressSummary: (n: number, total: number) =>
+      `Rundgang: Station ${String(n)} von ${String(total)}`,
+    next: 'Weiter',
+    back2: 'Zurück',
+    finish: 'Rundgang beenden',
+    doneTitle: 'Rundgang fertig',
+    doneText: (spots: string, areas: string) =>
+      `Du hast alle ${spots} in ${areas} gesehen. Was du später suchst, findest du unter «Wo ist was?».`,
+    again: 'Noch einmal',
+    toAreas: 'Zu den Lagerbereichen',
+    photoMissing: 'Foto fehlt',
+    addPhoto: 'Foto hinzufügen',
+    liesHere: 'Hier liegt',
+    nothingHere: 'Hier ist noch nichts zugewiesen.',
+    more: (n: number) => `und ${String(n)} weitere`,
+    wholeArea: 'Ganzer Bereich',
+    noSpotsHint: 'Dieser Bereich hat noch keine Plätze.',
+    addSpot: 'Platz erfassen',
+    unplaced: 'Ohne festen Platz',
+    print: 'Drucken',
+    printMeta: (business: string, date: string) => `${business} · Stand ${date}`,
+    printPhotoMissing: 'kein Foto',
+    emptyTitle: 'Noch kein Rundgang',
+    emptyText:
+      'Ein Rundgang zeigt neuen Mitarbeitenden jeden Platz mit Foto. Erfasse zuerst Lagerbereiche und Plätze.',
+  },
+} as const;
