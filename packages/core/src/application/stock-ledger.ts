@@ -1,4 +1,5 @@
 import { allocateFefo } from '../domain/fefo';
+import type { Requirement } from '../domain/requirements';
 import { lineValue, roundQuantity } from '../domain/units';
 import type { Id } from '../ids';
 import { rappen, type Rappen } from '../money';
@@ -15,6 +16,14 @@ import {
 } from '../model/stock';
 import { alive } from '../ports/storage';
 import { CommandError, requireRow, type AppContext } from './command';
+
+/** How a new lot shows in the ledger: only bought goods count as a purchase. */
+const RECEIPT_TYPE: Record<LotOrigin, MovementType> = {
+  purchase: 'receipt',
+  production: 'production',
+  opening: 'adjustment',
+  count: 'adjustment',
+};
 
 export interface ReceiveInput {
   businessId: Id;
@@ -166,7 +175,7 @@ export function createStockLedger(ctx: AppContext) {
         businessId: lot.businessId,
         lotId: lot.id,
         articleId: lot.articleId,
-        type: input.origin === 'count' ? 'adjustment' : 'receipt',
+        type: RECEIPT_TYPE[input.origin],
         quantity,
         valueRappen: lineValue(quantity, lot.pricePer1000),
         on: input.receivedOn,
@@ -213,6 +222,33 @@ export function createStockLedger(ctx: AppContext) {
       result.picks.push({ lotId: lot.id, quantity: pick.quantity, valueRappen: value });
     }
     return result;
+  }
+
+  /**
+   * Takes everything a recipe needs (`recipeRequirements`) from stock. Books what is there and
+   * lists the rest as shortages, so a kitchen that cooked anyway still gets its numbers.
+   */
+  async function consumeMany(
+    requirements: readonly Requirement[],
+    input: Omit<ConsumeInput, 'articleId' | 'quantity'>,
+  ): Promise<{ valueRappen: Rappen; shortages: { articleId: Id; missing: number }[] }> {
+    let value = 0;
+    const shortages: { articleId: Id; missing: number }[] = [];
+    for (const requirement of requirements) {
+      if (requirement.quantity <= 0) {
+        continue;
+      }
+      const result = await consume({
+        ...input,
+        articleId: requirement.articleId,
+        quantity: requirement.quantity,
+      });
+      value += result.valueRappen;
+      if (result.missing > 0) {
+        shortages.push({ articleId: requirement.articleId, missing: result.missing });
+      }
+    }
+    return { valueRappen: rappen(value), shortages };
   }
 
   async function lotWithAtLeast(businessId: Id, lotId: Id, quantity: number): Promise<StockLot> {
@@ -326,7 +362,7 @@ export function createStockLedger(ctx: AppContext) {
     return { lotId: moved.id };
   }
 
-  return { activeLots, receive, consume, consumeLot, writeOff, adjust, move };
+  return { activeLots, receive, consume, consumeMany, consumeLot, writeOff, adjust, move };
 }
 
 export type StockLedger = ReturnType<typeof createStockLedger>;

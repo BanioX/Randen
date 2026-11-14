@@ -66,6 +66,34 @@ describe('stock ledger', () => {
     await expectLedgerBalanced(t);
   });
 
+  it('books only bought goods as a purchase', async () => {
+    const { t, kitchen, ledger, today } = await setup();
+    const base = {
+      businessId: t.businessId,
+      areaId: kitchen.areas.cold.id,
+      quantity: 1000,
+      pricePer1000: 789,
+      receivedOn: today,
+    };
+    const produced = await ledger.receive({
+      ...base,
+      articleId: kitchen.articles.jus.id,
+      origin: 'production',
+    });
+    const opening = await ledger.receive({
+      ...base,
+      articleId: kitchen.articles.butter.id,
+      origin: 'opening',
+    });
+    const movements = await t.storage.movements.ofBusiness(t.businessId);
+    expect(movements.find((row) => row.lotId === produced.id)?.type).toBe('production');
+    expect(movements.find((row) => row.lotId === opening.id)?.type).toBe('adjustment');
+    // A production remembers its cost on the component; an opening stock leaves the price alone.
+    expect((await t.storage.articles.get(kitchen.articles.jus.id))?.pricePer1000).toBe(789);
+    expect((await t.storage.articles.get(kitchen.articles.butter.id))?.pricePer1000).toBe(1400);
+    await expectLedgerBalanced(t);
+  });
+
   it('consumes first expired first out and reports the value', async () => {
     const { t, kitchen, ledger, today } = await setup();
     const result = await ledger.consume({

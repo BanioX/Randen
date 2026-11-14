@@ -44,8 +44,29 @@ export const StockLotSchema = z.object({
 });
 export type StockLot = z.infer<typeof StockLotSchema>;
 
-export const MovementTypeSchema = z.enum(['receipt', 'consumption', 'waste', 'adjustment']);
+/**
+ * `receipt` goods bought · `production` a component made in house enters the stock ·
+ * `consumption` goods used · `waste` goods written off · `adjustment` a count or the opening
+ * stock said something else. Purchases are the receipts and nothing else.
+ */
+export const MovementTypeSchema = z.enum([
+  'receipt',
+  'production',
+  'consumption',
+  'waste',
+  'adjustment',
+]);
 export type MovementType = z.infer<typeof MovementTypeSchema>;
+
+export function movementTypeLabel(type: MovementType): string {
+  return {
+    receipt: 'Wareneingang',
+    production: 'Eigenproduktion',
+    consumption: 'Verbrauch',
+    waste: 'Abschreiber',
+    adjustment: 'Korrektur',
+  }[type];
+}
 
 /** Why goods were written off («Abschreiber»). */
 export const WasteReasonSchema = z.enum([
