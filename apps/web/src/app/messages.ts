@@ -1,0 +1,80 @@
+/**
+ * Texts shared by the whole app, in German (Switzerland): «ss» instead of «ß», one person
+ * addressed with «du». Each feature keeps its own texts in `features/<name>/messages.ts`;
+ * `messages.test.ts` checks all of them.
+ */
+export const messages = {
+  appName: 'Randen',
+  loading: 'Wird geladen …',
+  navLabel: 'Hauptnavigation',
+  skipToContent: 'Zum Inhalt springen',
+  nav: {
+    cockpit: 'Cockpit',
+    add: 'Erfassen',
+    stock: 'Lager',
+    purchasing: 'Einkauf',
+    areas: 'Wo ist was?',
+    articles: 'Artikel',
+    suppliers: 'Lieferanten',
+    recipes: 'Rezepte',
+    production: 'Produktion',
+    plan: 'Menüplan',
+    menu: 'Speisekarte',
+    numbers: 'Zahlen',
+    haccp: 'Selbstkontrolle',
+    more: 'Mehr',
+    business: 'Betrieb',
+    groups: {
+      overview: 'Übersicht',
+      kitchen: 'Küche',
+      stock: 'Lager',
+      control: 'Kontrolle',
+      business: 'Betrieb',
+    },
+  },
+  actions: {
+    save: 'Sichern',
+    cancel: 'Abbrechen',
+    done: 'Fertig',
+    edit: 'Bearbeiten',
+    remove: 'Löschen',
+    add: 'Hinzufügen',
+    back: 'Zurück',
+    close: 'Schliessen',
+    undo: 'Rückgängig',
+    search: 'Suchen',
+    print: 'Drucken',
+    showAll: 'Alle anzeigen',
+    choose: 'Auswählen',
+    confirm: 'Bestätigen',
+  },
+  defaults: {
+    businessName: 'Mein Betrieb',
+    memberName: 'Ich',
+    areas: { cold: 'Kühlraum', frozen: 'Tiefkühler', dry: 'Trockenlager' },
+  },
+  placeholder: {
+    text: 'Dieser Bereich ist in Arbeit.',
+  },
+  errors: {
+    title: 'Das hat nicht geklappt',
+    text: 'Die Seite konnte nicht angezeigt werden. Deine Daten sind auf dem Gerät und unverändert.',
+    reload: 'Neu laden',
+    home: 'Zum Cockpit',
+    updating: 'Neue Version',
+    updatingText: 'Randen wird aktualisiert …',
+    storage:
+      'Der Speicher des Geräts ist nicht erreichbar. Öffne Randen in einem normalen Fenster, nicht im privaten Modus.',
+    notFoundTitle: 'Nicht gefunden',
+    notFoundText: 'Diesen Eintrag gibt es nicht mehr.',
+    codes: {
+      not_found: 'Diesen Eintrag gibt es nicht mehr.',
+      invalid: 'Diese Angabe passt nicht. Prüfe die Menge und versuche es noch einmal.',
+      duplicate_name: 'Diesen Namen gibt es schon.',
+      in_use: 'Das wird noch verwendet und kann nicht gelöscht werden.',
+      insufficient_stock: 'Dafür ist zu wenig an Lager.',
+      not_allowed: 'Das ist in diesem Zustand nicht möglich.',
+    },
+    unknown: 'Das hat nicht geklappt. Versuche es noch einmal.',
+  },
+} as const;

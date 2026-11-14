@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Install only versions published at least three days ago: a poisoned release is usually found
+# and pulled within hours (ADR-0002, lesson from Rettich ADR-0085).
+minimumReleaseAge: 4320
