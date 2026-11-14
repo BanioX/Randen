@@ -3,13 +3,9 @@ import { Link, Outlet, useLocation } from 'react-router';
 import { ToastProvider } from '../ui/Toast';
 import { useBusiness } from './hooks';
 import { messages } from './messages';
-import { activeItem, businessNavItem, navGroups, tabItems, type NavItem } from './nav';
+import { useExtras } from './extras';
+import { activeItem, businessNavItem, tabItems, visibleNavGroups, type NavItem } from './nav';
 import { paths } from './paths';
-
-const sideItems: readonly NavItem[] = [
-  ...navGroups.flatMap((group) => group.items),
-  businessNavItem,
-];
 
 /**
  * One entry of the side navigation. From 1024 px it is a row with icon and label; between 768
@@ -45,6 +41,11 @@ function SideLink({ item, active }: { item: NavItem; active: boolean }) {
 export function AppShell() {
   const { pathname } = useLocation();
   const business = useBusiness();
+  const navGroups = visibleNavGroups(useExtras());
+  const sideItems: readonly NavItem[] = [
+    ...navGroups.flatMap((group) => group.items),
+    businessNavItem,
+  ];
   const activeSide = activeItem(pathname, sideItems);
   const activeTab = activeItem(pathname, tabItems);
 

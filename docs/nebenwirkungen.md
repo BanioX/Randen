@@ -35,6 +35,7 @@ Kommt eine davon in den Code, braucht ihre Zeile `ja` in «Daten verlassen das G
 | SE-04 | Cache des Service Workers (Cache Storage, Workbox): die Dateien der App, damit sie ohne Netz läuft. Wird mit jeder neuen Version ersetzt | `serviceWorker` | `apps/web/vite.config.ts` (`VitePWA`) | nein | ADR-0003 | 14.11.2026 |
 | SE-05 | sessionStorage `randen:reloaded-for-update`: Zeitpunkt des letzten Neuladens für eine neue Version, damit die App nicht in einer Schleife neu lädt. Bleibt, bis der Tab zu ist | `sessionStorage` | `apps/web/src/app/new-version.ts` | nein | ADR-0003 | 14.11.2026 |
 | SE-12 | localStorage `randen:last-backup`: der Tag der letzten Sicherung, damit die App nach zwei Wochen ruhig daran erinnert. Kein Inhalt der Sicherung | `localStorage` | Modul Betrieb (noch nicht gebaut) | nein | ADR-0006 | geplant |
+| SE-13 | localStorage `randen:extras`: welche Funktionen dieses Gerät zeigt (Grundfunktionen oder Erweitert, und welche Gruppen). Eine Anzeige, keine Betriebsdaten; nicht in der Sicherung | `localStorage` | `apps/web/src/app/extras.ts` | nein | ADR-0014 | 15.11.2026 |
 
 ## Funktionen des Geräts
 

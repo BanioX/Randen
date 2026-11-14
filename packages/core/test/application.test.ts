@@ -239,7 +239,8 @@ describe('ensureLocalBusiness', () => {
     const areas = await storage.areas.ofBusiness(first.business.id);
     expect(areas.map((area) => area.kind).sort()).toEqual(['cold', 'dry', 'frozen']);
     const second = await ensureLocalBusiness(storage, clock, ids, names);
-    expect(second).toEqual(first);
+    expect(first.created).toBe(true);
+    expect(second).toEqual({ ...first, created: false });
     expect(await storage.businesses.all()).toHaveLength(1);
     expect(await storage.areas.ofBusiness(first.business.id)).toHaveLength(3);
   });

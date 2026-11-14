@@ -23,6 +23,7 @@ import { browserClock, browserIds } from '../data/adapters';
 import { RandenDb } from '../data/db';
 import { dexieStorage } from '../data/dexie-storage';
 import { requestPersistentStorage } from '../data/persistence';
+import { startWithEssentials } from './extras';
 import { messages } from './messages';
 
 export interface AppData {
@@ -83,6 +84,10 @@ export function AppDataProvider({
         member: messages.defaults.memberName,
         areas: messages.defaults.areas,
       });
+      // A new business starts with the essentials (ADR-0014); an existing one keeps its choice.
+      if (local.created) {
+        startWithEssentials();
+      }
       // Local-first: ask the browser not to clear the data when space runs low.
       void requestPersistentStorage('storage' in navigator ? navigator.storage : undefined);
       const remembered = IdSchema.safeParse((await database.meta.get('currentStaffId'))?.value);

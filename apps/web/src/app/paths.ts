@@ -83,6 +83,8 @@ export const paths = {
   more: () => '/more',
   business: () => '/more/business',
   team: () => '/more/team',
+  /** «Funktionen»: the essentials and the extras of ADR-0014. */
+  features: () => '/more/features',
   data: () => '/more/data',
   demo: () => '/more/demo',
   about: () => '/more/about',

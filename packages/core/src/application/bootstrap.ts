@@ -13,6 +13,8 @@ import { alive, type Storage } from '../ports/storage';
 export interface LocalProfile {
   business: Business;
   member: StaffMember;
+  /** True on the very first start on this device: the business was just created. */
+  created: boolean;
 }
 
 /**
@@ -40,7 +42,7 @@ export async function ensureLocalBusiness(
       );
       const member = staff.find((row) => row.active) ?? staff[0];
       if (member !== undefined) {
-        return { business: existing, member };
+        return { business: existing, member, created: false };
       }
     }
     const now = clock.now();
@@ -86,6 +88,6 @@ export async function ensureLocalBusiness(
       updatedAt: now,
     });
     await storage.staff.add(member);
-    return { business, member };
+    return { business, member, created: existing === undefined };
   });
 }

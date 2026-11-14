@@ -45,3 +45,4 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Selbstkontrolle | `haccp` | Temperaturen, Reinigungsplan, Wareneingangskontrolle |
 | Richtwert | – | Ein Vorschlag ohne rechtliche Verbindlichkeit, den der Betrieb ändern kann (ADR-0012) |
 | Sicherung | `settings.export` | Der ganze Betrieb als eine Datei |
+| Grundfunktionen, Erweitert | `extras.ts`, `useExtra` | Was jede Küche jeden Tag braucht, und was man unter «Betrieb › Funktionen» dazuschaltet: Wo ist was?, Produktion und Menüplan, Zahlen und Auswertung, Team (ADR-0014) |

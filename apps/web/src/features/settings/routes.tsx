@@ -2,7 +2,15 @@ import type { RouteObject } from 'react-router';
 import { messages } from '../../app/messages';
 import { PlaceholderPage } from '../placeholder/PlaceholderPage';
 
-/** Pages of «settings» inside the app frame. The module replaces this placeholder. */
+/** Pages of «Betrieb» under /more. The settings module adds business, team and data. */
 export const settingsRoutes: RouteObject[] = [
-  { path: 'more/*', element: <PlaceholderPage title={messages.nav.more} /> },
+  {
+    path: 'more',
+    lazy: async () => ({ Component: (await import('./MorePage')).MorePage }),
+  },
+  {
+    path: 'more/features',
+    lazy: async () => ({ Component: (await import('./FeaturesPage')).FeaturesPage }),
+  },
+  { path: 'more/*', element: <PlaceholderPage title={messages.nav.business} /> },
 ];

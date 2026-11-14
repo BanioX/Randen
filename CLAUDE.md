@@ -19,7 +19,9 @@ Kurzfassung der Regeln. Karte des Codes: [`AGENTS.md`](AGENTS.md) · Stand: [`do
 4. **Freigabe:** Alles, was kostenlos ist, darf Claude ohne Rückfrage nutzen. **Alban fragen vor:** allem, was Geld kostet, Preisen, allem, was Betriebsdaten das Gerät neu verlassen lässt, und grösseren Abweichungen vom Produkt.
 5. **Strategie hat ihren Ort:** Dieses Repo ist privat. Was mit Randen Geld verdienen soll, Preise und Vergleiche mit anderen Produkten stehen in `rettich-intern/ideen/gastro.md` (`BanioX/SWELPER`) oder hier unter `docs/intern/`, nie in UI-Texten, Demo-Daten oder Commits, und **nie im öffentlichen Rettich-Repo**. Der Rest der Doku beschreibt, was gebaut ist und wie.
 6. **Lokal zuerst prüfen:** `pnpm check` vor jedem Push; die Zeile `ALL=` lesen und bei `RED` jede Zeile mit `exit=` ungleich 0.
-7. **Wenig technische Schulden:** Abkürzungen in `docs/schulden.md`, Nebenwirkungen in `docs/nebenwirkungen.md` (Test prüft), Lektionen in `docs/lernbuch.md`, Begriffe im Glossar.
+7. **Aus Rettich übernehmen** (Alban, 15.11.2026): Funktionen aus Rettich laufend kopieren und an die Küche anpassen, wenn sie nützen; Claude entscheidet nach Nützlichkeit und führt [`docs/rettich.md`](docs/rettich.md). Von Randen fliesst nichts zurück ins öffentliche Rettich-Repo.
+8. **Grundfunktionen zuerst** (ADR-0014): Neue Nutzer:innen sehen nur, was eine Küche jeden Tag braucht. Alles Weitere ist ein Extra unter «Betrieb › Funktionen». Jede neue Funktion ist ausdrücklich Grundfunktion oder gehört in eine Gruppe (`useExtra`).
+9. **Wenig technische Schulden:** Abkürzungen in `docs/schulden.md`, Nebenwirkungen in `docs/nebenwirkungen.md` (Test prüft), Lektionen in `docs/lernbuch.md`, Begriffe im Glossar.
 
 ## Harte Regeln
 - **Geld immer als Ganzzahl** in der kleinsten Einheit der Betriebswährung (CHF: Rappen), nie Float (ADR-0004). Stückpreise sind Rappen pro 1000 Basiseinheiten (pro kg, pro Liter, pro 1000 Stück). Mengen dürfen drei Nachkommastellen haben, Geld nie.
@@ -59,4 +61,5 @@ pnpm e2e            # Playwright; lokal PW_CHROMIUM_EXECUTABLE setzen, Port übe
 - [ ] UI-Texte de-CH mit «du» und «ss», a11y-Basics (Labels, Kontrast, Fokus, 44 px)
 - [ ] iPhone, iPad hochkant, iPad quer und Web angeschaut (ADR-0013): kein seitliches Scrollen, nichts hinter Leisten, kein Feld unter 16 px, hell und dunkel
 - [ ] Neue Funktion auf den Flächen nachgezogen oder bewusst weggelassen (Cockpit, Liste, Detail, Zahlen, Druck/Export, Demo-Daten)
+- [ ] Grundfunktion oder Extra entschieden (ADR-0014), Extras blenden sich mit `useExtra` aus
 - [ ] Doku/ADR aktualisiert, Schulden und Nebenwirkungen eingetragen

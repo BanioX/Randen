@@ -14,6 +14,7 @@ import {
   Tags,
   type LucideIcon,
 } from 'lucide-react';
+import { isShown, type ExtrasState, type ExtraGroup } from './extras';
 import { messages } from './messages';
 import { paths } from './paths';
 
@@ -25,6 +26,8 @@ export interface NavItem {
   also?: readonly string[];
   /** «Erfassen» is the main action on the phone: its icon sits in a filled circle. */
   primary?: boolean;
+  /** An extra (ADR-0014): shown only while its group is switched on. Without: an essential. */
+  extra?: ExtraGroup;
 }
 
 export interface NavGroup {
@@ -50,8 +53,8 @@ export const navGroups: readonly NavGroup[] = [
     label: t.groups.kitchen,
     items: [
       { to: paths.recipes(), label: t.recipes, icon: BookOpen },
-      { to: paths.production(), label: t.production, icon: CookingPot },
-      { to: paths.plan(), label: t.plan, icon: CalendarDays },
+      { to: paths.production(), label: t.production, icon: CookingPot, extra: 'production' },
+      { to: paths.plan(), label: t.plan, icon: CalendarDays, extra: 'production' },
       { to: paths.menu(), label: t.menu, icon: ClipboardList },
     ],
   },
@@ -61,7 +64,7 @@ export const navGroups: readonly NavGroup[] = [
     items: [
       { to: paths.stock(), label: t.stock, icon: Package },
       { to: paths.purchasing(), label: t.purchasing, icon: ShoppingCart },
-      { to: paths.areas(), label: t.areas, icon: MapPin },
+      { to: paths.areas(), label: t.areas, icon: MapPin, extra: 'places' },
       // Suppliers are master data next to the articles: reached from there, not a destination
       // of their own, so the whole navigation fits an iPad on its side without scrolling.
       { to: paths.articles(), label: t.articles, icon: Tags, also: [paths.suppliers()] },
@@ -71,7 +74,7 @@ export const navGroups: readonly NavGroup[] = [
     id: 'control',
     label: t.groups.control,
     items: [
-      { to: paths.numbers(), label: t.numbers, icon: ChartColumn },
+      { to: paths.numbers(), label: t.numbers, icon: ChartColumn, extra: 'numbers' },
       { to: paths.haccp(), label: t.haccp, icon: ShieldCheck },
     ],
   },
@@ -110,6 +113,16 @@ export const tabItems: readonly NavItem[] = [
     ],
   },
 ];
+
+/** The groups of the navigation with what this device shows (ADR-0014); empty groups drop out. */
+export function visibleNavGroups(extras: ExtrasState): NavGroup[] {
+  return navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => item.extra === undefined || isShown(extras, item.extra)),
+    }))
+    .filter((group) => group.items.length > 0);
+}
 
 const within = (path: string, base: string) =>
   base === '/' ? path === '/' : path === base || path.startsWith(`${base}/`);
