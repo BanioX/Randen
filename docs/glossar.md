@@ -6,7 +6,7 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | --- | --- | --- |
 | Betrieb | `Business` | Eine Küche mit ihrem Lager, ihren Rezepten und Zahlen. Ein zweiter Standort ist ein zweiter Betrieb |
 | Team, Person | `StaffMember` | Wer auf dem Gerät arbeitet; steht bei jeder Buchung |
-| Lagerbereich | `StorageArea` | Kühlraum, Tiefkühler, Trockenlager, Bar und Keller; mit Temperaturbereich |
+| Lagerbereich | `StorageArea` | Kühlzelle, Tiefkühlzelle, Trockenlager, Bar und Keller; mit Temperaturbereich |
 | Platz | `StorageSpot` | Ein benannter Ort im Lagerbereich, mit Foto: «Regal 2, oben» |
 | Wo ist was? | `where.search` | Suche nach einem Artikel, zeigt Bereich, Platz und Foto |
 | Rundgang | `tour` | Alle Plätze der Reihe nach, für neue Mitarbeitende |

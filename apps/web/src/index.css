@@ -1,8 +1,9 @@
 @import 'tailwindcss';
 
 /*
- * Randen design tokens (docs/design.md, ADR-0009). Weinrot, warm stone neutrals, Onyx; one gold
- * accent on dark. Every text/background pair meets WCAG AA; `pnpm contrast` proves it.
+ * Randen design tokens (docs/design.md, ADR-0009). Three tones from Alban's brief of 14.11.2026:
+ * Rotwein #6D1F2F for what you tap, Traube #3F0F1C for the dark surfaces, Kork #E8D9C0 as the
+ * warm companion; text in Onyx as in Rettich. Every pair meets WCAG AA; `pnpm contrast` proves it.
  */
 @theme {
   /* System font, as on Apple devices: nothing to download. */
@@ -11,40 +12,42 @@
     sans-serif;
   --font-display: var(--font-sans);
 
-  /* Weinrot: a deep Bordeaux built in OKLCH (hue 10) with even lightness steps.
-     700 is what you tap and what is chosen (white on it 10.7:1), 600 the focus ring,
-     800 wine-coloured text on light surfaces. */
-  --color-wine-50: #fdf3f4;
-  --color-wine-100: #fce4e7;
-  --color-wine-200: #efbec4;
-  --color-wine-300: #e496a1;
-  --color-wine-400: #d46e80;
-  --color-wine-500: #bf4761;
-  --color-wine-600: #a02647;
-  --color-wine-700: #791432;
-  --color-wine-800: #5f0c25;
-  --color-wine-900: #46071a;
-  --color-wine-950: #2c060f;
+  /* Rotwein: the scale keeps the hue of #6D1F2F (OKLCH 12) with even lightness steps.
+     700 is Rotwein itself: buttons, the chosen segment, the active entry (white on it 11.1:1).
+     600 is the focus ring, 800 wine-coloured text on light surfaces, 900 is Traube. */
+  --color-wine-50: #fef3f3;
+  --color-wine-100: #fde4e6;
+  --color-wine-200: #f3c4c8;
+  --color-wine-300: #e79ea6;
+  --color-wine-400: #d67784;
+  --color-wine-500: #bd5566;
+  --color-wine-600: #953447;
+  --color-wine-700: #6d1f2f;
+  --color-wine-800: #571825;
+  --color-wine-900: #3f0f1c;
+  --color-wine-950: #20070b;
 
-  /* Stone: warm, quiet neutrals that make wine red look expensive without a paper tint. */
-  --color-ground: #f7f4f2;
+  /* Traube: the sidebar and the one dark card per page, like the cover of a wine list. */
+  --color-grape: #3f0f1c;
+  /* Kork: the warm companion. As a colour only on Traube (labels, marks); its light tints
+     are the ground and the quiet surfaces of the app. */
+  --color-cork: #e8d9c0;
+
+  --color-ground: #f9f5f0;
   --color-surface: #ffffff;
-  --color-surface-muted: #eeeae8;
-  --color-line: #e0dbd8;
+  --color-surface-muted: #f0eadf;
+  --color-line: #e3dacc;
   /* Borders that must be seen: inputs, unchecked controls (3:1 on every light surface). */
-  --color-line-strong: #8b827f;
-  --color-mist: #c5bbb8;
+  --color-line-strong: #877f72;
+  /* Quiet text on Traube. */
+  --color-mist: #cfc3ae;
 
-  /* Onyx: a soft black with a breath of wine, for text, the sidebar and the one dark card. */
-  --color-ink: #1b1415;
-  --color-ink-muted: #685e5c;
-  --color-onyx: #170e0f;
+  /* Onyx, as in Rettich: text, and a soft black for the rare neutral dark element. */
+  --color-ink: #14161a;
+  --color-ink-muted: #605a50;
+  --color-onyx: #0d1012;
 
-  /* Gold: only on dark (the key figure on the onyx card, the mark for the best margin). */
-  --color-gold: #dab975;
-  --color-gold-bg: #221a10;
-
-  /* Status, always with text or an icon. Wine is what you tap; vermilion is what is wrong. */
+  /* Status, always with text or an icon. Rotwein is what you tap; vermilion is what is wrong. */
   --color-ok: #1f6b41;
   --color-ok-bg: #e5f6ea;
   --color-soon: #854f06;
@@ -64,42 +67,41 @@
   --color-bar-bg: #f3edfb;
 
   /* Chart series, in this order; told apart by lightness as well as hue. */
-  --color-chart-1: #a02647;
+  --color-chart-1: #953447;
   --color-chart-2: #03769e;
   --color-chart-3: #946d03;
   --color-chart-4: #4d3f98;
   --color-chart-5: #5aa173;
   --color-chart-6: #b07fda;
 
-  --shadow-card: 0 1px 2px rgb(27 20 21 / 0.05), 0 2px 10px rgb(27 20 21 / 0.05);
-  --shadow-float: 0 8px 24px rgb(27 20 21 / 0.12);
+  --shadow-card: 0 1px 2px rgb(63 15 28 / 0.05), 0 2px 10px rgb(63 15 28 / 0.05);
+  --shadow-float: 0 8px 24px rgb(63 15 28 / 0.14);
 }
 
 /*
  * Dark mode follows the device. The same tokens at night: a near-black ground with a trace of
- * wine, lifted surfaces, light text. Fills (buttons, the chosen segment) keep white text; text in
- * brand and status colours gets a lighter tone below.
+ * wine, lifted surfaces, light warm text. Fills (buttons, the chosen segment) keep white text;
+ * text in brand and status colours gets a lighter tone below.
  */
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --color-ground: #0f0b0c;
-    --color-surface: #1d1819;
-    --color-surface-muted: #2c2627;
-    --color-line: #3b3334;
-    --color-line-strong: #7e7573;
-    --color-mist: #b9aead;
-    --color-ink: #f2efee;
-    --color-ink-muted: #b3aaa9;
-    --color-onyx: #342b2c;
+    --color-ground: #110a0b;
+    --color-surface: #1f1718;
+    --color-surface-muted: #2f2525;
+    --color-line: #3f3334;
+    --color-line-strong: #837671;
+    --color-mist: #c1b6a2;
+    --color-ink: #f3f0ea;
+    --color-ink-muted: #b7b0a5;
+    --color-onyx: #2a2e33;
+    --color-grape: #42151d;
     --color-wine-50: #2c171a;
-    --color-wine-100: #411e24;
-    --color-wine-600: #d46e80;
-    --color-wine-700: #971f41;
-    --color-wine-800: #791432;
-    --color-wine-900: #5f0c25;
-    --color-gold: #e0c07b;
-    --color-gold-bg: #2d2213;
+    --color-wine-100: #421f24;
+    --color-wine-600: #d67884;
+    --color-wine-700: #892e3f;
+    --color-wine-800: #6d1f2f;
+    --color-wine-900: #571825;
     --color-ok: #278250;
     --color-ok-bg: #132a1b;
     --color-soon: #f2b772;
@@ -115,7 +117,7 @@
     --color-dry-bg: #2a2313;
     --color-bar: #cab1e8;
     --color-bar-bg: #2a2035;
-    --color-chart-1: #d46e80;
+    --color-chart-1: #d67884;
     --color-chart-2: #2e9cc0;
     --color-chart-3: #c2a03c;
     --color-chart-4: #8a80e0;
@@ -131,7 +133,7 @@
   .text-wine-700,
   .text-wine-800,
   .text-wine-900 {
-    color: #e496a1;
+    color: #e79ea6;
   }
   .text-ok {
     color: #81d39f;

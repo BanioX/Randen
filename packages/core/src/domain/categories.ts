@@ -3,16 +3,21 @@ import type { Diet } from './allergens';
 import type { DateKind } from '../model/primitives';
 
 /** Where a kind of goods is usually kept; an area has exactly one kind. */
-export const AreaKindSchema = z.enum(['cold', 'frozen', 'dry', 'bar', 'other']);
+/**
+ * `station` is a «Posten»: the fridge and shelves of one station of the kitchen (garde-manger,
+ * pâtisserie), where the mise en place of the day is kept.
+ */
+export const AreaKindSchema = z.enum(['cold', 'frozen', 'dry', 'bar', 'station', 'other']);
 export type AreaKind = z.infer<typeof AreaKindSchema>;
 export const AREA_KINDS = AreaKindSchema.options;
 
 export function areaKindLabel(kind: AreaKind): string {
   return {
-    cold: 'Kühlraum',
-    frozen: 'Tiefkühler',
+    cold: 'Kühlzelle',
+    frozen: 'Tiefkühlzelle',
     dry: 'Trockenlager',
-    bar: 'Bar und Keller',
+    bar: 'Bar und Weinkeller',
+    station: 'Posten',
     other: 'Anderes',
   }[kind];
 }

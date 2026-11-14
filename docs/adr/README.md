@@ -12,7 +12,7 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | [0006](0006-data-stays-on-the-device.md) | Betriebsdaten bleiben auf dem Gerät | angenommen | 2026-11-14 |
 | [0007](0007-stock-ledger.md) | Chargen, FEFO und das Lager-Ledger | angenommen | 2026-11-14 |
 | [0008](0008-computed-not-stored.md) | Allergene, Herkunft, Wareneinsatz und Marge werden berechnet, nie gespeichert | angenommen | 2026-11-14 |
-| [0009](0009-wine-red-design.md) | Weinrot, Stein, Onyx; und Zinnober für das, was falsch ist | angenommen | 2026-11-14 |
+| [0009](0009-wine-red-design.md) | Rotwein, Traube, Kork; und Zinnober für das, was falsch ist | angenommen | 2026-11-14 |
 | [0010](0010-du-in-a-business-product.md) | «du» auch im Geschäftsprodukt | angenommen (Albans Bestätigung offen) | 2026-11-14 |
 | [0011](0011-no-partner-integrations.md) | Keine Anbindungen an Kasse, Lieferanten und Gäste-Geräte | angenommen | 2026-11-14 |
 | [0012](0012-facts-with-sources.md) | Rechtliche Angaben nur mit Quelle, Richtwerte heissen Richtwerte | angenommen | 2026-11-14 |

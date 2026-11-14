@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  breakEven,
+  breakEvenPortions,
   dishFigures,
   effectiveUnitPrice,
   foodCostBps,
@@ -166,5 +168,58 @@ describe('prices and margins', () => {
     expect(grossQuantity(850, 8500)).toBe(1000);
     expect(grossQuantity(100, 10_000)).toBe(100);
     expect(grossQuantity(100, 0)).toBe(100);
+  });
+});
+
+describe('break-even', () => {
+  it('finds the revenue at which the contribution covers the fixed costs', () => {
+    // CHF 60'000 net revenue, CHF 18'000 goods: 70 % of every franc is left.
+    // CHF 35'000 fixed costs need CHF 50'000 of revenue.
+    expect(
+      breakEven({
+        fixedCostsRappen: rappen(3_500_000),
+        netRevenueRappen: rappen(6_000_000),
+        costOfGoodsRappen: rappen(1_800_000),
+      }),
+    ).toEqual({
+      contributionBps: 7000,
+      revenueRappen: 5_000_000,
+      gapRappen: 1_000_000,
+      reached: true,
+    });
+    const below = breakEven({
+      fixedCostsRappen: rappen(3_500_000),
+      netRevenueRappen: rappen(4_000_000),
+      costOfGoodsRappen: rappen(1_200_000),
+    });
+    expect(below).toMatchObject({
+      revenueRappen: 5_000_000,
+      gapRappen: -1_000_000,
+      reached: false,
+    });
+  });
+
+  it('has no answer without revenue or without a contribution', () => {
+    const fixed = rappen(100_000);
+    expect(
+      breakEven({
+        fixedCostsRappen: fixed,
+        netRevenueRappen: rappen(0),
+        costOfGoodsRappen: rappen(0),
+      }),
+    ).toBeUndefined();
+    expect(
+      breakEven({
+        fixedCostsRappen: fixed,
+        netRevenueRappen: rappen(1000),
+        costOfGoodsRappen: rappen(1000),
+      }),
+    ).toBeUndefined();
+  });
+
+  it('counts the portions that cover the fixed costs', () => {
+    // CHF 35'000 at CHF 25.14 per portion: 1393 portions (rounded up).
+    expect(breakEvenPortions(rappen(3_500_000), rappen(2514))).toBe(1393);
+    expect(breakEvenPortions(rappen(3_500_000), rappen(0))).toBeUndefined();
   });
 });

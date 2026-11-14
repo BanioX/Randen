@@ -7,8 +7,8 @@ type CardVariant = 'default' | 'tip' | 'premium';
 const variantClasses: Record<CardVariant, string> = {
   default: 'border-transparent bg-surface shadow-card',
   tip: 'border-transparent bg-wine-50 text-wine-900',
-  /* The one dark card per page (the key figure of the cockpit): Onyx with a hairline of silver. */
-  premium: 'border-white/10 bg-onyx text-white shadow-float',
+  /* The one dark card per page (the key figure): Traube, like the cover of a wine list. */
+  premium: 'border-transparent bg-grape text-white shadow-float',
 };
 
 interface CardProps {

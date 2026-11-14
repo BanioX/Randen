@@ -87,10 +87,42 @@ export function wasteReasonLabel(reason: WasteReason): string {
     spoiled: 'Verdorben',
     overproduction: 'Überproduktion',
     prep_waste: 'Rüstabfall',
-    plate_waste: 'Tellerrest',
+    plate_waste: 'Tellerrücklauf',
     damaged: 'Beschädigt',
     other: 'Anderes',
   }[reason];
+}
+
+/**
+ * Where a loss happens, the three kinds a kitchen measures: in the store (expired, spoiled,
+ * damaged), in production (trimmings, too much cooked) and on the plate.
+ */
+export type WasteKind = 'storage' | 'production' | 'plate' | 'other';
+export const WASTE_KINDS: readonly WasteKind[] = ['storage', 'production', 'plate', 'other'];
+
+export function wasteKind(reason: WasteReason): WasteKind {
+  switch (reason) {
+    case 'expired':
+    case 'spoiled':
+    case 'damaged':
+      return 'storage';
+    case 'overproduction':
+    case 'prep_waste':
+      return 'production';
+    case 'plate_waste':
+      return 'plate';
+    case 'other':
+      return 'other';
+  }
+}
+
+export function wasteKindLabel(kind: WasteKind): string {
+  return {
+    storage: 'Lagerverlust',
+    production: 'Produktionsabfall',
+    plate: 'Tellerrücklauf',
+    other: 'Anderes',
+  }[kind];
 }
 
 /** What consumed goods were used for. */

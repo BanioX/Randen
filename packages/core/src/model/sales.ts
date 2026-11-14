@@ -30,12 +30,17 @@ export const SaleSchema = z.object({
 });
 export type Sale = z.infer<typeof SaleSchema>;
 
-/** What the kitchen may spend on goods in a month, and the revenue it plans with («Budget»). */
+/**
+ * What the kitchen may spend on goods in a month, the revenue it plans with and its fixed costs
+ * («Budget»). From these follow the food cost share and the break-even.
+ */
 export const BudgetSchema = z.object({
   ...syncFields,
   month: YearMonthSchema,
   purchaseBudgetRappen: RappenSchema.min(0),
   revenueTargetRappen: RappenSchema.min(0).optional(),
+  /** What the month costs whether a guest comes or not (rent, wages, energy): for the break-even. */
+  fixedCostsRappen: RappenSchema.min(0).optional(),
   targetFoodCostBps: BpsSchema.optional(),
   note: textSchema(300).optional(),
 });

@@ -2,13 +2,13 @@
 
 Kurzfassung der Regeln. Karte des Codes: [`AGENTS.md`](AGENTS.md) · Stand: [`docs/plan.md`](docs/plan.md) · Entscheide: [`docs/adr/`](docs/adr/) · Design: [`docs/design.md`](docs/design.md) · Regeln für Texte und Screens: [`docs/regeln.md`](docs/regeln.md) · Schulden: [`docs/schulden.md`](docs/schulden.md) · Nebenwirkungen: [`docs/nebenwirkungen.md`](docs/nebenwirkungen.md) · Lernbuch: [`docs/lernbuch.md`](docs/lernbuch.md) · Glossar: [`docs/glossar.md`](docs/glossar.md).
 
-**Name:** Randen, mit grossem R. Technische Namen (Pakete `@randen/*`, Datenbank `randen`) bleiben klein. Farbe: Weinrot.
+**Name:** Randen, mit grossem R (Alban, 14.11.2026). Technische Namen (Pakete `@randen/*`, Datenbank `randen`) bleiben klein. Farben: Rotwein `#6D1F2F`, Traube `#3F0F1C`, Kork `#E8D9C0`, Schrift Onyx.
 
-**Produkt:** Local-first PWA für Gastrobetriebe und Grossküchen: Lager mit Ablaufdaten, «Wo ist was?» mit Fotos, Rezepte mit Kalkulation und Marge, Produktion, Menüplan, der Reste verwertet, digitale Speisekarte mit Allergenen, Einkauf, Budget, Zahlen und Selbstkontrolle (HACCP). Product Owner: Alban Hyseni. Randen ist die Schwester von Rettich (Haushalte) und übernimmt dessen Architektur und Lektionen.
+**Produkt:** Local-first PWA für Küchen, vom Imbiss bis zur Grossküche: Lager mit Ablaufdaten, «Wo ist was?» mit Fotos, Rezepte mit Kalkulation und Marge, Produktion, Menüplan, der Reste verwertet, digitale Speisekarte mit Allergenen, Einkauf, Budget, Zahlen und Selbstkontrolle (HACCP). Product Owner: Alban Hyseni. Randen ist die Schwester von Rettich (Haushalte) und übernimmt dessen Architektur und Lektionen.
 
 ## Sprache
 - UI-Texte und Doku: Deutsch (Schweiz), «ss» statt «ß», inklusive Schreibweise (Mitarbeitende, Köch:innen).
-- Die App spricht **eine Person mit «du»** an, nie «ihr» oder «Sie». Ein Test prüft alle Textkataloge.
+- Die App spricht **eine Person mit «du»** an, nie «ihr» oder «Sie» (ADR-0010; «du» oder «Sie» ist ein offener Entscheid von Alban). Ein Test prüft alle Textkataloge.
 - Code, Bezeichner, Commit-Messages: Englisch.
 - Namen ruhig und genau wie bei einer Schweizer Privatbank: «Wareneingang», «Abschreiber», «Inventur», «Deckungsbeitrag». Keine Schlagworte, keine Ausrufezeichen.
 
@@ -17,7 +17,7 @@ Kurzfassung der Regeln. Karte des Codes: [`AGENTS.md`](AGENTS.md) · Stand: [`do
 2. Ein PR = ein Thema, mit Tests und grüner Prüfung. PR-Beschreibung: Was, Warum, Wie getestet.
 3. **Previews für Alban:** Bei jeder sichtbaren UI-Änderung `pnpm preview:shots <route …>` und das `sheet.png` mitschicken.
 4. **Freigabe:** Alles, was kostenlos ist, darf Claude ohne Rückfrage nutzen. **Alban fragen vor:** allem, was Geld kostet, Preisen, allem, was Betriebsdaten das Gerät neu verlassen lässt, und grösseren Abweichungen vom Produkt.
-5. **Strategie bleibt draussen:** Was mit Randen Geld verdienen soll, Preise und Vergleiche mit anderen Produkten stehen nicht in diesem Repo. Hier steht, was gebaut ist und wie.
+5. **Strategie hat ihren Ort:** Dieses Repo ist privat. Was mit Randen Geld verdienen soll, Preise und Vergleiche mit anderen Produkten stehen in `rettich-intern/ideen/gastro.md` (`BanioX/SWELPER`) oder hier unter `docs/intern/`, nie in UI-Texten, Demo-Daten oder Commits, und **nie im öffentlichen Rettich-Repo**. Der Rest der Doku beschreibt, was gebaut ist und wie.
 6. **Lokal zuerst prüfen:** `pnpm check` vor jedem Push; die Zeile `ALL=` lesen und bei `RED` jede Zeile mit `exit=` ungleich 0.
 7. **Wenig technische Schulden:** Abkürzungen in `docs/schulden.md`, Nebenwirkungen in `docs/nebenwirkungen.md` (Test prüft), Lektionen in `docs/lernbuch.md`, Begriffe im Glossar.
 

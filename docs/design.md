@@ -1,72 +1,78 @@
 # Randen – Design-System
 
-> **Leitbild:** die ruhige, genaue Geschäfts-Schwester von Rettich. Weinrot, warmer Stein, Onyx. Premium statt laut.
+> **Leitbild (Alban, 12. und 14.11.2026):** «mehr Dunkelrot, premium wie Rotwein», die ruhige, genaue Geschäfts-Schwester von Rettich. Rotwein, Traube, Kork; Schrift in Onyx. Wirkt wie eine Weinkarte: ruhig, edel, für Profis.
 > Umsetzung: Tokens in `apps/web/src/index.css` (`@theme`), Bausteine in `apps/web/src/ui/` ([`ui-kit.md`](ui-kit.md)), alles zusammen unter `/styleguide`.
 > Kontrast: `pnpm contrast` prüft jedes Paar unten, hell und dunkel.
 
 ## Haltung
 
-- **Premium statt laut:** Weinrot als Marke, warmer Stein als Grund, Onyx für Schrift, Seitenleiste und die eine dunkle Karte. Viel Weissraum, keine Verläufe, keine Neon-Töne.
+- **Premium statt laut:** Rotwein als Marke, Traube für die dunklen Flächen, Kork als warmer Begleiter, Onyx für Schrift. Viel Weissraum, keine Verläufe, keine Neon-Töne.
 - **Ein Werkzeug, kein Prospekt:** Zahlen stehen in Tabellenziffern, Geld rechtsbündig, das Wichtigste zuoberst. Eine Hauptaktion pro Seite.
+- **Vom Imbiss bis zur Grossküche:** Wer allein im Laden steht, kommt ohne Schulung zurecht; wer eine Brigade führt, findet die Tiefe.
 - **Farbe trägt Bedeutung** und steht nie allein: immer mit Text oder Symbol.
 - **Daumen und Schreibtisch:** am Handy wichtige Aktionen unten und Ziele mindestens 44 px; am Tablet und am Schreibtisch nutzt der Inhalt die Breite mit Spalten und Tabellen, nie ein gestrecktes Handy-Layout.
 - **Immer sauber ausgerichtet:** In einer Fläche steht alles auf derselben Achse. Text wird nie angeschnitten.
 
 ## Farben
 
-### Weinrot (OKLCH, Farbton 10°, gleichmässige Helligkeitsschritte)
+### Drei Töne (Albans Brief vom 14.11.2026)
+
+| Ton | Wert | Token | Wofür |
+| --- | --- | --- | --- |
+| **Rotwein** | `#6D1F2F` | `wine-700` | Was du tippst und was gewählt ist: Knöpfe, gewähltes Segment, aktiver Eintrag, der ＋-Knopf. Weiss darauf 11.1:1 |
+| **Traube** | `#3F0F1C` | `grape` (= `wine-900`) | Die dunklen Flächen: Seitenleiste und die eine dunkle Karte pro Seite, wie der Umschlag einer Weinkarte. Weiss darauf 16.2:1 |
+| **Kork** | `#E8D9C0` | `cork` | Der warme Begleiter. Als Farbe nur auf Traube (Beschriftung, Auszeichnung «Beste Marge»); seine hellen Abstufungen sind Grund und ruhige Flächen der App |
+| **Onyx** | `#14161A` | `ink` | Schrift, wie bei Rettich |
+
+### Rotwein (OKLCH, Farbton 12°, gleichmässige Helligkeitsschritte)
 
 | Stufe | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Wert | `#FDF3F4` | `#FCE4E7` | `#EFBEC4` | `#E496A1` | `#D46E80` | `#BF4761` | `#A02647` | `#791432` | `#5F0C25` | `#46071A` | `#2C060F` |
+| Wert | `#FEF3F3` | `#FDE4E6` | `#F3C4C8` | `#E79EA6` | `#D67784` | `#BD5566` | `#953447` | `#6D1F2F` | `#571825` | `#3F0F1C` | `#20070B` |
 
-- **700** `#791432` ist die Aktionsfarbe: Knöpfe, gewähltes Segment, aktiver Eintrag der Navigation, der ＋-Knopf. Weiss darauf 10.7:1.
-- **600** ist der Fokusring, **800** weinroter Text auf hellen Flächen, **50** die Hinweis-Karte, **100** die Pille hinter dem aktiven Tab.
+- **700** ist Rotwein selbst, **900** ist Traube. **600** ist der Fokusring, **800** weinroter Text auf hellen Flächen, **50** die Hinweis-Karte, **100** die Pille hinter dem aktiven Tab.
 
-### Stein und Onyx
+### Kork-Neutrale und Onyx
 
 | Token | Hell | Dunkel | Wofür |
 | --- | --- | --- | --- |
-| `ground` | `#F7F4F2` | `#0F0B0C` | App-Hintergrund |
-| `surface` | `#FFFFFF` | `#1D1819` | Karten, Listen, Tab-Leiste |
-| `surface-muted` | `#EEEAE8` | `#2C2627` | Segment-Spur, Symbol-Kacheln, ruhige Flächen |
-| `line` | `#E0DBD8` | `#3B3334` | Haarlinien |
-| `line-strong` | `#8B827F` | `#7E7573` | Ränder, die man sehen muss: Eingabefelder, leere Kontrollkästchen (3:1) |
-| `mist` | `#C5BBB8` | `#B9AEAD` | Schrift und Linien auf Onyx |
-| `ink` | `#1B1415` | `#F2EFEE` | Haupttext |
-| `ink-muted` | `#685E5C` | `#B3AAA9` | Nebentext |
-| `onyx` | `#170E0F` | `#342B2C` | Seitenleiste und die eine dunkle Karte pro Seite |
+| `ground` | `#F9F5F0` | `#110A0B` | App-Hintergrund: ein Hauch Kork |
+| `surface` | `#FFFFFF` | `#1F1718` | Karten, Listen, Tab-Leiste |
+| `surface-muted` | `#F0EADF` | `#2F2525` | Segment-Spur, Symbol-Kacheln, ruhige Flächen |
+| `line` | `#E3DACC` | `#3F3334` | Haarlinien |
+| `line-strong` | `#877F72` | `#837671` | Ränder, die man sehen muss: Eingabefelder, leere Kontrollkästchen (3:1) |
+| `cork` | `#E8D9C0` | `#E8D9C0` | Beschriftung und Auszeichnung auf Traube |
+| `mist` | `#CFC3AE` | `#C1B6A2` | Ruhige Schrift auf Traube |
+| `ink` | `#14161A` | `#F3F0EA` | Haupttext |
+| `ink-muted` | `#605A50` | `#B7B0A5` | Nebentext |
+| `grape` | `#3F0F1C` | `#42151D` | Seitenleiste und die eine dunkle Karte pro Seite |
 
-Der Stein ist ein warmes Grau mit sehr wenig Farbe: Er lässt Weinrot teuer wirken, ohne nach Papier auszusehen.
-
-### Gold
-
-`gold` `#DAB975` steht **nur auf Dunkel**: als kleine Auszeichnung auf der Onyx-Karte (die Leitzahl) und als Marke «Beste Marge» (`gold` auf `gold-bg`). Nie als Fläche, nie auf Weiss.
+Kork gibt der App die Wärme einer Weinkarte, ohne nach Papier auszusehen: Karten bleiben weiss, nur der Grund und die ruhigen Flächen tragen den Ton.
 
 ### Eine Bedeutung pro Farbe
 
 | Farbe | Bedeutet | Token |
 | --- | --- | --- |
-| **Weinrot** | Was du tippst und was gewählt ist | `wine-700` |
+| **Rotwein** | Was du tippst und was gewählt ist | `wine-700` |
 | **Zinnober** | Was falsch ist: abgelaufen, ausserhalb der Temperatur, abgeschrieben, über dem Ziel | `danger` `#C33701`, Text auf `today-bg` |
 | **Bernstein** | Bald: läuft in 1 bis 3 Tagen ab, knapp über dem Ziel | `soon` auf `soon-bg` |
 | **Grün** | In Ordnung: Temperatur stimmt, Marge im Ziel | `ok` auf `ok-bg` |
-| **Onyx** | Ergebnis und Leitzahl | `onyx` |
-| **Stein** | Alles andere | `surface-muted`, `ink-muted` |
+| **Traube** | Ergebnis und Leitzahl: die eine dunkle Karte | `grape` |
+| **Kork** | Alles andere | `surface-muted`, `ink-muted` |
 
-**Die Marke ist rot, darum gilt:** Weinrot ist, was du tippst; Zinnober ist, was falsch ist. Zinnober ist klar heller und oranger als Weinrot (Farbton 36° statt 10°) und steht immer mit Wort oder Symbol («abgelaufen», Warndreieck). Ein Löschen-Knopf ist nur im Bestätigungsdialog zinnoberrot.
+**Die Marke ist rot, darum gilt:** Rotwein ist, was du tippst; Zinnober ist, was falsch ist. Zinnober ist klar heller und oranger als Rotwein (Farbton 36° statt 12°) und steht immer mit Wort oder Symbol («abgelaufen», Warndreieck). Ein Löschen-Knopf ist nur im Bestätigungsdialog zinnoberrot.
 
 ### Lagerbereiche
 
-Je ein Ton, nur im Symbol und im Chip, nie als Kartenfläche: Kühlraum `cold` (Petrol), Tiefkühler `frozen` (Blau), Trockenlager `dry` (Weizen), Bar und Keller `bar` (Pflaume).
+Je ein Ton, nur im Symbol und im Chip, nie als Kartenfläche: Kühlzelle `cold` (Petrol), Tiefkühlzelle `frozen` (Blau), Trockenlager `dry` (Weizen), Bar und Weinkeller `bar` (Pflaume). Posten und Anderes sind neutral.
 
 ### Diagramme
 
-Sechs Reihen in fester Folge (`chart-1` bis `chart-6`): Weinrot, Petrol, Senf, Indigo, Salbei, Flieder. Sie unterscheiden sich auch in der Helligkeit, nicht nur im Farbton. Eine einzelne Reihe ist immer Weinrot. Status-Diagramme (im Ziel, bald, darüber) nutzen die Status-Farben. Im Dunkelmodus sind alle Reihen heller.
+Sechs Reihen in fester Folge (`chart-1` bis `chart-6`): Rotwein, Petrol, Senf, Indigo, Salbei, Flieder. Sie unterscheiden sich auch in der Helligkeit, nicht nur im Farbton. Eine einzelne Reihe ist immer Rotwein. Status-Diagramme (im Ziel, bald, darüber) nutzen die Status-Farben. Im Dunkelmodus sind alle Reihen heller.
 
 ### Dunkelmodus
 
-Folgt dem Gerät (`prefers-color-scheme`). Dieselben Tokens bekommen nachts andere Werte; Flächen mit weisser Schrift bleiben Flächen, Text in Weinrot, Grün und Zinnober wird heller (`#E496A1`, `#81D39F`, `#FD9376`). Schatten werden zu einer feinen hellen Kante.
+Folgt dem Gerät (`prefers-color-scheme`). Dieselben Tokens bekommen nachts andere Werte; Flächen mit weisser Schrift bleiben Flächen, Text in Rotwein, Grün und Zinnober wird heller (`#E79EA6`, `#81D39F`, `#FD9376`). Schatten werden zu einer feinen hellen Kante.
 
 ## Schrift
 
@@ -93,13 +99,13 @@ Systemschrift (SF Pro, Roboto, Segoe UI): Es wird nichts geladen, die Grössen i
 | --- | --- | --- | --- |
 | 390 px | Handy | Tab-Leiste unten mit fünf Zielen: Cockpit, Lager, ＋ Erfassen, Rezepte, Mehr | eine Spalte, höchstens `max-w-xl` |
 | 820 px | Tablet hoch | Tab-Leiste | eine breite Spalte (`max-w-3xl`), Kennzahlen zu viert |
-| ab 1024 px | Tablet quer, Schreibtisch | Seitenleiste in Onyx, 256 px, mit allen Bereichen in Gruppen | bis `max-w-6xl`, Karten nebeneinander, Tabellen mit allen Spalten |
+| ab 1024 px | Tablet quer, Schreibtisch | Seitenleiste in Traube, 256 px, mit allen Bereichen in Gruppen | bis `max-w-6xl`, Karten nebeneinander, Tabellen mit allen Spalten |
 
 Die Seitenleiste gruppiert: Übersicht · Küche (Rezepte, Produktion, Menüplan, Speisekarte) · Lager (Lager, Einkauf, Wo ist was?, Artikel, Lieferanten) · Kontrolle (Zahlen, Selbstkontrolle) · Betrieb.
 
 ## App-Symbol
 
-Eine weisse Rande mit rosa Schulter und drei Blättern auf Weinrot `#791432` (`apps/web/public/icon.svg`): die Schwester des Rettichs auf Smaragd. Die PNG-Symbole entstehen mit `node apps/web/scripts/icons.ts`.
+Eine weisse Rande mit rosa Schulter und drei Blättern auf Rotwein `#6D1F2F` (`apps/web/public/icon.svg`): die Schwester des Rettichs auf Smaragd. Die PNG-Symbole entstehen mit `node apps/web/scripts/icons.ts`.
 
 ## Druck
 

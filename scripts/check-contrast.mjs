@@ -25,7 +25,7 @@ if (themeBlock === undefined || darkBlock === undefined) {
 const light = tokens(themeBlock);
 const dark = new Map([...light, ...tokens(darkBlock)]);
 /** Text colours the dark block sets on classes instead of tokens. */
-const darkText = { wine: '#e496a1', ok: '#81d39f', danger: '#fd9376' };
+const darkText = { wine: '#e79ea6', ok: '#81d39f', danger: '#fd9376' };
 for (const value of Object.values(darkText)) {
   if (!css.includes(value)) {
     console.error(`Dark text colour ${value} is not in index.css any more: update this script`);
@@ -87,11 +87,11 @@ for (const [mode, t, text] of [
   check(mode, 'white on wine-800 (hover)', WHITE, t.get('wine-800'), 7);
   check(mode, 'white on danger (button)', WHITE, t.get('danger'), 4.5);
   check(mode, 'white on ok (button)', WHITE, t.get('ok'), 4.5);
-  check(mode, 'white on onyx (sidebar, dark card)', WHITE, t.get('onyx'), 7);
-  check(mode, 'mist on onyx', t.get('mist'), t.get('onyx'), 4.5);
-  check(mode, 'gold on onyx', t.get('gold'), t.get('onyx'), 4.5);
-  check(mode, 'gold on gold-bg (chip)', t.get('gold'), t.get('gold-bg'), 4.5);
-  check(mode, 'white on wine-700 vs onyx (active nav)', t.get('wine-700'), t.get('onyx'), 1.3);
+  check(mode, 'white on grape (sidebar, dark card)', WHITE, t.get('grape'), 7);
+  check(mode, 'cork on grape', t.get('cork'), t.get('grape'), 7);
+  check(mode, 'mist on grape', t.get('mist'), t.get('grape'), 4.5);
+  check(mode, 'wine-700 pill on grape (active entry)', t.get('wine-700'), t.get('grape'), 1.3);
+  check(mode, 'white on onyx', WHITE, t.get('onyx'), 7);
   // Tints with their text.
   check(mode, 'wine text on wine-50 (tip card)', text.wine, t.get('wine-50'), 4.5);
   check(mode, 'wine text on wine-100 (active tab)', text.wine, t.get('wine-100'), 4.5);

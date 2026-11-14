@@ -223,3 +223,49 @@ export function dishFigures(input: {
     suggestedPriceRappen: suggested,
   };
 }
+
+export interface BreakEven {
+  /** Share of every franc of net revenue that is left after the goods, in basis points. */
+  contributionBps: number;
+  /** Net revenue at which the contribution covers the fixed costs. */
+  revenueRappen: Rappen;
+  /** How far the revenue so far is from that point: negative below, positive above. */
+  gapRappen: Rappen;
+  reached: boolean;
+}
+
+/**
+ * Break-even: from which net revenue the kitchen earns money. The contribution is what is left
+ * of the revenue after the cost of goods; the break-even is where it equals the fixed costs.
+ * Undefined while there is no revenue or the goods cost as much as they bring in.
+ */
+export function breakEven(input: {
+  fixedCostsRappen: Rappen;
+  netRevenueRappen: Rappen;
+  costOfGoodsRappen: Rappen;
+}): BreakEven | undefined {
+  const contribution = input.netRevenueRappen - input.costOfGoodsRappen;
+  if (input.netRevenueRappen <= 0 || contribution <= 0) {
+    return undefined;
+  }
+  const revenue = rappen(
+    Math.ceil((input.fixedCostsRappen * input.netRevenueRappen) / contribution),
+  );
+  return {
+    contributionBps: Math.round((contribution * 10_000) / input.netRevenueRappen),
+    revenueRappen: revenue,
+    gapRappen: rappen(input.netRevenueRappen - revenue),
+    reached: input.netRevenueRappen >= revenue,
+  };
+}
+
+/** How many portions at an average contribution margin cover the fixed costs. */
+export function breakEvenPortions(
+  fixedCostsRappen: Rappen,
+  marginPerPortionRappen: Rappen,
+): number | undefined {
+  if (marginPerPortionRappen <= 0) {
+    return undefined;
+  }
+  return Math.ceil(fixedCostsRappen / marginPerPortionRappen);
+}

@@ -95,7 +95,7 @@ describe('shared reads', () => {
     const t = await createTestContext();
     const kitchen = await seedKitchen(t);
     const { areas } = await t.useCases['lookup.areas']({ businessId: t.businessId });
-    expect(areas.map((area) => area.name)).toEqual(['Kühlraum', 'Tiefkühler', 'Trockenlager']);
+    expect(areas.map((area) => area.name)).toEqual(['Kühlzelle', 'Tiefkühlzelle', 'Trockenlager']);
     expect(areas[0]).toMatchObject({ kind: 'cold', minDeciC: 0, maxDeciC: 50 });
     expect(areas[0]?.spots).toEqual([
       { id: kitchen.spots.meatDrawer.id, name: 'Schublade Fleisch' },
@@ -199,7 +199,7 @@ describe('ensureLocalBusiness', () => {
   const names = {
     business: 'Mein Betrieb',
     member: 'Ich',
-    areas: { cold: 'Kühlraum', frozen: 'Tiefkühler', dry: 'Trockenlager' },
+    areas: { cold: 'Kühlzelle', frozen: 'Tiefkühlzelle', dry: 'Trockenlager' },
   };
 
   it('creates a business with one person and three areas on the first start, once', async () => {

@@ -28,7 +28,7 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
 }
 
 /**
- * The frame of the app. From 1024 px a dark sidebar shows every area (office, tablet on the
+ * The frame of the app. From 1024 px a sidebar in Traube shows every area (office, tablet on the
  * pass); below, five tabs sit at the bottom as on the iPhone and the rest hangs off «Mehr».
  * No brand bar over the content: the large title leads each page.
  */
@@ -49,7 +49,7 @@ export function AppShell() {
 
       <nav
         aria-label={messages.navLabel}
-        className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col bg-onyx px-3 pt-[calc(1.25rem+env(safe-area-inset-top))] pb-4 lg:flex print:hidden"
+        className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col bg-grape px-3 pt-[calc(1.25rem+env(safe-area-inset-top))] pb-4 lg:flex print:hidden"
       >
         <Link to={paths.cockpit()} className="mb-5 flex items-center gap-3 rounded-xl px-3 py-1">
           <img src="/icon.svg" alt="" className="h-9 w-9 rounded-[0.6rem]" />
@@ -57,7 +57,7 @@ export function AppShell() {
             <span className="block text-lg leading-tight font-semibold text-white">
               {messages.appName}
             </span>
-            <span className="block truncate text-xs text-mist">{business.name}</span>
+            <span className="block truncate text-xs text-cork">{business.name}</span>
           </span>
         </Link>
         <div className="flex-1 space-y-4 overflow-y-auto">

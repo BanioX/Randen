@@ -189,8 +189,8 @@ export async function seedKitchen(t: TestContext): Promise<Kitchen> {
   const area = (name: string, kind: StorageArea['kind'], sortOrder: number, range: object) =>
     StorageAreaSchema.parse({ id: ids.next(), ...base, name, kind, sortOrder, ...range });
   const areas = {
-    cold: area('Kühlraum', 'cold', 0, { minDeciC: 0, maxDeciC: 50 }),
-    frozen: area('Tiefkühler', 'frozen', 1, { maxDeciC: -180 }),
+    cold: area('Kühlzelle', 'cold', 0, { minDeciC: 0, maxDeciC: 50 }),
+    frozen: area('Tiefkühlzelle', 'frozen', 1, { maxDeciC: -180 }),
     dry: area('Trockenlager', 'dry', 2, {}),
   };
   const spot = (name: string, areaId: Id, sortOrder: number) =>

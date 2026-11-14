@@ -51,7 +51,7 @@ export const messages = {
   defaults: {
     businessName: 'Mein Betrieb',
     memberName: 'Ich',
-    areas: { cold: 'Kühlraum', frozen: 'Tiefkühler', dry: 'Trockenlager' },
+    areas: { cold: 'Kühlzelle', frozen: 'Tiefkühlzelle', dry: 'Trockenlager' },
   },
   placeholder: {
     text: 'Dieser Bereich ist in Arbeit.',
