@@ -21,7 +21,8 @@
     "e2e": "pnpm --filter @randen/web e2e",
     "preview:shots": "pnpm --filter @randen/web preview:shots",
     "licenses:check": "node scripts/check-licenses.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "contrast": "node scripts/check-contrast.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

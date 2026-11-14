@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#6f1d33"/><circle cx="256" cy="300" r="120" fill="#fbf3f4"/><path d="M256 180c-10-50 10-90 50-110-5 45-15 80-50 110zM256 180c-40-25-60-60-55-105 40 20 55 55 55 105z" fill="#dc9ba6"/><path d="M256 420v50" stroke="#fbf3f4" stroke-width="14" stroke-linecap="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Randen">
+  <rect width="512" height="512" rx="112" fill="#791432" />
+  <path d="M247 200c-40-14-74-44-86-86 40 4 76 34 86 86z" fill="#e496a1" />
+  <path d="M265 200c40-14 74-44 86-86-40 4-76 34-86 86z" fill="#e496a1" />
+  <path d="M256 198c-24-40-24-90 0-128 24 38 24 88 0 128z" fill="#fce4e7" />
+  <path d="M256 190c72 0 126 50 126 116 0 60-48 96-96 108-16 4-24 22-28 44-1 5-3 5-4 0-4-22-12-40-28-44-48-12-96-48-96-108 0-66 54-116 126-116z" fill="#f8f4f0" />
+  <path d="M148 262c18-46 58-72 108-72s90 26 108 72c-32-18-68-26-108-26s-76 8-108 26z" fill="#efbec4" />
+  <g fill="none" stroke="#e0cfc9" stroke-width="7" stroke-linecap="round">
+    <path d="M170 304q22 9 44 4" />
+    <path d="M342 334q-20 9-42 5" />
+    <path d="M206 366q16 7 30 3" />
+  </g>
+</svg>

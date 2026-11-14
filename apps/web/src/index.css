@@ -1,64 +1,145 @@
 @import 'tailwindcss';
 
 /*
- * Randen design tokens (provisional values; docs/design.md holds the checked palette).
- * Weinrot, warm neutrals, Onyx. Every text/background pair meets WCAG AA.
+ * Randen design tokens (docs/design.md, ADR-0009). Weinrot, warm stone neutrals, Onyx; one gold
+ * accent on dark. Every text/background pair meets WCAG AA; `pnpm contrast` proves it.
  */
 @theme {
+  /* System font, as on Apple devices: nothing to download. */
   --font-sans:
     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     sans-serif;
   --font-display: var(--font-sans);
 
-  --color-wine-50: #fbf3f4;
-  --color-wine-100: #f6e3e6;
-  --color-wine-200: #ecc5cb;
-  --color-wine-300: #dc9ba6;
-  --color-wine-400: #c66b7b;
-  --color-wine-500: #a94558;
-  --color-wine-600: #8c2f44;
-  --color-wine-700: #6f1d33;
-  --color-wine-800: #571527;
-  --color-wine-900: #3f0e1c;
-  --color-wine-950: #260711;
+  /* Weinrot: a deep Bordeaux built in OKLCH (hue 10) with even lightness steps.
+     700 is what you tap and what is chosen (white on it 10.7:1), 600 the focus ring,
+     800 wine-coloured text on light surfaces. */
+  --color-wine-50: #fdf3f4;
+  --color-wine-100: #fce4e7;
+  --color-wine-200: #efbec4;
+  --color-wine-300: #e496a1;
+  --color-wine-400: #d46e80;
+  --color-wine-500: #bf4761;
+  --color-wine-600: #a02647;
+  --color-wine-700: #791432;
+  --color-wine-800: #5f0c25;
+  --color-wine-900: #46071a;
+  --color-wine-950: #2c060f;
 
-  --color-ground: #f6f4f1;
+  /* Stone: warm, quiet neutrals that make wine red look expensive without a paper tint. */
+  --color-ground: #f7f4f2;
   --color-surface: #ffffff;
-  --color-surface-muted: #ece9e4;
-  --color-line: #dedad3;
-  --color-mist: #c4bdb6;
-  --color-ink: #1a1614;
-  --color-ink-muted: #645d57;
-  --color-onyx: #151112;
-  --color-gold: #c9a45c;
-  --color-gold-bg: #f7efdd;
+  --color-surface-muted: #eeeae8;
+  --color-line: #e0dbd8;
+  /* Borders that must be seen: inputs, unchecked controls (3:1 on every light surface). */
+  --color-line-strong: #8b827f;
+  --color-mist: #c5bbb8;
 
-  --color-ok: #1f6b45;
-  --color-ok-bg: #e6f3ec;
-  --color-soon: #8a4b0f;
-  --color-soon-bg: #fff1df;
-  --color-today: #c2410c;
-  --color-today-bg: #fdebe0;
-  --color-danger: #c2410c;
+  /* Onyx: a soft black with a breath of wine, for text, the sidebar and the one dark card. */
+  --color-ink: #1b1415;
+  --color-ink-muted: #685e5c;
+  --color-onyx: #170e0f;
 
-  --color-cold: #2a6b8c;
-  --color-cold-bg: #e6f3f8;
-  --color-frozen: #3d4f9f;
-  --color-frozen-bg: #e9ecfa;
-  --color-dry: #8a5f14;
-  --color-dry-bg: #f8f0dc;
-  --color-bar: #6b4a7a;
-  --color-bar-bg: #f1eaf5;
+  /* Gold: only on dark (the key figure on the onyx card, the mark for the best margin). */
+  --color-gold: #dab975;
+  --color-gold-bg: #221a10;
 
-  --color-chart-1: #6f1d33;
-  --color-chart-2: #2a6b8c;
-  --color-chart-3: #c9a45c;
-  --color-chart-4: #1f6b45;
-  --color-chart-5: #6b4a7a;
-  --color-chart-6: #8a8580;
+  /* Status, always with text or an icon. Wine is what you tap; vermilion is what is wrong. */
+  --color-ok: #1f6b41;
+  --color-ok-bg: #e5f6ea;
+  --color-soon: #854f06;
+  --color-soon-bg: #fdf1dc;
+  --color-danger: #c33701;
+  --color-today: #c33701;
+  --color-today-bg: #ffeee8;
 
-  --shadow-card: 0 1px 2px rgb(26 22 20 / 0.05), 0 2px 10px rgb(26 22 20 / 0.05);
-  --shadow-float: 0 8px 24px rgb(26 22 20 / 0.1);
+  /* Storage areas: cold room, freezer, dry store, bar and cellar. */
+  --color-cold: #13676f;
+  --color-cold-bg: #e2f5f7;
+  --color-frozen: #315a97;
+  --color-frozen-bg: #e8f1fe;
+  --color-dry: #6c5824;
+  --color-dry-bg: #f6f0e0;
+  --color-bar: #624581;
+  --color-bar-bg: #f3edfb;
+
+  /* Chart series, in this order; told apart by lightness as well as hue. */
+  --color-chart-1: #a02647;
+  --color-chart-2: #03769e;
+  --color-chart-3: #946d03;
+  --color-chart-4: #4d3f98;
+  --color-chart-5: #5aa173;
+  --color-chart-6: #b07fda;
+
+  --shadow-card: 0 1px 2px rgb(27 20 21 / 0.05), 0 2px 10px rgb(27 20 21 / 0.05);
+  --shadow-float: 0 8px 24px rgb(27 20 21 / 0.12);
+}
+
+/*
+ * Dark mode follows the device. The same tokens at night: a near-black ground with a trace of
+ * wine, lifted surfaces, light text. Fills (buttons, the chosen segment) keep white text; text in
+ * brand and status colours gets a lighter tone below.
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-ground: #0f0b0c;
+    --color-surface: #1d1819;
+    --color-surface-muted: #2c2627;
+    --color-line: #3b3334;
+    --color-line-strong: #7e7573;
+    --color-mist: #b9aead;
+    --color-ink: #f2efee;
+    --color-ink-muted: #b3aaa9;
+    --color-onyx: #342b2c;
+    --color-wine-50: #2c171a;
+    --color-wine-100: #411e24;
+    --color-wine-600: #d46e80;
+    --color-wine-700: #971f41;
+    --color-wine-800: #791432;
+    --color-wine-900: #5f0c25;
+    --color-gold: #e0c07b;
+    --color-gold-bg: #2d2213;
+    --color-ok: #278250;
+    --color-ok-bg: #132a1b;
+    --color-soon: #f2b772;
+    --color-soon-bg: #34220b;
+    --color-danger: #cf3d07;
+    --color-today: #cf3d07;
+    --color-today-bg: #3f1a12;
+    --color-cold: #82ccd5;
+    --color-cold-bg: #0b292c;
+    --color-frozen: #9ec0f2;
+    --color-frozen-bg: #192639;
+    --color-dry: #d3bb82;
+    --color-dry-bg: #2a2313;
+    --color-bar: #cab1e8;
+    --color-bar-bg: #2a2035;
+    --color-chart-1: #d46e80;
+    --color-chart-2: #2e9cc0;
+    --color-chart-3: #c2a03c;
+    --color-chart-4: #8a80e0;
+    --color-chart-5: #4fae7b;
+    --color-chart-6: #c29be8;
+    --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.05);
+    --shadow-float: 0 0 0 1px rgb(255 255 255 / 0.07), 0 8px 24px rgb(0 0 0 / 0.55);
+  }
+
+  /* Wine, green and vermilion as TEXT need a lighter tone on the dark ground; as a fill with
+     white text (buttons, the chosen segment) the tokens above apply. */
+  .text-wine-600,
+  .text-wine-700,
+  .text-wine-800,
+  .text-wine-900 {
+    color: #e496a1;
+  }
+  .text-ok {
+    color: #81d39f;
+  }
+  .text-danger,
+  .text-today {
+    color: #fd9376;
+  }
 }
 
 @layer base {

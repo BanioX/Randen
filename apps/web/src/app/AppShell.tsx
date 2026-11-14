@@ -17,8 +17,8 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
       aria-current={active ? 'page' : undefined}
       className={`flex min-h-11 items-center gap-3 rounded-xl px-3 text-[0.9375rem] transition-colors ${
         active
-          ? 'bg-white/12 font-semibold text-white'
-          : 'font-medium text-mist hover:bg-white/6 hover:text-white'
+          ? 'bg-wine-700 font-semibold text-white'
+          : 'font-medium text-mist hover:bg-white/8 hover:text-white'
       }`}
     >
       <Icon size={20} strokeWidth={active ? 2 : 1.75} aria-hidden="true" />
