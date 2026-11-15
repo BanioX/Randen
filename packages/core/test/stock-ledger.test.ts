@@ -209,6 +209,26 @@ describe('stock ledger', () => {
     ).rejects.toMatchObject({ code: 'invalid' });
   });
 
+  it('names the sale a single lot went into, so a lot can be traced to a dish', async () => {
+    const { t, kitchen, ledger, today } = await setup();
+    const saleId = t.ids.next();
+    await ledger.consumeLot({
+      businessId: t.businessId,
+      lotId: kitchen.lots.salmon.id,
+      quantity: 180,
+      on: today,
+      purpose: 'sale',
+      saleId,
+    });
+    const movements = await t.storage.movements.ofBusiness(t.businessId);
+    expect(movements.find((movement) => movement.saleId === saleId)).toMatchObject({
+      lotId: kitchen.lots.salmon.id,
+      type: 'consumption',
+      quantity: -180,
+    });
+    await expectLedgerBalanced(t);
+  });
+
   it('follows a count in both directions', async () => {
     const { t, kitchen, ledger, today } = await setup();
     const less = await ledger.adjust({

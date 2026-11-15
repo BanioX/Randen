@@ -42,6 +42,7 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Verkauf | `Sale` | Verkaufte Portionen eines Gerichts an einem Tag, oder Umsatz ohne Rezept |
 | Budget | `Budget` | Was der Betrieb in einem Monat für Ware ausgeben will, sein Umsatzziel und seine Fixkosten |
 | Break-even | `breakEven` | Der Umsatz, ab dem der Deckungsbeitrag die Fixkosten deckt: ab hier verdient die Küche Geld |
+| Personalessen | `ConsumptionPurpose 'staff'` | Was das Team isst; eine Entnahme aus dem Lager, kein Verkauf |
 | Demo-Betrieb | `demo.load` | Eine eingerichtete Beispielküche zum Ausprobieren, mit erfundenen Namen und Preisen |
 | Gewinner, Renner, Schläfer, Verlierer | `MenuClass` | Die vier Felder des Menu-Engineerings: beliebt und rentabel, beliebt, rentabel, weder noch |
 | Selbstkontrolle | `haccp` | Temperaturen, Reinigungsplan, Wareneingangskontrolle |

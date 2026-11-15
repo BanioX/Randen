@@ -288,11 +288,16 @@ export function createStockLedger(ctx: AppContext) {
     on: LocalDate;
     purpose: ConsumptionPurpose;
     note?: string | undefined;
+    /** The sale or production this lot went into, for tracing a lot to a dish. */
+    saleId?: Id | undefined;
+    productionId?: Id | undefined;
   }): Promise<{ valueRappen: Rappen }> {
     const lot = await lotWithAtLeast(input.businessId, input.lotId, input.quantity);
     const booked = await book(lot, lot.quantity - input.quantity, 'consumption', input.on, {
       purpose: input.purpose,
       note: input.note,
+      saleId: input.saleId,
+      productionId: input.productionId,
     });
     return { valueRappen: rappen(0 - booked.valueRappen) };
   }
