@@ -114,6 +114,7 @@ export function createMemoryStorage(): Storage {
   ) as unknown as { [TName in TableName]: Storage[TName] };
 
   function purge(businessId: Id): Promise<void> {
+    commandRows.clear();
     for (const rows of tables) {
       for (const [key, value] of rows) {
         const row = value as { id?: unknown; businessId?: unknown };

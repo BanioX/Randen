@@ -61,6 +61,8 @@ export function dexieStorage(db: RandenDb): Storage {
           await db.rows(name).where('businessId').equals(businessId).delete();
         }
         await db.events.where('businessId').equals(businessId).delete();
+        // The command log keeps the results of commands, with names; see the port.
+        await db.commands.clear();
         await db.businesses.delete(businessId);
       });
     },

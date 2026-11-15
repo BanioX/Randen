@@ -102,7 +102,10 @@ export type Storage = { [TName in TableName]: RecordStore<Tables[TName]> } & {
   events: EventLog;
   commands: CommandLog;
   /**
-   * Removes a business for good: every row of every table, its events and the business itself.
+   * Removes a business for good: every row of every table, its events, the business itself and
+   * the command log of the device. The log keeps the results of commands, which carry names of
+   * the business and its team, so «alles löschen» must empty it too. A device holds one business
+   * (ADR-0003); commands of another business are retried only after such a reset.
    * The one hard delete there is; it serves «alles löschen» and the import of a backup, which
    * replaces what is on the device (ADR-0006).
    */
