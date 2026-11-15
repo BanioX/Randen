@@ -1,6 +1,6 @@
 # Randen – Stand und Plan
 
-> **Stand 15.11.2026:** Version 0.1.0 im Aufbau. Fundament, Design, UI-Kit, Werkzeuge, Artikel, Lager, Rezepte mit Kalkulation, Betriebsarten und Funktionen, Cockpit und Preisänderung stehen; Einkauf, Produktion, Betrieb und der Demo-Betrieb sind in Arbeit.
+> **Stand 15.11.2026:** Version 0.1.0 im Aufbau. Gebaut sind Fundament, Design, UI-Kit, Werkzeuge, Artikel, Lager, Rezepte mit Kalkulation, Betriebsarten und Funktionen, Cockpit, Preisänderung, Einkauf, Produktion und Menüplan, Betrieb mit Sicherung und der Demo-Betrieb. In Arbeit sind Speisekarte, Zahlen, Selbstkontrolle und Auslieferung.
 
 Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. Entscheide stehen in den [ADRs](adr/README.md), Regeln in [`regeln.md`](regeln.md).
 
@@ -21,16 +21,18 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | Artikel und Lieferanten | Stammdaten mit Allergenen, Herkunft, Ausbeute, Mindest- und Sollbestand; «Mehrere auf einmal»; Preisverlauf |
 | Lager | Bestand nach Charge, Ablauf zuerst, Wareneingang mit Kontrolle an der Tür, Abschreiber, Entnahme, Verschieben, Inventur, Journal |
 | Betriebsarten und Funktionen | 14 Betriebsarten, 11 schaltbare Funktionen, «Randen einrichten» mit Fragen nach Betriebsart, Ware, Team und Ort des Essens; «Betrieb › Funktionen»; Ansicht pro Gerät; Modell für Menülinien, Mahlzeiten, Tellerrücklauf, Märkte (ADR-0015) |
+| Einkauf | Einkaufsliste für den Markt, Bestellvorschlag je Lieferant, Bestellungen, Einkauf im Markt mit Beleg, der aufgehen muss (Depot, Privates, Rabatt), Preisbeobachtung (ADR-0015) |
+| Produktion und Menüplan | Produktionsläufe mit Charge und Etikett, Menüplan mit Menülinien und Allergenen je Tag, Woche füllen, Mahlzeiten zählen, Tellerrücklauf in Gramm (ADR-0015) |
+| Betrieb, Team, Sicherung | Betrieb bearbeiten, Team, Sicherung mit optionalem Passwort und Wiederherstellen mit Prüfung, Alles löschen, Über Randen (ADR-0017) |
 | Cockpit | Heute: was verfällt, was heute fällig ist, Temperaturen, Selbstkontrolle, Mindestbestand; Lagerwert, Weggeworfen diesen Monat, Suche über Artikel, Rezepte, Lieferanten und Plätze; Erfassen nach Funktionen (ADR-0015) |
-| Doku | Entscheide 0001 bis 0016, Regeln für Texte und Screens, Fakten mit Quellen, Glossar, Schulden, Lernbuch, Vorschau-Links |
+| Doku | Entscheide 0001 bis 0017, Regeln für Texte und Screens, Fakten mit Quellen, Glossar, Schulden, Lernbuch, Vorschau-Links |
 
 ## In Arbeit
 
 | Teil | Inhalt |
 | --- | --- |
-| Module, Welle 1 | Wo ist was? mit Fotos und Rundgang · Rezepte mit Kalkulation, Deklaration und Kochansicht |
-| Module, Welle 2 | Produktion und Menüplan mit Menülinien, Znüni und Zvieri, Allergenen je Linie und «Reste verwerten» · Speisekarte mit Gästeansicht · Einkauf mit Bestellvorschlag und Einkaufsliste für den Markt, Beleg mit Depot und Privatem · Verkäufe, Mahlzeiten, Tellerrücklauf, Margen, Menu-Engineering · Zahlen mit Budget, Wareneinsatz pro Mahlzeit, Break-even, Abschreiber nach Art, Monatsbericht · Selbstkontrolle · Betrieb, Team, Sicherung · Demo-Bistro |
-| Danach | Auslieferung an Aussenstellen und Anlässe · Schritte «Kühlgeräte» und «Menülinien» beim Einrichten · Cook-&-Chill-Kontrollen · Beleg fotografieren und lesen (aus Rettich) |
+| Module, Welle 3 | Speisekarte mit Gästeansicht und Allergenliste · Zahlen mit Wareneinsatz pro Mahlzeit, Budget, Break-even, Abschreiber nach Art, Monatsbericht (die Definition ist offen, siehe unten) · Selbstkontrolle mit Temperaturen und Reinigungsplan · Auslieferung an Aussenstellen und Anlässe |
+| Demo-Betrieb | Gebaut, aber die Verweise auf Zahlen, Selbstkontrolle und Auslieferung führen noch auf Platzhalter |
 
 ## Danach
 
