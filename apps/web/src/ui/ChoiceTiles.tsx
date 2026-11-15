@@ -67,7 +67,8 @@ const grid = (columns: 1 | 2) => `grid gap-2.5 ${columns === 2 ? 'md:grid-cols-2
 
 /**
  * Large choices for a question that stands alone on a screen, such as the steps of «Randen
- * einrichten»: a tile per answer with a line of explanation, easy to hit with a thumb. Native
+ * einrichten»: the question as a title, a tile per answer with a line of explanation, easy to
+ * hit with a thumb. Native
  * radio buttons underneath, so arrow keys and screen readers work as usual.
  */
 export function ChoiceTiles<TValue extends string>({
@@ -82,7 +83,13 @@ export function ChoiceTiles<TValue extends string>({
 }: ChoiceTilesProps<TValue>) {
   const name = useId();
   return (
-    <FieldGroup legend={legend} hideLegend={hideLegend} hint={hint} error={error}>
+    <FieldGroup
+      legend={legend}
+      legendStyle="title"
+      hideLegend={hideLegend}
+      hint={hint}
+      error={error}
+    >
       <div className={grid(columns)}>
         {options.map((option) => {
           const checked = option.value === value;
@@ -127,7 +134,13 @@ export function MultiChoiceTiles<TValue extends string>({
 }: MultiChoiceTilesProps<TValue>) {
   const name = useId();
   return (
-    <FieldGroup legend={legend} hideLegend={hideLegend} hint={hint} error={error}>
+    <FieldGroup
+      legend={legend}
+      legendStyle="title"
+      hideLegend={hideLegend}
+      hint={hint}
+      error={error}
+    >
       <div className={grid(columns)}>
         {options.map((option) => {
           const checked = value.includes(option.value);

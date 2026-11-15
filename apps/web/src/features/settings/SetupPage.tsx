@@ -12,6 +12,7 @@ import {
   type ModuleId,
   type TeamSize,
 } from '@randen/core';
+import { ChevronRight } from 'lucide-react';
 import { useState, type SyntheticEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { errorText, useBusiness, useCommand } from '../../app/hooks';
@@ -325,7 +326,12 @@ function Functions({
       </Section>
       {off.length === 0 ? null : (
         <details className="group">
-          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-wine-700">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 font-semibold text-wine-700 [&::-webkit-details-marker]:hidden">
+            <ChevronRight
+              size={18}
+              aria-hidden="true"
+              className="transition-transform group-open:rotate-90"
+            />
             {t.more}
           </summary>
           <div className="mt-2">{rows(off)}</div>

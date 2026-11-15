@@ -204,6 +204,8 @@ export function Field({
 export interface FieldGroupProps {
   legend: string;
   hideLegend?: boolean | undefined;
+  /** `title`: the legend is the question of the screen, set as a section title. */
+  legendStyle?: 'label' | 'title' | undefined;
   hint?: string | undefined;
   error?: string | null | undefined;
   disabled?: boolean | undefined;
@@ -218,6 +220,7 @@ export interface FieldGroupProps {
 export function FieldGroup({
   legend,
   hideLegend = false,
+  legendStyle = 'label',
   hint,
   error,
   disabled = false,
@@ -232,7 +235,17 @@ export function FieldGroup({
       aria-describedby={joinIds(invalid && ids.error, hasText(hint) && ids.hint)}
       className={`relative min-w-0 ${className}`}
     >
-      <legend className={hideLegend ? 'sr-only' : `mb-1.5 ${FIELD_LABEL_CLASS}`}>{legend}</legend>
+      <legend
+        className={
+          hideLegend
+            ? 'sr-only'
+            : legendStyle === 'title'
+              ? 'mb-3 text-xl leading-snug font-semibold text-ink'
+              : `mb-1.5 ${FIELD_LABEL_CLASS}`
+        }
+      >
+        {legend}
+      </legend>
       {children}
       <FieldNotes ids={ids} error={error} info={null} hint={hint} />
     </fieldset>
