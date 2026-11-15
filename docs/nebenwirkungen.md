@@ -34,7 +34,7 @@ Kommt eine davon in den Code, braucht ihre Zeile `ja` in «Daten verlassen das G
 | SE-03 | Bitte an den Browser, die Daten bei knappem Platz nicht zu löschen (dauerhafter Speicher), beim Start der App | `storage.persist` | `apps/web/src/data/persistence.ts`, aufgerufen in `apps/web/src/app/AppData.tsx` | nein | ADR-0006 | 14.11.2026 |
 | SE-04 | Cache des Service Workers (Cache Storage, Workbox): die Dateien der App, damit sie ohne Netz läuft. Wird mit jeder neuen Version ersetzt | `serviceWorker` | `apps/web/vite.config.ts` (`VitePWA`) | nein | ADR-0003 | 14.11.2026 |
 | SE-05 | sessionStorage `randen:reloaded-for-update`: Zeitpunkt des letzten Neuladens für eine neue Version, damit die App nicht in einer Schleife neu lädt. Bleibt, bis der Tab zu ist | `sessionStorage` | `apps/web/src/app/new-version.ts` | nein | ADR-0003 | 14.11.2026 |
-| SE-12 | localStorage `randen:last-backup`: der Tag der letzten Sicherung, damit die App nach zwei Wochen ruhig daran erinnert. Kein Inhalt der Sicherung | `localStorage` | Modul Betrieb (noch nicht gebaut) | nein | ADR-0006 | geplant |
+| SE-12 | localStorage `randen:last-backup`: der Tag der letzten Sicherung, damit die App nach zwei Wochen ruhig daran erinnert. Kein Inhalt der Sicherung | `localStorage` | `apps/web/src/features/settings/last-backup.ts` | nein | ADR-0006 | 15.11.2026 |
 | SE-13 | localStorage `randen:extras`: die Ansicht dieses Geräts, «Erweitert» oder Grundfunktionen (`{ on }`). Eine Anzeige, keine Betriebsdaten; nicht in der Sicherung. Welche Funktionen der Betrieb nutzt, steht im Betrieb (ADR-0015) | `localStorage` | `apps/web/src/app/view.ts` | nein | ADR-0014, ADR-0015 | 15.11.2026 |
 
 ## Funktionen des Geräts
@@ -52,8 +52,8 @@ Jede dieser Nebenwirkungen beginnt mit einem Tipp der Person und zeigt vorher, w
 | SE-07 | Drucken über den Druckdialog des Geräts: Listen, Karten und Berichte (zum Beispiel Rezeptkarte, Speisekarte, Bestellung, Kontrollblatt) gehen an den Drucker oder in ein PDF | `window.print` | `apps/web/src/features/stock` (Journal, Zählblatt), `apps/web/src/features/areas/TourPage.tsx` (Rundgang), `apps/web/src/features/recipes/RecipeCookPage.tsx` (Rezeptkarte) | ja, nur auf Tipp der Person | ADR-0006 | 15.11.2026 |
 | SE-08 | Teilen über das Teilen-Blatt des Geräts: ein Text (zum Beispiel eine Bestellung) geht an die App, welche die Person wählt | `navigator.share` | Module (noch nicht gebaut) | ja, nur auf Tipp der Person | ADR-0006, ADR-0011 | geplant |
 | SE-09 | Kopieren in die Zwischenablage: ein Text (zum Beispiel eine Bestellung), den die Person danach selbst einfügt | `navigator.clipboard` | Module (noch nicht gebaut) | ja, nur auf Tipp der Person | ADR-0006, ADR-0011 | geplant |
-| SE-10 | Als Datei sichern: die Sicherung des ganzen Betriebs oder ein Export, abgelegt dort, wo die Person es wählt | `download`, `createObjectURL` | Module (noch nicht gebaut) | ja, nur auf Tipp der Person | ADR-0006 | geplant |
-| SE-11 | Datei einlesen über die Dateiauswahl: eine Sicherung zurückholen. Die Datei wird auf dem Gerät gelesen | `type="file"` | Module (noch nicht gebaut) | nein | ADR-0006 | geplant |
+| SE-10 | Als Datei sichern: die Sicherung des ganzen Betriebs oder ein Export, abgelegt dort, wo die Person es wählt | `download`, `createObjectURL` | `apps/web/src/features/settings/files.ts`, `BackupSection.tsx` | nein, nur auf Tipp der Person | ADR-0006 | 15.11.2026 |
+| SE-11 | Datei einlesen über die Dateiauswahl: eine Sicherung zurückholen. Die Datei wird auf dem Gerät gelesen | `type="file"` | `apps/web/src/features/settings/files.ts`, `RestoreSection.tsx` | nein | ADR-0006 | 15.11.2026 |
 
 ## Kennt der Test, kommt heute nicht vor
 
