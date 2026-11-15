@@ -1,11 +1,25 @@
 import type { RouteObject } from 'react-router';
-import { messages } from '../../app/messages';
-import { PlaceholderPage } from '../placeholder/PlaceholderPage';
 
-/** Pages of «menu» inside the app frame. The module replaces this placeholder. */
+/** Pages of «Speisekarte» inside the app frame, loaded when first opened. */
 export const menuRoutes: RouteObject[] = [
-  { path: 'menu/*', element: <PlaceholderPage title={messages.nav.menu} /> },
+  {
+    path: 'menu',
+    lazy: async () => ({ Component: (await import('./MenuPage')).MenuPage }),
+  },
+  {
+    path: 'menu/:cardId',
+    lazy: async () => ({ Component: (await import('./MenuCardPage')).MenuCardPage }),
+  },
+  {
+    path: 'menu/:cardId/allergens',
+    lazy: async () => ({ Component: (await import('./MenuAllergensPage')).MenuAllergensPage }),
+  },
 ];
 
-/** Pages outside the app frame: the guest view of a menu card, full screen. */
-export const guestRoutes: RouteObject[] = [];
+/** The guest view: outside the app frame, full screen, for the table, the phone or the counter. */
+export const guestRoutes: RouteObject[] = [
+  {
+    path: 'guest/:cardId',
+    lazy: async () => ({ Component: (await import('./GuestPage')).GuestPage }),
+  },
+];
