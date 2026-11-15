@@ -9,6 +9,7 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Lagerbereich | `StorageArea` | Kühlzelle, Tiefkühlzelle, Trockenlager, Bar und Weinkeller, Posten; mit Temperaturbereich |
 | Posten | `AreaKind 'station'` | Der Kühlschrank und die Ablage einer Station der Küche (Garde-manger, Pâtisserie) mit der Mise en place des Tages |
 | Platz | `StorageSpot` | Ein benannter Ort im Lagerbereich, mit Foto: «Regal 2, oben» |
+| Lagerort | `areaId`, `spotId` am Artikel | Wo ein Artikel hingehört: der Lagerbereich und, wenn es ihn gibt, der Platz |
 | Wo ist was? | `where.search` | Suche nach einem Artikel, zeigt Bereich, Platz und Foto |
 | Rundgang | `tour` | Alle Plätze der Reihe nach, für neue Mitarbeitende |
 | Artikel | `Article` | Was an Lager liegt: eingekaufte Ware oder Eigenproduktion |
@@ -27,6 +28,7 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Ausbeute | `yieldBps` | Was nach dem Rüsten bleibt, in Prozent |
 | Nettomenge, Bruttomenge | `quantity`, `grossQuantity` | Netto kommt in die Pfanne, brutto geht vom Lager (netto ÷ Ausbeute) |
 | Rezept, Gericht, Komponente | `Recipe`, `kind 'dish' \| 'component'` | Ein Gericht wird portionenweise verkauft, eine Komponente füllt einen Artikel |
+| Ansatz | `Recipe.output` | Die Menge, die ein Rezept einer Komponente ergibt («ein Ansatz ergibt 1 l») |
 | Kochansicht | `recipeCook` | Rezept gross, mit umgerechneten Mengen, für den Pass |
 | Wareneinsatz | `recipeCost`, `foodCostBps` | Warenkosten einer Portion; als Anteil am Nettopreis in Prozent |
 | Deckungsbeitrag | `marginRappen` | Nettopreis minus Wareneinsatz einer Portion |

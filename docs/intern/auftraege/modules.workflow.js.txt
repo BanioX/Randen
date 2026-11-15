@@ -6,6 +6,13 @@ export const meta = {
 
 const BASE = args.base
 const ONLY = args.only
+// Guard (lesson L-11): never start every module by accident, never from an unknown commit.
+if (!Array.isArray(ONLY) || ONLY.length === 0) {
+  throw new Error('args.only must name the modules to build')
+}
+if (typeof BASE !== 'string' || !/^[0-9a-f]{7,40}$/.test(BASE)) {
+  throw new Error('args.base must be a commit sha')
+}
 const BUILT = Array.isArray(args.built) ? args.built : []
 
 const REPORT_SCHEMA = {
@@ -470,7 +477,7 @@ TESTS (required, they are the proof that the first impression is true):
 }
 
 phase('Build')
-const names = (Array.isArray(ONLY) && ONLY.length > 0 ? ONLY : Object.keys(MODULES)).filter((name) => name in MODULES)
+const names = ONLY.filter((name) => name in MODULES)
 log(`Building ${names.join(', ')} from ${BASE}`)
 const results = await parallel(
   names.map((name) => () =>

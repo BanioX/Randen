@@ -54,7 +54,7 @@ export function AppShell() {
   useEdgeSwipeBack(page);
 
   return (
-    <div className="min-h-dvh md:pl-24 lg:pl-64">
+    <div className="min-h-dvh md:pl-24 lg:pl-64 print:pl-0">
       <a
         href="#content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-surface focus:px-4 focus:py-3 focus:shadow-float"

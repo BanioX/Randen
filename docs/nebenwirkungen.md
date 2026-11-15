@@ -49,7 +49,7 @@ Jede dieser Nebenwirkungen beginnt mit einem Tipp der Person und zeigt vorher, w
 
 | Kennung | Nebenwirkung | Im Code | Wo | Daten verlassen das Gerät? | Entscheid | Seit |
 | --- | --- | --- | --- | --- | --- | --- |
-| SE-07 | Drucken über den Druckdialog des Geräts: Listen, Karten und Berichte (zum Beispiel Rezeptkarte, Speisekarte, Bestellung, Kontrollblatt) gehen an den Drucker oder in ein PDF | `window.print` | Module (noch nicht gebaut) | ja, nur auf Tipp der Person | ADR-0006 | geplant |
+| SE-07 | Drucken über den Druckdialog des Geräts: Listen, Karten und Berichte (zum Beispiel Rezeptkarte, Speisekarte, Bestellung, Kontrollblatt) gehen an den Drucker oder in ein PDF | `window.print` | `apps/web/src/features/stock` (Journal, Zählblatt), `apps/web/src/features/areas/TourPage.tsx` (Rundgang), `apps/web/src/features/recipes/RecipeCookPage.tsx` (Rezeptkarte) | ja, nur auf Tipp der Person | ADR-0006 | 15.11.2026 |
 | SE-08 | Teilen über das Teilen-Blatt des Geräts: ein Text (zum Beispiel eine Bestellung) geht an die App, welche die Person wählt | `navigator.share` | Module (noch nicht gebaut) | ja, nur auf Tipp der Person | ADR-0006, ADR-0011 | geplant |
 | SE-09 | Kopieren in die Zwischenablage: ein Text (zum Beispiel eine Bestellung), den die Person danach selbst einfügt | `navigator.clipboard` | Module (noch nicht gebaut) | ja, nur auf Tipp der Person | ADR-0006, ADR-0011 | geplant |
 | SE-10 | Als Datei sichern: die Sicherung des ganzen Betriebs oder ein Export, abgelegt dort, wo die Person es wählt | `download`, `createObjectURL` | Module (noch nicht gebaut) | ja, nur auf Tipp der Person | ADR-0006 | geplant |
