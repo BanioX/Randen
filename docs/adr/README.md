@@ -20,3 +20,4 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | [0014](0014-essentials-and-extras.md) | Grundfunktionen zuerst, alles Weitere zum Einschalten | teilweise ersetzt durch 0015 | 2026-11-15 |
 | [0015](0015-betriebsarten-und-funktionen.md) | Betriebsarten und Funktionen: jede Küche wählt ihre Komplexität | angenommen | 2026-11-15 |
 | [0016](0016-preisaenderung-durchrechnen.md) | Preisänderung durchrechnen: eine Frage, kein Eingriff | angenommen | 2026-11-15 |
+| [0017](0017-sicherung-format-und-verschluesselung.md) | Sicherung: Format und Verschlüsselung | Entwurf, zur Bestätigung durch Alban | 2026-11-15 |

@@ -5,7 +5,7 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | In der App | Im Code | Bedeutung |
 | --- | --- | --- |
 | Betrieb | `Business` | Eine Küche mit ihrem Lager, ihren Rezepten und Zahlen. Ein zweiter Standort ist ein zweiter Betrieb |
-| Team, Person | `StaffMember` | Wer auf dem Gerät arbeitet; steht bei jeder Buchung |
+| Team, Person | `StaffMember` | Wer auf dem Gerät arbeitet; steht bei jeder Buchung. Das Team ist eine Funktion des Betriebs (ADR-0015) |
 | Lagerbereich | `StorageArea` | Kühlzelle, Tiefkühlzelle, Trockenlager, Bar und Weinkeller, Posten; mit Temperaturbereich |
 | Posten | `AreaKind 'station'` | Der Kühlschrank und die Ablage einer Station der Küche (Garde-manger, Pâtisserie) mit der Mise en place des Tages |
 | Platz | `StorageSpot` | Ein benannter Ort im Lagerbereich, mit Foto: «Regal 2, oben» |
@@ -51,7 +51,7 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Gewinner, Renner, Schläfer, Verlierer | `MenuClass` | Die vier Felder des Menu-Engineerings: beliebt und rentabel, beliebt, rentabel, weder noch |
 | Selbstkontrolle | `haccp` | Temperaturen, Reinigungsplan, Wareneingangskontrolle |
 | Richtwert | – | Ein Vorschlag ohne rechtliche Verbindlichkeit, den der Betrieb ändern kann (ADR-0012) |
-| Sicherung | `settings.export` | Der ganze Betrieb als eine Datei |
+| Sicherung | `settings.export` | Der ganze Betrieb als eine Datei, optional mit Passwort (ADR-0017) | Der ganze Betrieb als eine Datei |
 | Betriebsart | `BusinessKind` | Was für ein Betrieb das ist, vom Imbiss bis zur Produktionsküche; schlägt die Funktionen vor (ADR-0015) |
 | Funktion | `ModuleId`, `useModule` | Womit der Betrieb arbeitet, unter «Betrieb › Funktionen» schaltbar: Speisekarte, Bestellen, Einkauf im Markt, Produktion, Menüplan, Mahlzeiten zählen, Auslieferung, Verkäufe, Budget und Zahlen, Wo ist was?, Team. Im Entscheid «Baustein» (ADR-0015) |
 | Randen einrichten | `business.setup`, `/setup` | Die Fragen nach Betriebsart, Ware, Team und Name, die die Funktionen vorschlagen |
