@@ -50,5 +50,8 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | MWST im Wareneinsatz | Betriebe ohne MWST-Pflicht oder mit Saldosteuersatz tragen die MWST als Kosten. Soll ihr Wareneinsatz mit MWST rechnen? Braucht vorher eine Quelle in `fakten.md` (ADR-0015) |
 | «Menu» oder «Menü» | In der Schweizer Gastronomie ist «Menu» üblich, die App schreibt heute «Menü» (ADR-0015) |
 | Begriffe für kleine Betriebe | «Abschreiber», «Wareneinsatz» und «Mindestbestand» erklären oder ersetzen, etwa durch «Weggeworfen», «Warenkosten» und «Nachkaufen ab» (ADR-0015). Bis dahin erklärt die App die Begriffe |
+| Wareneinsatz pro Mahlzeit | Was zählt: der ganze Verbrauch des Monats oder nur die Mittag-Linien? Solange offen zeigt die Demo kein Ziel pro Mahlzeit (TD-27) |
+| Verkäufe mit Slot | Bekommt ein Verkauf Mittag oder Abend? Ohne Slot zählen die Mahlzeiten einer Linie auch die Abendportionen desselben Gerichts (TD-26) |
+| MWST 2.6 % für Mitnehmen | Die Abgrenzung der Belege nach `fakten.md` 3.2 fehlt in ADR-0015 (Zeile 66) und in der App (TD-25) |
 | Domain | Nicht gekauft; kostet Geld |
 | Cloudflare-Vorschau | Projekt `randen` eingerichtet (15.11.2026), Production vorläufig auf dem Arbeits-Branch ([`previews.md`](previews.md)) |
