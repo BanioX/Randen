@@ -7,6 +7,10 @@ export const recipesRoutes: RouteObject[] = [
     lazy: async () => ({ Component: (await import('./RecipesPage')).RecipesPage }),
   },
   {
+    path: 'recipes/price-change',
+    lazy: async () => ({ Component: (await import('./PriceChangePage')).PriceChangePage }),
+  },
+  {
     path: 'recipes/new',
     lazy: async () => ({ Component: (await import('./RecipeFormPage')).RecipeNewPage }),
   },

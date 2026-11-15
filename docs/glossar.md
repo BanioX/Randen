@@ -33,6 +33,7 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Wareneinsatz | `recipeCost`, `foodCostBps` | Warenkosten einer Portion; als Anteil am Nettopreis in Prozent |
 | Deckungsbeitrag | `marginRappen` | Nettopreis minus Wareneinsatz einer Portion |
 | Preisvorschlag | `suggestedPrice` | Der Preis, bei dem der Wareneinsatz dem Ziel entspricht |
+| Preisänderung durchrechnen | `priceChangeImpact`, `recipes.priceChange` | Was ein neuer Einkaufspreis eines Artikels mit den Gerichten macht: Wareneinsatz und Ampel vorher und nachher. Eine Frage, kein Eingriff: Es wird nichts gespeichert, nichts geändert (ADR-0016) |
 | Produktion | `Production` | Ein Rezept wurde gekocht: Zutaten gehen vom Lager, eine Komponente kommt hinein |
 | Menüplan | `PlanEntry` | Welches Gericht an welchem Tag, mit erwarteten Portionen |
 | Reste verwerten | `plan.suggest` | Vorschlag für Gerichte, die Ware nutzen, die bald abläuft |

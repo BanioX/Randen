@@ -38,6 +38,8 @@ export const formMessages = {
     unreadable: 'Dieser Anteil lässt sich nicht lesen. Trag zum Beispiel 30 oder 8.1 ein.',
     min: (min: string) => `Trag mindestens ${min} ein.`,
     max: (max: string) => `Trag höchstens ${max} ein.`,
+    /** The toggle for a minus sign in a change in percent: phone number pads have no minus key. */
+    minus: (label: string) => `Minus, ${label}`,
   },
   temperature: {
     unreadable: 'Diese Temperatur lässt sich nicht lesen. Trag zum Beispiel 4.5 oder -18 ein.',

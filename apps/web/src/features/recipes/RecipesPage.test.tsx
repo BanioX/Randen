@@ -91,4 +91,10 @@ describe('RecipesPage', () => {
       paths.recipeNew(),
     );
   });
+
+  it('links to the price what-if from the header', async () => {
+    await renderList();
+    const link = await screen.findByRole('link', { name: 'Preisänderung durchrechnen' });
+    expect(link.getAttribute('href')).toBe('/recipes/price-change');
+  });
 });

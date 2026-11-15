@@ -19,3 +19,4 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | [0013](0013-iphone-ipad-web.md) | Eine App für iPhone, iPad und Web | angenommen | 2026-11-14 |
 | [0014](0014-essentials-and-extras.md) | Grundfunktionen zuerst, alles Weitere zum Einschalten | teilweise ersetzt durch 0015 | 2026-11-15 |
 | [0015](0015-betriebsarten-und-funktionen.md) | Betriebsarten und Funktionen: jede Küche wählt ihre Komplexität | angenommen | 2026-11-15 |
+| [0016](0016-preisaenderung-durchrechnen.md) | Preisänderung durchrechnen: eine Frage, kein Eingriff | angenommen | 2026-11-15 |

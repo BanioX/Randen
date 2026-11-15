@@ -251,6 +251,39 @@ export const recipesMessages = {
     saved: 'Gesichert',
   },
 
+  priceChange: {
+    entry: 'Preisänderung durchrechnen',
+    title: 'Preisänderung durchrechnen',
+    subtitle:
+      'Was passiert mit den Gerichten, wenn der Einkaufspreis eines Artikels steigt oder sinkt. Nichts wird gespeichert.',
+    back: 'Rezepte',
+    article: 'Artikel',
+    percent: 'Preisänderung',
+    percentHint: 'Positiv für teurer, negativ für günstiger.',
+    ask: 'Wähle einen Artikel und eine Preisänderung. Dann rechnet Randen die Gerichte durch.',
+    newPrice: (price: string) => `Neuer Preis: ${price}`,
+    todayPrice: (price: string) => `Heute: ${price}`,
+    using: (count: number) =>
+      count === 1
+        ? '1 Gericht verwendet diesen Artikel.'
+        : `${String(count)} Gerichte verwenden diesen Artikel.`,
+    worse: (count: number) =>
+      count === 1
+        ? '1 Gericht rutscht über das Ziel.'
+        : `${String(count)} Gerichte rutschen über das Ziel.`,
+    better: (count: number) =>
+      count === 1
+        ? '1 Gericht rückt näher ans Ziel.'
+        : `${String(count)} Gerichte rücken näher ans Ziel.`,
+    unchanged: 'Am Status ändert sich bei keinem Gericht etwas.',
+    none: 'Dieser Artikel wird in keinem Gericht verwendet.',
+    noPrice: 'Der Artikel hat noch keinen Preis, darum lässt sich nichts durchrechnen.',
+    gone: 'Den Artikel gibt es nicht mehr. Wähle einen anderen.',
+    dishes: 'Gerichte mit diesem Artikel',
+    share: (before: string, after: string) => `${before} → ${after}`,
+    afterLabel: ', danach',
+  },
+
   cook: {
     back: (name: string) => name,
     portions: 'Portionen',

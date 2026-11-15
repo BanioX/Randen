@@ -6,6 +6,7 @@ export * from './declaration';
 export * from './expiry';
 export * from './fefo';
 export * from './menu-engineering';
+export * from './price-change';
 export * from './requirements';
 export * from './units';
 export * from './vat';

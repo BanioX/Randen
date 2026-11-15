@@ -37,6 +37,7 @@ export const paths = {
   // Rezepte
   recipes: () => '/recipes',
   recipeNew: () => '/recipes/new',
+  recipesPriceChange: () => '/recipes/price-change',
   recipe: (recipeId: string) => `/recipes/${recipeId}`,
   recipeEdit: (recipeId: string) => `/recipes/${recipeId}/edit`,
   /** The recipe card for the pass: large type, steps, scaled quantities. */

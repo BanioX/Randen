@@ -341,6 +341,43 @@ describe('PercentField', () => {
     expect(onValue).toHaveBeenLastCalledWith(3525);
   });
 
+  it('takes a minus sign only where a change is meant, from the button or by typing', async () => {
+    const user = userEvent.setup();
+    const onValue = vi.fn();
+    render(
+      <Percent onValue={onValue} allowNegative min={-9000} max={30000} label="Preisänderung" />,
+    );
+    const input = screen.getByLabelText<HTMLInputElement>('Preisänderung');
+    const minus = screen.getByRole('button', { name: 'Minus, Preisänderung' });
+    await user.type(input, '15');
+    expect(onValue).toHaveBeenLastCalledWith(1500);
+    expect(minus.getAttribute('aria-pressed')).toBe('false');
+    await user.click(minus);
+    expect(onValue).toHaveBeenLastCalledWith(-1500);
+    expect(minus.getAttribute('aria-pressed')).toBe('true');
+    await user.click(minus);
+    expect(onValue).toHaveBeenLastCalledWith(1500);
+    await user.clear(input);
+    await user.type(input, '-8,5');
+    expect(onValue).toHaveBeenLastCalledWith(-850);
+    await user.clear(input);
+    await user.type(input, '-95');
+    await user.tab();
+    expect(onValue).toHaveBeenLastCalledWith(null);
+    expect(screen.getByText('Trag mindestens -90 % ein.')).toBeTruthy();
+  });
+
+  it('keeps a share unsigned: a minus is unreadable without allowNegative', async () => {
+    const user = userEvent.setup();
+    const onValue = vi.fn();
+    render(<Percent onValue={onValue} />);
+    await user.type(screen.getByLabelText('Ausbeute'), '-5');
+    await user.tab();
+    expect(onValue).toHaveBeenLastCalledWith(null);
+    expect(screen.getByText(formMessages.percent.unreadable)).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /^Minus/ })).toBeNull();
+  });
+
   it('shows a stored share without float noise', () => {
     render(<Percent initial={810} />);
     expect(screen.getByLabelText<HTMLInputElement>('Ausbeute').value).toBe('8.1');

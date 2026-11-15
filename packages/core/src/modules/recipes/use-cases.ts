@@ -25,6 +25,7 @@ import {
   type DeclarationBook,
 } from '../../domain/declaration';
 import { usableQuantity } from '../../domain/fefo';
+import { priceAfterChange, priceChangeImpact } from '../../domain/price-change';
 import { recipeRequirements } from '../../domain/requirements';
 import { formatQuantity, milliToRappen, roundQuantity } from '../../domain/units';
 import type { Id } from '../../ids';
@@ -1287,8 +1288,51 @@ export function createRecipesUseCases(ctx: AppContext) {
     });
   };
 
+  /**
+   * «Preisänderung durchrechnen» (ADR-0016): a read-only what-if. The new price is computed here
+   * from the percent; the dishes are the active ones, and only those that use the article are
+   * returned. Nothing is written.
+   */
+  const priceChange: UseCase<'recipes.priceChange'> = async (raw) => {
+    const input = CONTRACT_V1['recipes.priceChange'].input.parse(raw);
+    const book = await loadBook(input.businessId);
+    const article = book.articleById.get(input.articleId);
+    if (article === undefined) {
+      throw new CommandError('not_found', `Article ${input.articleId} not found`);
+    }
+    if (article.pricePer1000 <= 0) {
+      throw new CommandError(
+        'invalid',
+        'Der Artikel hat noch keinen Preis, darum lässt sich nichts durchrechnen.',
+      );
+    }
+    const newPricePer1000 = priceAfterChange(article.pricePer1000, input.percentBps);
+    const impact = priceChangeImpact({
+      book: book.cost,
+      dishes: book.recipes.filter((recipe) => recipe.kind === 'dish' && recipe.active),
+      articleId: article.id,
+      newPricePer1000,
+      targetFoodCostBps: book.business.targetFoodCostBps,
+    });
+    return {
+      article: {
+        id: article.id,
+        name: article.name,
+        unit: article.unit,
+        pricePer1000: rappen(article.pricePer1000),
+        newPricePer1000: rappen(newPricePer1000),
+      },
+      dishes: impact.dishes
+        .filter((dish) => dish.uses)
+        .sort(byName)
+        .map(({ id, name, changed, before, after }) => ({ id, name, changed, before, after })),
+      summary: impact.summary,
+    };
+  };
+
   return {
     'recipes.list': list,
+    'recipes.priceChange': priceChange,
     'recipes.get': get,
     'recipes.card': card,
     'recipes.editor': editor,

@@ -161,9 +161,14 @@ export function RecipesPage() {
         }
         actions={
           empty ? undefined : (
-            <ButtonLink to={paths.recipeNew()} icon={Plus} size="sm">
-              {t.create}
-            </ButtonLink>
+            <>
+              <ButtonLink to={paths.recipesPriceChange()} variant="secondary" size="sm">
+                {t.priceChange.entry}
+              </ButtonLink>
+              <ButtonLink to={paths.recipeNew()} icon={Plus} size="sm">
+                {t.create}
+              </ButtonLink>
+            </>
           )
         }
       />

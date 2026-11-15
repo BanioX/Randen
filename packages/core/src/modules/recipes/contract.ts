@@ -144,6 +144,23 @@ export const RecipeDeclarationSchema = z.object({
 });
 export type RecipeDeclaration = z.infer<typeof RecipeDeclarationSchema>;
 
+/** One dish in a price what-if: its food cost share and status now and after the change. */
+export const PriceChangeFiguresSchema = z.object({
+  costPerPortionRappen: RappenSchema,
+  foodCostBps: z.int().optional(),
+  status: MarginStatusSchema,
+});
+
+export const PriceChangeDishSchema = z.object({
+  id: IdSchema,
+  name: z.string(),
+  /** The cost of one portion differs after the change. */
+  changed: z.boolean(),
+  before: PriceChangeFiguresSchema,
+  after: PriceChangeFiguresSchema,
+});
+export type PriceChangeDishRow = z.infer<typeof PriceChangeDishSchema>;
+
 /** The numbers of a dish at its menu price, and the price that meets the target. */
 export const DishFiguresSchema = z.object({
   priceRappen: RappenSchema.optional(),
@@ -428,6 +445,37 @@ export const recipesContract = {
       ),
       /** Components that already contain this recipe: picking one would make a loop. */
       loops: z.array(z.object({ articleId: IdSchema, path: z.array(z.string()) })),
+    }),
+  }),
+  'recipes.priceChange': query({
+    name: 'recipes.priceChange',
+    summary: {
+      de: 'Durchrechnen, was eine Preisänderung eines Artikels mit den Gerichten macht: Wareneinsatz und Ampel vorher und nachher. Nichts wird gespeichert.',
+      en: 'What a price change of an article does to the dishes: food cost and status before and after. Nothing is stored.',
+    },
+    scopes: ['recipes:read'],
+    input: z.object({
+      ...queryBase,
+      articleId: IdSchema,
+      /** Basis points: 1500 is +15 %, -1000 is -10 %. */
+      percentBps: z.int().min(-9000).max(30000),
+    }),
+    output: z.object({
+      article: z.object({
+        id: IdSchema,
+        name: z.string(),
+        unit: UnitSchema,
+        pricePer1000: UnitPriceSchema,
+        newPricePer1000: UnitPriceSchema,
+      }),
+      /** The active dishes that use the article, directly or through a component. */
+      dishes: z.array(PriceChangeDishSchema),
+      summary: z.object({
+        using: z.int(),
+        /** Good → watch or over, watch → over. */
+        worse: z.int(),
+        better: z.int(),
+      }),
     }),
   }),
   'recipes.create': command({
