@@ -9,6 +9,7 @@ import { CalendarCheck } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { errorText, useCommand, useMoney, useToday } from '../../app/hooks';
+import { useModule } from '../../app/modules';
 import { paths } from '../../app/paths';
 import { AreaBadge, ExpiryChip } from '../../ui/badges';
 import { Button, ButtonLink } from '../../ui/Button';
@@ -46,6 +47,7 @@ export function ExpiryList({ data, only, unfiltered }: ExpiryListProps) {
   const today = useToday();
   const run = useCommand();
   const toast = useToast();
+  const planning = useModule('planning');
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -175,7 +177,9 @@ export function ExpiryList({ data, only, unfiltered }: ExpiryListProps) {
             title={t.groups[group]}
             titleStyle="group"
             hint={t.groupHint(money.format(data.groups[group].valueRappen))}
-            action={group === planGroup ? { label: t.usePlan, to: paths.plan() } : undefined}
+            action={
+              planning && group === planGroup ? { label: t.usePlan, to: paths.plan() } : undefined
+            }
           >
             <div className="md:hidden">
               <GroupedList>

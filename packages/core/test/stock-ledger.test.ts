@@ -289,6 +289,23 @@ describe('stock ledger', () => {
     await expectLedgerBalanced(t);
   });
 
+  it('keeps the initial quantities of a split lot adding up to what came in, so nothing looks used', async () => {
+    const { t, kitchen, ledger } = await setup();
+    const part = await ledger.move({
+      businessId: t.businessId,
+      lotId: kitchen.lots.entrecote.id,
+      areaId: kitchen.areas.frozen.id,
+      quantity: 1500,
+    });
+    const origin = await t.storage.lots.get(kitchen.lots.entrecote.id);
+    const moved = await t.storage.lots.get(part.lotId);
+    // 4 000 g came in; 2 500 g stay and 1 500 g moved, and neither part looks consumed.
+    expect(origin).toMatchObject({ quantity: 2500, initialQuantity: 2500 });
+    expect(moved).toMatchObject({ quantity: 1500, initialQuantity: 1500 });
+    expect((origin?.initialQuantity ?? 0) + (moved?.initialQuantity ?? 0)).toBe(4000);
+    await expectLedgerBalanced(t);
+  });
+
   it('knows only rows of its own business', async () => {
     const { kitchen, ledger, today } = await setup();
     const other = await createTestContext();

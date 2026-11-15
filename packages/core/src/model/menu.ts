@@ -71,13 +71,16 @@ export const MenuLineSchema = z.object({
 });
 export type MenuLine = z.infer<typeof MenuLineSchema>;
 
+/** The most portions one dish of the plan takes: a plan entry, an auto fill and a suggestion. */
+export const MAX_PLAN_PORTIONS = 10_000;
+
 /** One dish on one day of the menu plan («Menüplan»), with the portions the kitchen expects. */
 export const PlanEntrySchema = z.object({
   ...syncFields,
   date: LocalDateSchema,
   slot: PlanSlotSchema,
   recipeId: IdSchema,
-  portions: z.int().min(1).max(10_000),
+  portions: z.int().min(1).max(MAX_PLAN_PORTIONS),
   /** The menu line the dish belongs to; missing in a plan without lines. */
   lineId: IdSchema.optional(),
   note: textSchema(200).optional(),

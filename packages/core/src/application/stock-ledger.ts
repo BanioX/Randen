@@ -50,7 +50,10 @@ export interface ConsumeInput {
   articleId: Id;
   /** Gross quantity to take from stock, in base units. */
   quantity: number;
+  /** The day the movement is booked. */
   on: LocalDate;
+  /** The day expiry is judged on (default: `on`). A run dated back is still checked against today. */
+  usableOn?: LocalDate | undefined;
   purpose: ConsumptionPurpose;
   productionId?: Id | undefined;
   saleId?: Id | undefined;
@@ -220,7 +223,7 @@ export function createStockLedger(ctx: AppContext) {
    */
   async function consume(input: ConsumeInput): Promise<ConsumeResult> {
     const lots = await activeLots(input.businessId, input.articleId);
-    const { picks, missing } = allocateFefo(lots, input.quantity, input.on);
+    const { picks, missing } = allocateFefo(lots, input.quantity, input.usableOn ?? input.on);
     const byId = new Map(lots.map((lot) => [lot.id, lot]));
     const result: ConsumeResult = { consumed: 0, missing, valueRappen: rappen(0), picks: [] };
     for (const pick of picks) {
@@ -365,10 +368,13 @@ export function createStockLedger(ctx: AppContext) {
       );
       return { lotId: lot.id };
     }
+    // The part leaves the lot as it came in: the initial quantities of the lots stay what was
+    // received, so a split does not look like a consumption, and a run's output still adds up.
     await storage.lots.put(
       StockLotSchema.parse({
         ...lot,
         quantity: roundQuantity(lot.quantity - part),
+        initialQuantity: roundQuantity(lot.initialQuantity - part),
         updatedAt: now,
       }),
     );

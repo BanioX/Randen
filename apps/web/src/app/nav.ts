@@ -58,7 +58,8 @@ export const navGroups: readonly NavGroup[] = [
     items: [
       { to: paths.recipes(), label: t.recipes, icon: BookOpen },
       { to: paths.production(), label: t.production, icon: CookingPot, modules: ['production'] },
-      { to: paths.plan(), label: t.plan, icon: CalendarDays, modules: ['planning'] },
+      // The meal counts live in the plan: they are reached from there, so the entry stays with them.
+      { to: paths.plan(), label: t.plan, icon: CalendarDays, modules: ['planning', 'meals'] },
       { to: paths.dispatch(), label: t.dispatch, icon: Truck, modules: ['dispatch'] },
       { to: paths.menu(), label: t.menu, icon: ClipboardList, modules: ['menu_card'] },
     ],

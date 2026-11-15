@@ -15,6 +15,7 @@ import { ChefHat, CookingPot, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { errorText, isNotFound, useCommand, useMoney, useQueryResult } from '../../app/hooks';
+import { useModule } from '../../app/modules';
 import { messages } from '../../app/messages';
 import { NotFoundPage } from '../../app/NotFoundPage';
 import { paths } from '../../app/paths';
@@ -163,6 +164,7 @@ function RecipeDetail({ detail, onPortions, onLeaving }: RecipeDetailProps) {
   const run = useCommand();
   const navigate = useNavigate();
   const toast = useToast();
+  const producing = useModule('production');
   const [dialog, setDialog] = useState<'confirm' | 'blocked' | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
 
@@ -367,14 +369,16 @@ function RecipeDetail({ detail, onPortions, onLeaving }: RecipeDetailProps) {
             >
               {t.edit}
             </ButtonLink>
-            <ButtonLink
-              to={paths.productionNew(recipe.id)}
-              icon={CookingPot}
-              variant="secondary"
-              size="sm"
-            >
-              {t.produce}
-            </ButtonLink>
+            {producing ? (
+              <ButtonLink
+                to={paths.productionNew(recipe.id)}
+                icon={CookingPot}
+                variant="secondary"
+                size="sm"
+              >
+                {t.produce}
+              </ButtonLink>
+            ) : null}
             <ButtonLink to={paths.recipeCook(recipe.id)} icon={ChefHat} size="sm">
               {t.cook}
             </ButtonLink>

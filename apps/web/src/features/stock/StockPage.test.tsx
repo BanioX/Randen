@@ -246,3 +246,22 @@ describe('StockPage, «Ablauf»', () => {
     expect(router.state.location.pathname).toBe('/stock');
   });
 });
+
+describe('StockPage, «Ablauf» with the functions of the business', () => {
+  it('offers the way into the menu plan only with the planning', async () => {
+    const view = await renderApp(<StockPage />, { route: '/stock/expiring' });
+    await table('In 3 Tagen');
+    expect(screen.getAllByRole('link', { name: 'Im Menüplan verwerten' }).length).toBeGreaterThan(
+      0,
+    );
+    await view.t.useCases['business.update']({
+      commandId: view.t.cmd(),
+      businessId: view.t.businessId,
+      modules: ['menu_card', 'ordering'],
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole('link', { name: 'Im Menüplan verwerten' })).toBeNull();
+    });
+    expect(screen.getByRole('table', { name: 'In 3 Tagen' })).toBeTruthy();
+  }, 20_000);
+});

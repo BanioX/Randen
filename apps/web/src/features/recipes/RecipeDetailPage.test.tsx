@@ -168,3 +168,24 @@ describe('RecipeDetailPage', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Nicht gefunden' })).toBeTruthy();
   });
 });
+
+describe('RecipeDetailPage with the functions of the business', () => {
+  it('offers «Produzieren» only when the business produces', async () => {
+    const view = await renderDetail((picked) => picked.kitchen.recipes.entrecoteDish.id);
+    expect(await screen.findByRole('link', { name: t.produce })).toBeTruthy();
+    await view.t.useCases['business.update']({
+      commandId: view.t.cmd(),
+      businessId: view.t.businessId,
+      modules: ['menu_card', 'ordering'],
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole('link', { name: t.produce })).toBeNull();
+    });
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Entrecôte mit Rotweinjus und Kartoffelstock',
+      }),
+    ).toBeTruthy();
+  }, 20_000);
+});

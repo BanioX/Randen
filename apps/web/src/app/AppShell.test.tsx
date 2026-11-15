@@ -1,7 +1,9 @@
 import { screen, within } from '@testing-library/react';
+import type { ModuleId } from '@randen/core';
 import { describe, expect, it } from 'vitest';
 import { AppShell } from './AppShell';
-import { navGroups, tabItems, activeItem } from './nav';
+import { navGroups, tabItems, activeItem, visibleNavGroups } from './nav';
+import { paths } from './paths';
 import { routes } from './routes';
 import { renderApp } from './test-helpers';
 
@@ -52,6 +54,16 @@ describe('navigation', () => {
     expect(activeItem('/recipes/abc', tabItems)).toBe('/recipes');
     expect(activeItem('/', tabItems)).toBe('/');
     expect(activeItem('/unknown', tabItems)).toBeUndefined();
+  });
+
+  it('shows the menu plan with the planning or with the meal counts, which live in it', () => {
+    const inNav = (modules: ModuleId[]) =>
+      visibleNavGroups(new Set(modules))
+        .flatMap((group) => group.items)
+        .some((item) => item.to === paths.plan());
+    expect(inNav(['planning'])).toBe(true);
+    expect(inNav(['meals'])).toBe(true);
+    expect(inNav(['production', 'numbers'])).toBe(false);
   });
 
   it('has a page for every entry', () => {
