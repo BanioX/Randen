@@ -1,17 +1,14 @@
 import type { RouteObject } from 'react-router';
-import { messages } from '../../app/messages';
-import { PlaceholderPage } from '../placeholder/PlaceholderPage';
-import { SetupPrompt } from '../settings/SetupPrompt';
+import { CockpitPage } from './CockpitPage';
 
-/** Pages of «cockpit» inside the app frame. The module replaces this placeholder. */
+/**
+ * Pages of «Cockpit» inside the app frame. The cockpit is the first screen and loads with the
+ * app; «Erfassen» loads when it is first opened. The path patterns are those of `app/paths.ts`.
+ */
 export const cockpitRoutes: RouteObject[] = [
+  { index: true, element: <CockpitPage /> },
   {
-    index: true,
-    element: (
-      <PlaceholderPage title={messages.nav.cockpit}>
-        <SetupPrompt />
-      </PlaceholderPage>
-    ),
+    path: 'add',
+    lazy: async () => ({ Component: (await import('./AddPage')).AddPage }),
   },
-  { path: 'add', element: <PlaceholderPage title={messages.nav.add} /> },
 ];
