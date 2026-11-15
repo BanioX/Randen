@@ -2,6 +2,7 @@ import { CommandError, type AppContext, type UseCase } from '../../application/c
 import { CONTRACT_V1 } from '../../contract';
 import { addDays, addMonths, daysBetween, localDate, toLocalDate } from '../../dates';
 import { dishFigures, foodCostBps, netOfVat, recipeCost } from '../../domain/costing';
+import { costOfGoods, costPerMeal, mealGoods, mealTotal } from '../../domain/meals';
 import { expiryInfo } from '../../domain/expiry';
 import { lineValue, roundQuantity } from '../../domain/units';
 import type { Id } from '../../ids';
@@ -85,33 +86,6 @@ function perMealStatus(perMeal: number | undefined, target: number | undefined) 
     : perMeal * 10_000 <= target * (10_000 + WATCH_BAND_BPS)
       ? ('watch' as const)
       : ('over' as const);
-}
-
-interface MealTotal {
-  expected?: number;
-  served?: number;
-}
-
-/**
- * The meals of one day and meal: the count of the whole meal wins, value by value; where it
- * says nothing, the counts of its lines are added up. Nothing counted stays undefined, so an
- * empty field is never read as zero meals.
- */
-function mealTotal(rows: readonly MealCount[]): MealTotal {
-  const whole = rows
-    .filter((row) => row.lineId === undefined)
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
-  const lines = rows.filter((row) => row.lineId !== undefined);
-  const added = (pick: (row: MealCount) => number | undefined) => {
-    const values = lines.map(pick).filter((value) => value !== undefined);
-    return values.length === 0 ? undefined : values.reduce((total, value) => total + value, 0);
-  };
-  const expected = whole?.expected ?? added((row) => row.expected);
-  const served = whole?.served ?? added((row) => row.served);
-  return {
-    ...(expected === undefined ? {} : { expected }),
-    ...(served === undefined ? {} : { served }),
-  };
 }
 
 const slotOrder = (slot: PlanSlot) => PLAN_SLOTS.indexOf(slot);
@@ -439,12 +413,10 @@ export function createCockpitUseCases(ctx: AppContext) {
     const monthStart = firstOfMonth(day);
     // Cost of goods: what was used, less what came back into stock as a component made in
     // house. Its ingredients count once, when the component is used, not when it is made.
-    const costRappen = rappen(
-      Math.max(
-        0,
-        -valueOf('consumption', monthStart, day) - valueOf('production', monthStart, day),
-      ),
-    );
+    const costRappen = costOfGoods({
+      consumed: -valueOf('consumption', monthStart, day),
+      produced: valueOf('production', monthStart, day),
+    });
     const netRevenueRappen = sum(
       alive(saleRows)
         .filter((sale) => within(sale.soldOn, monthStart, day))
@@ -476,14 +448,11 @@ export function createCockpitUseCases(ctx: AppContext) {
           within(movement.on, monthStart, day),
       )
       .reduce((total, movement) => total + movement.valueRappen, 0);
-    const mealCostRappen = rappen(
-      Math.max(
-        0,
-        -valueOf('consumption', monthStart, day) -
-          valueOf('production', monthStart, day) -
-          countDifference,
-      ),
-    );
+    const mealCostRappen = mealGoods({
+      consumed: -valueOf('consumption', monthStart, day),
+      produced: valueOf('production', monthStart, day),
+      countDifference,
+    });
     const mealsOfMonth = new Map<string, MealCount[]>();
     for (const row of counts.filter((count) => within(count.date, monthStart, day))) {
       const key = `${row.date} ${row.slot}`;
@@ -493,7 +462,7 @@ export function createCockpitUseCases(ctx: AppContext) {
       (total, rows) => total + (mealTotal(rows).served ?? 0),
       0,
     );
-    const perMealRappen = served > 0 ? rappen(Math.round(mealCostRappen / served)) : undefined;
+    const perMealRappen = costPerMeal(mealCostRappen, served);
     const mealTarget = budget?.costPerMealRappen;
     const daysInMonth = daysBetween(monthStart, firstOfMonth(addMonths(monthStart, 1)));
 

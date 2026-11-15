@@ -5,6 +5,7 @@ export * from './costing';
 export * from './declaration';
 export * from './expiry';
 export * from './fefo';
+export * from './meals';
 export * from './menu-engineering';
 export * from './price-change';
 export * from './requirements';
