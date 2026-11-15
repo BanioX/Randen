@@ -26,7 +26,6 @@ const REPORT_SCHEMA = {
         format: { type: 'string' }, lint: { type: 'string' }, typecheck: { type: 'string' },
         test: { type: 'string' }, build: { type: 'string' },
       },
-      required: ['format', 'lint', 'typecheck', 'test', 'build'],
     },
     operations: { type: 'string', description: 'every operation of your contract with one line on what it does' },
     pages: { type: 'string', description: 'every route with one line on what the page offers' },
@@ -37,8 +36,9 @@ const REPORT_SCHEMA = {
     },
     notes: { type: 'string', description: 'decisions, shortcuts (debts), open ends, anything the integrator must know' },
   },
-  required: ['branch', 'commit', 'checks', 'operations', 'pages', 'requests', 'notes'],
+  required: ['branch', 'commit'],
 }
+// The report is for the integrator: plain short strings, no backslashes, each under 800 characters (lesson: a long report broke the structured output).
 
 const common = (name, owns) => `You are building one module of "Randen": a premium, local-first PWA for kitchens from the one-person takeaway to the large kitchen, in the colours of red wine (Rotwein, Traube, Kork). It is the business sister of "Rettich" (a household app by the same owner, Alban Hyseni). Randen's repo is /home/user/Randen (private). Rettich's repo is /home/user/FridgeAI: READ ONLY, never change it; you may read it for craft and port ideas (same owner, same stack).
 
