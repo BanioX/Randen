@@ -16,5 +16,21 @@ export const settingsRoutes: RouteObject[] = [
     path: 'more/features',
     lazy: async () => ({ Component: (await import('./FeaturesPage')).FeaturesPage }),
   },
+  {
+    path: 'more/business',
+    lazy: async () => ({ Component: (await import('./BusinessPage')).BusinessPage }),
+  },
+  {
+    path: 'more/team',
+    lazy: async () => ({ Component: (await import('./TeamPage')).TeamPage }),
+  },
+  {
+    path: 'more/data',
+    lazy: async () => ({ Component: (await import('./DataPage')).DataPage }),
+  },
+  {
+    path: 'more/about',
+    lazy: async () => ({ Component: (await import('./AboutPage')).AboutPage }),
+  },
   { path: 'more/*', element: <PlaceholderPage title={messages.nav.business} /> },
 ];
