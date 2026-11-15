@@ -45,5 +45,8 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | «du» oder «Sie» | Gebaut ist «du» (ADR-0010); ein Wechsel betrifft nur die Textkataloge |
 | Server und Sync | Gebaut ist ein Gerät pro Küche ohne Server (ADR-0006). Mehrere Geräte brauchen Konten und Sync: kostet und lässt Daten das Gerät verlassen |
 | Speisekarte im Netz mit QR-Code | Nicht gebaut (ADR-0011): braucht eine öffentliche Adresse |
+| MWST im Wareneinsatz | Betriebe ohne MWST-Pflicht oder mit Saldosteuersatz tragen die MWST als Kosten. Soll ihr Wareneinsatz mit MWST rechnen? Braucht vorher eine Quelle in `fakten.md` (ADR-0015) |
+| «Menu» oder «Menü» | In der Schweizer Gastronomie ist «Menu» üblich, die App schreibt heute «Menü» (ADR-0015) |
+| Begriffe für kleine Betriebe | «Abschreiber», «Wareneinsatz» und «Mindestbestand» erklären oder ersetzen, etwa durch «Weggeworfen», «Warenkosten» und «Nachkaufen ab» (ADR-0015). Bis dahin erklärt die App die Begriffe |
 | Domain | Nicht gekauft; kostet Geld |
 | Cloudflare-Vorschau | Projekt `randen` eingerichtet (15.11.2026), Production vorläufig auf dem Arbeits-Branch ([`previews.md`](previews.md)) |
