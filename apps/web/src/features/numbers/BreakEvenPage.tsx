@@ -197,16 +197,18 @@ function FixedCostsForm({
       return;
     }
     try {
+      // Only what the saved budget of this month holds is passed on. The proposal of the month
+      // before has targets this form does not show, so they are not saved with it.
       await run('budgets.set', {
         month,
         purchaseBudgetRappen: purchases,
         fixedCostsRappen: fixed,
-        ...(source?.revenueTargetRappen === undefined
+        ...(row?.revenueTargetRappen === undefined
           ? {}
-          : { revenueTargetRappen: source.revenueTargetRappen }),
-        ...(source?.targetFoodCostBps === undefined
+          : { revenueTargetRappen: row.revenueTargetRappen }),
+        ...(row?.targetFoodCostBps === undefined
           ? {}
-          : { targetFoodCostBps: source.targetFoodCostBps }),
+          : { targetFoodCostBps: row.targetFoodCostBps }),
         ...(row?.note === undefined ? {} : { note: row.note }),
       });
       setError(null);

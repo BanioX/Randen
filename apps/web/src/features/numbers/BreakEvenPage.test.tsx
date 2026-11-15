@@ -1,5 +1,5 @@
 import { localDate, SaleSchema } from '@randen/core';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { createStockLedger } from '@randen/core';
 import { renderApp, type AppView } from '../../app/test-helpers';
@@ -74,6 +74,44 @@ describe('Break-even of the month', () => {
     ).toBeTruthy();
     expect(screen.getByText('Deckungsbeitrag')).toBeTruthy();
     expect(screen.getByText('70 %')).toBeTruthy();
+  });
+
+  it('saves the fixed costs of a new month without the targets of the month before (guards the proposal targets)', async () => {
+    const view = await renderApp(<BreakEvenPage />, {
+      route: '/numbers/break-even',
+      path: '/numbers/break-even',
+      routes: [{ path: '/elsewhere', element: <p>Anderswo</p> }],
+    });
+    await view.t.useCases['budgets.set']({
+      commandId: view.t.cmd(),
+      businessId: view.t.businessId,
+      month: '2026-10',
+      purchaseBudgetRappen: 2_000_000,
+      revenueTargetRappen: 4_000_000,
+      targetFoodCostBps: 3000,
+    });
+    // The form takes its start from the proposal of October when it mounts: leave and come back.
+    await act(async () => {
+      await view.router.navigate('/elsewhere');
+    });
+    await act(async () => {
+      await view.router.navigate('/numbers/break-even');
+    });
+    await view.user.type(await screen.findByLabelText('Fixkosten'), '35000');
+    await view.user.click(screen.getByRole('button', { name: 'Fixkosten sichern' }));
+    await waitFor(async () => {
+      const rows = await view.t.storage.budgets.ofBusiness(view.t.businessId);
+      expect(
+        rows.filter((row) => row.month === '2026-11').map((row) => row.fixedCostsRappen),
+      ).toEqual([3_500_000]);
+    });
+    const november = (await view.t.storage.budgets.ofBusiness(view.t.businessId)).find(
+      (row) => row.month === '2026-11',
+    );
+    // The purchase budget the form shows is saved; the targets it does not show are not.
+    expect(november?.purchaseBudgetRappen).toBe(2_000_000);
+    expect(november?.revenueTargetRappen).toBeUndefined();
+    expect(november?.targetFoodCostBps).toBeUndefined();
   });
 
   it('says the revenue is still missing, while the fixed costs are known', async () => {

@@ -3,6 +3,7 @@ import {
   formatQuantity,
   formatSwissDate,
   rappen,
+  type LocalDate,
   type MonthReport,
   type YearMonth,
 } from '@randen/core';
@@ -75,13 +76,22 @@ export function MonthReportPage() {
       {result.status === 'error' ? (
         <Notice tone="danger">{`${t.errorTitle} ${errorText(result.error)}`}</Notice>
       ) : result.data === undefined ? null : (
-        <Report report={result.data} money={money} />
+        <Report report={result.data} money={money} printedOn={today} />
       )}
     </>
   );
 }
 
-function Report({ report, money }: { report: MonthReport; money: Money }) {
+/** `printedOn` is the day of printing (today), not the last day of the month the report covers. */
+function Report({
+  report,
+  money,
+  printedOn,
+}: {
+  report: MonthReport;
+  money: Money;
+  printedOn: LocalDate;
+}) {
   const { totals, budget, breakEven, waste, dishes, incomplete, meals } = report;
   const foodCostText = totals.foodCostBps === undefined ? '–' : formatPercent(totals.foodCostBps);
   const spent = budget.spentRappen;
@@ -94,7 +104,7 @@ function Report({ report, money }: { report: MonthReport; money: Money }) {
           {t.report.heading(monthName(report.month))}
         </h2>
         <p className="text-sm text-ink-muted print:text-black">
-          {t.report.printedOn(formatSwissDate(report.to))}
+          {t.report.printedOn(formatSwissDate(printedOn))}
         </p>
       </header>
 

@@ -29,6 +29,22 @@ describe('Monatsbericht', () => {
     print.mockRestore();
   });
 
+  it('prints the day of printing, not the last day of the month it reports (guards the printed date)', async () => {
+    await renderApp(<MonthReportPage />, { route: '/numbers/report', today: '2026-11-15' });
+    expect(await screen.findByText('Gedruckt am 15.11.2026')).toBeTruthy();
+    expect(screen.queryByText('Gedruckt am 30.11.2026')).toBeNull();
+  });
+
+  it('keeps the day of printing when another month is shown', async () => {
+    const view = await renderApp(<MonthReportPage />, {
+      route: '/numbers/report',
+      today: '2026-11-15',
+    });
+    await view.user.click(await screen.findByRole('button', { name: 'Vormonat' }));
+    expect(await screen.findByRole('heading', { name: 'Monatsbericht Oktober 2026' })).toBeTruthy();
+    expect(screen.getByText('Gedruckt am 15.11.2026')).toBeTruthy();
+  });
+
   it('switches the month, and keeps it in the address', async () => {
     const view = await renderApp(<MonthReportPage />, { route: '/numbers/report' });
     await view.user.click(await screen.findByRole('button', { name: 'Vormonat' }));
