@@ -194,8 +194,9 @@ describe('haccp.report', () => {
    *   Kühlzelle 14.11.: 4.5 °C in order and 7.5 °C out of range (with action).  Days with a range
    *   only; Tiefkühlzelle (no reading) is listed with its range and no readings.
    *   Gemüse garen 13.11.: 73 °C in order (cooking, food).  Goods receipt 12.11.: 8.5 °C, not ok.
-   *   Abfall leeren (daily): ticked on 14.11. by «TE», due on 9. to 14.11. (six days), done once.
-   *   Kühlzelle auswischen (Monday 9.11.): ticked by «AM» (Anna Meier), done once of one due.
+   *   Abfall leeren (daily, made 14.11.): ticked on 14.11. by «TE», due on 14.11. only, done once.
+   *   Kühlzelle auswischen (Monday, made 9.11.): ticked on 9.11. by «AM2» (Anna Muster), done once
+   *   of one due.
    *   Missing days up to today: 9., 10., 11. and 12.11. (15.11. has not come yet).
    */
   async function prepare() {
@@ -251,6 +252,8 @@ describe('haccp.report', () => {
       businessId: s.businessId,
       taskId: daily.taskId,
     });
+    // Made on Monday 9.11., so that its one due day in the period is the day it is ticked on.
+    s.t.clock.setToday('2026-11-09');
     const weekly = await s.run['hygiene.saveTask']({
       commandId: s.t.cmd(),
       businessId: s.businessId,
@@ -259,6 +262,7 @@ describe('haccp.report', () => {
       weekday: 'mon',
       active: true,
     });
+    s.t.clock.setToday('2026-11-14');
     await addCheck(s, weekly.taskId, '2026-11-09', anna);
     const removed = await s.run['hygiene.saveTask']({
       commandId: s.t.cmd(),
@@ -387,15 +391,15 @@ describe('haccp.report', () => {
     expect(abfall).toMatchObject({
       name: 'Abfall leeren',
       frequency: 'daily',
-      dueCount: 6,
+      dueCount: 1,
       doneCount: 1,
     });
     expect(abfall?.cells.map((cell) => cell.state)).toEqual([
-      'open',
-      'open',
-      'open',
-      'open',
-      'open',
+      'not_due',
+      'not_due',
+      'not_due',
+      'not_due',
+      'not_due',
       'done',
       'not_due',
     ]);
@@ -427,7 +431,7 @@ describe('haccp.report', () => {
       { initials: 'AM2', name: 'Anna Muster' },
       { initials: 'TE', name: 'Testperson' },
     ]);
-    expect(report.counts.tasksDue).toBe(7);
+    expect(report.counts.tasksDue).toBe(2);
     expect(report.counts.tasksDone).toBe(2);
   });
 
@@ -464,6 +468,72 @@ describe('haccp.report', () => {
     expect(row).toMatchObject({ dueCount: 1, doneCount: 1 });
     expect(row?.cells[5]).toEqual({ on: '2026-11-14', state: 'done', initials: 'TE' });
     expect(row?.cells[0]?.state).toBe('not_due');
+  });
+
+  it('counts every task only from the day it was made: daily from that day, weekly from its first weekday, monthly from its month', async () => {
+    const s = await setup();
+    // Made on Thursday 12.11.: the Wednesday 11.11. before it is not a day of the weekly task.
+    s.t.clock.setToday('2026-11-12');
+    const daily = await s.run['hygiene.saveTask']({
+      commandId: s.t.cmd(),
+      businessId: s.businessId,
+      name: 'Tresen wischen',
+      frequency: 'daily',
+      active: true,
+    });
+    const weekly = await s.run['hygiene.saveTask']({
+      commandId: s.t.cmd(),
+      businessId: s.businessId,
+      name: 'Fettfang leeren',
+      frequency: 'weekly',
+      weekday: 'wed',
+      active: true,
+    });
+    s.t.clock.setToday('2026-11-14');
+    const monthly = await s.run['hygiene.saveTask']({
+      commandId: s.t.cmd(),
+      businessId: s.businessId,
+      name: 'Schädlingskontrolle',
+      frequency: 'monthly',
+      active: true,
+    });
+    const report = await s.run['haccp.report']({
+      businessId: s.businessId,
+      from: '2026-10-01',
+      to: '2026-11-15',
+    });
+    const byId = new Map(report.tasks.map((task) => [task.taskId, task]));
+    // 12., 13. and 14.11. are the days of the daily task; the period before it has none.
+    expect(byId.get(daily.taskId)).toMatchObject({ dueCount: 3, doneCount: 0 });
+    expect(byId.get(weekly.taskId)).toMatchObject({ dueCount: 0, doneCount: 0 });
+    // Made in November: October is not one of its months.
+    expect(byId.get(monthly.taskId)).toMatchObject({ dueCount: 1, doneCount: 0 });
+  });
+
+  it('counts a monthly task ticked earlier in its month as done for a period later in that month', async () => {
+    const s = await setup();
+    s.t.clock.setToday('2026-11-02');
+    const monthly = await s.run['hygiene.saveTask']({
+      commandId: s.t.cmd(),
+      businessId: s.businessId,
+      name: 'Schädlingskontrolle',
+      frequency: 'monthly',
+      active: true,
+    });
+    await s.run['hygiene.check']({
+      commandId: s.t.cmd(),
+      businessId: s.businessId,
+      taskId: monthly.taskId,
+    });
+    s.t.clock.setToday('2026-11-14');
+    const report = await s.run['haccp.report']({
+      businessId: s.businessId,
+      from: '2026-11-09',
+      to: '2026-11-15',
+    });
+    // Ticked on 2.11.: November is done, so the period 9. to 15.11. reads 1 of 1, not 0 of 1.
+    const row = report.tasks.find((task) => task.taskId === monthly.taskId);
+    expect(row).toMatchObject({ dueCount: 1, doneCount: 1 });
   });
 
   it('shows nothing of another business', async () => {

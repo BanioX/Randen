@@ -313,9 +313,12 @@ function foodColumns(): DataTableColumn<ReportView['food'][number]>[] {
     },
     {
       key: 'limit',
-      header: t.report.food.title,
+      header: t.report.food.limitTitle,
       hideBelow: 'md',
-      render: (row) => rangeText(row.minDeciC, row.maxDeciC) ?? '–',
+      render: (row) => {
+        const range = rangeText(row.minDeciC, row.maxDeciC);
+        return range === undefined ? '–' : t.report.food.limit(range);
+      },
     },
     {
       key: 'result',

@@ -37,9 +37,11 @@ export const TEMPERATURE_PROPOSALS: Readonly<Record<FoodKind, TemperatureProposa
     source: 'GVG Kap. 2.4.4 und 2.4.7: mindestens 65 °C, höchstens 3 Stunden',
   },
   // Abkühlen: innert 90 Minuten von 65 °C auf weniger als 5 °C (GVG Kap. 2.4.4). A single reading
-  // at the end of the cooling counts: at most 5 °C. The cantonal 50-to-10 °C rule (BS-Temp, AG-15)
-  // is a time rule and is not checked by a single reading.
-  cooling: { maxDeciC: 50, source: 'GVG Kap. 2.4.4: auf weniger als 5 °C innert 90 Minuten' },
+  // at the end of the cooling counts. Readings are whole tenths of a degree (DeciCelsius), so
+  // «weniger als 5 °C» is exactly «höchstens 4,9 °C»: 49 is the highest reading that passes, and
+  // 50 (5.0 °C) does not. The cantonal 50-to-10 °C rule (BS-Temp, AG-15) is a time rule and is not
+  // checked by a single reading.
+  cooling: { maxDeciC: 49, source: 'GVG Kap. 2.4.4: auf weniger als 5 °C innert 90 Minuten' },
 };
 
 /** The food kinds in the order of the record form. */

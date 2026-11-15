@@ -201,10 +201,10 @@ describe('temperatures.record: food', () => {
     });
   });
 
-  it('checks hot holding at least 65 °C and cooling at most 5 °C', async () => {
+  it('checks hot holding at least 65 °C and cooling below 5 °C', async () => {
     const s = await setup();
     expect(await record(s, 'hot_holding', 660)).toMatchObject({ ok: true, minDeciC: 650 });
-    expect(await record(s, 'cooling', 45)).toMatchObject({ ok: true, maxDeciC: 50 });
+    expect(await record(s, 'cooling', 45)).toMatchObject({ ok: true, maxDeciC: 49 });
     await expect(record(s, 'cooling', 80)).rejects.toMatchObject({ code: 'invalid' });
     await expect(record(s, 'hot_holding', 600)).rejects.toMatchObject({ code: 'invalid' });
   });
@@ -212,6 +212,26 @@ describe('temperatures.record: food', () => {
   it('checks goods at the door against 5 °C', async () => {
     const s = await setup();
     expect(await record(s, 'receiving', 30)).toMatchObject({ ok: true, maxDeciC: 50 });
+  });
+
+  it('lets cooling pass at 4.9 °C but not at exactly 5.0 °C, because «auf weniger als 5 °C» is strict', async () => {
+    const s = await setup();
+    expect(await record(s, 'cooling', 49)).toMatchObject({ ok: true, maxDeciC: 49 });
+    await expect(record(s, 'cooling', 50)).rejects.toMatchObject({ code: 'invalid' });
+    expect(await record(s, 'cooling', 50, 'Kühlung nachgeholt.')).toMatchObject({
+      ok: false,
+      maxDeciC: 49,
+    });
+  });
+
+  it('lets goods at the door pass at exactly 5.0 °C, because «höchstens 5 °C» includes 5 °C', async () => {
+    const s = await setup();
+    expect(await record(s, 'receiving', 50)).toMatchObject({ ok: true, maxDeciC: 50 });
+    await expect(record(s, 'receiving', 51)).rejects.toMatchObject({ code: 'invalid' });
+    expect(await record(s, 'receiving', 51, 'Ware zurückgewiesen.')).toMatchObject({
+      ok: false,
+      maxDeciC: 50,
+    });
   });
 
   it('needs a label for a food reading and no area', async () => {

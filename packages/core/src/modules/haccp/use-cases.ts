@@ -6,7 +6,7 @@ import {
   type UseCase,
 } from '../../application/command';
 import { CONTRACT_V1 } from '../../contract';
-import { addDays } from '../../dates';
+import { addDays, toLocalDate } from '../../dates';
 import type { AreaKind } from '../../domain/categories';
 import type { Id } from '../../ids';
 import {
@@ -275,7 +275,9 @@ export function createHaccpUseCases(ctx: AppContext) {
         const area = task.areaId === undefined ? undefined : book.areaById.get(task.areaId);
         const live = task.deletedAt === undefined && task.active;
         const own = checksInPeriod.filter((check) => check.taskId === task.id);
-        const dueDays = new Set(live ? past.filter((on) => dueOn(task, on)) : []);
+        // A task is due only from the local day it was made: the days before it are not its days.
+        const madeOn = toLocalDate(task.createdAt);
+        const dueDays = new Set(live ? past.filter((on) => on >= madeOn && dueOn(task, on)) : []);
         const cells = days.map((on) => {
           const check = own.find((entry) => entry.on === on);
           const state = check !== undefined ? 'done' : dueDays.has(on) ? 'open' : 'not_due';
@@ -285,11 +287,16 @@ export function createHaccpUseCases(ctx: AppContext) {
             ...(check === undefined ? {} : { initials: book.staff.initialsOf(check.doneBy) }),
           } as const;
         });
-        const months = [...new Set(past.map(monthOf))];
+        // A monthly task is due once in each calendar month from the one it was made in. A tick in
+        // that month makes it done for the whole month, also for a period that ends before the tick.
+        const months = [...new Set(past.filter((on) => on >= madeOn).map(monthOf))];
+        const tickedMonths = new Set(
+          book.checks.filter((check) => check.taskId === task.id).map((check) => monthOf(check.on)),
+        );
         const dueCount = !live ? 0 : task.frequency === 'monthly' ? months.length : dueDays.size;
         const doneCount =
           task.frequency === 'monthly'
-            ? months.filter((month) => own.some((check) => monthOf(check.on) === month)).length
+            ? months.filter((month) => tickedMonths.has(month)).length
             : cells.filter((cell) => cell.state === 'done' && dueDays.has(cell.on)).length;
         return {
           taskId: task.id,

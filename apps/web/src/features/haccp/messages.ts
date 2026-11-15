@@ -227,6 +227,7 @@ export const haccpMessages = {
     food: {
       title: 'Lebensmittel',
       empty: 'Keine Messung von Lebensmitteln in diesem Zeitraum.',
+      limitTitle: 'Richtwert',
       limit: (text: string) => `Richtwert ${text}`,
     },
     tasks: {

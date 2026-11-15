@@ -87,6 +87,21 @@ describe('ReportPage', () => {
     expect(screen.getByText(t.report.summaryReceipts(0, 0))).toBeTruthy();
   });
 
+  it('heads the food limit as Richtwert and writes each limit with that word (ADR-0012)', async () => {
+    const view = await renderReport();
+    await view.t.useCases['temperatures.record']({
+      commandId: view.t.cmd(),
+      businessId: view.t.businessId,
+      kind: 'cooking',
+      label: 'Gemüse',
+      deciC: 730,
+    });
+    const food = await screen.findByRole('table', { name: t.report.food.title });
+    expect(within(food).getByRole('columnheader', { name: t.report.food.limitTitle })).toBeTruthy();
+    expect(within(food).getByText(t.report.food.limit('mindestens 70 °C'))).toBeTruthy();
+    expect(within(food).queryByText('mindestens 70 °C')).toBeNull();
+  });
+
   it('keeps the reading when the device shows the detailed view again', async () => {
     writeDetailed(true);
     await renderReport();
