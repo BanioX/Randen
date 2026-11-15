@@ -1,8 +1,25 @@
 import type { RouteObject } from 'react-router';
-import { messages } from '../../app/messages';
-import { PlaceholderPage } from '../placeholder/PlaceholderPage';
 
-/** Pages of «recipes» inside the app frame. The module replaces this placeholder. */
+/** Pages of «Rezepte» inside the app frame, loaded when first opened. */
 export const recipesRoutes: RouteObject[] = [
-  { path: 'recipes/*', element: <PlaceholderPage title={messages.nav.recipes} /> },
+  {
+    path: 'recipes',
+    lazy: async () => ({ Component: (await import('./RecipesPage')).RecipesPage }),
+  },
+  {
+    path: 'recipes/new',
+    lazy: async () => ({ Component: (await import('./RecipeFormPage')).RecipeNewPage }),
+  },
+  {
+    path: 'recipes/:recipeId',
+    lazy: async () => ({ Component: (await import('./RecipeDetailPage')).RecipeDetailPage }),
+  },
+  {
+    path: 'recipes/:recipeId/edit',
+    lazy: async () => ({ Component: (await import('./RecipeFormPage')).RecipeEditPage }),
+  },
+  {
+    path: 'recipes/:recipeId/cook',
+    lazy: async () => ({ Component: (await import('./RecipeCookPage')).RecipeCookPage }),
+  },
 ];
