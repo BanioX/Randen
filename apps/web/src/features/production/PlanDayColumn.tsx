@@ -64,25 +64,39 @@ export function PlanEntryButton({
   const content = (
     <>
       <DishPhoto photo={entry.photo} alt="" className="size-11 shrink-0" radius="md" />
-      <span className="min-w-0 flex-1">
-        <span className="block leading-snug font-semibold break-words">{entry.recipeName}</span>
+      {/* From 1280 px the week is seven narrow columns: the photo sits above the name, which gets the full width. */}
+      <span className="min-w-0 flex-1 xl:w-full">
+        <span className="block leading-snug font-semibold break-words hyphens-calm">
+          {entry.recipeName}
+        </span>
         <span className="block text-[0.8125rem] text-ink-muted">
           {t.plan.entryMeta(entry.portions)}
           {entry.lineName === undefined ? '' : ` · ${entry.lineName}`}
         </span>
+        {/* Under the text, not beside it: in a narrow day column a badge beside the name
+            leaves the name a few letters wide. */}
+        {entry.produced ? (
+          <span className="mt-1 block">
+            <StatusChip tone="ok" size="sm">
+              {t.plan.producedBadge}
+            </StatusChip>
+          </span>
+        ) : detailed ? (
+          <span className="mt-1 block">
+            <MarginBadge
+              status={entry.marginStatus}
+              foodCostBps={entry.foodCostBps}
+              short
+              size="sm"
+            />
+          </span>
+        ) : null}
       </span>
-      {entry.produced ? (
-        <StatusChip tone="ok" size="sm">
-          {t.plan.producedBadge}
-        </StatusChip>
-      ) : detailed ? (
-        <MarginBadge status={entry.marginStatus} foodCostBps={entry.foodCostBps} short size="sm" />
-      ) : null}
     </>
   );
   if (onOpen === undefined) {
     return (
-      <div className="flex min-h-14 w-full items-center gap-2 rounded-xl bg-surface p-2 text-left shadow-card">
+      <div className="flex min-h-14 w-full items-center gap-2 rounded-xl bg-surface p-2 text-left shadow-card xl:flex-col xl:items-start">
         {content}
       </div>
     );
@@ -93,7 +107,7 @@ export function PlanEntryButton({
       onClick={() => {
         onOpen(entry);
       }}
-      className="flex min-h-14 w-full items-center gap-2 rounded-xl bg-surface p-2 text-left shadow-card transition-colors hover:bg-surface-muted"
+      className="flex min-h-14 w-full items-center gap-2 rounded-xl bg-surface p-2 text-left shadow-card xl:flex-col xl:items-start transition-colors hover:bg-surface-muted"
     >
       {content}
     </button>

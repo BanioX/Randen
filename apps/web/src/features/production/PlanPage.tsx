@@ -179,7 +179,7 @@ export function PlanPage() {
       </h2>
 
       {week === undefined ? null : (
-        <div className="grid gap-3 lg:grid-cols-7 print:grid print:grid-cols-7 print:gap-2">
+        <div className="grid gap-3 xl:grid-cols-7 print:grid print:grid-cols-7 print:gap-2">
           {week.days.map((day) => (
             <PlanDayColumn
               key={day.date}
