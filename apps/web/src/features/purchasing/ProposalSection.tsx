@@ -286,9 +286,10 @@ export function ProposalSection({ data, withMarket, planning }: ProposalSectionP
         />
       ) : (
         <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
-          {groups.map((group) => (
+          {groups.map((group, index) => (
             <SupplierCard
-              key={group.supplier?.id ?? 'none'}
+              // A group without a supplier shares the id «none»: the index keeps the keys unique.
+              key={group.supplier?.id ?? `none-${String(index)}`}
               group={group}
               horizonDays={data.horizonDays}
               primary={orderable.length === 1}
