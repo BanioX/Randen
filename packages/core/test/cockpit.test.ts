@@ -169,7 +169,7 @@ describe('cockpit.today, the day', () => {
     });
   });
 
-  it('lists the hygiene tasks still open today: daily, weekly from their day, monthly', async () => {
+  it('lists the hygiene tasks still open today: daily, weekly on their day, monthly', async () => {
     const { t, run, businessId } = await setup();
     // Saturday, 14.11.2026: the week began on Monday, 9.11., the month on 1.11.
     const task = (name: string, fields: object) => {
@@ -182,6 +182,8 @@ describe('cockpit.today, the day', () => {
       task('Kühlzelle reinigen', { frequency: 'weekly', weekday: 'sat' }),
       task('Abzug reinigen', { frequency: 'weekly', weekday: 'mon' }),
       task('Lager ausräumen', { frequency: 'weekly', weekday: 'sun' }),
+      // Monday's task, not ticked: like the haccp plan, it is not open on Saturday any more.
+      task('Dunstfilter prüfen', { frequency: 'weekly', weekday: 'mon' }),
       task('Fettabscheider leeren', { frequency: 'monthly' }),
       task('Lüftungsfilter wechseln', { frequency: 'monthly' }),
       task('Glacemaschine reinigen', { frequency: 'daily', active: false }),

@@ -94,19 +94,17 @@ const slotOrder = (slot: PlanSlot) => PLAN_SLOTS.indexOf(slot);
 const within = (day: LocalDate, from: LocalDate, to: LocalDate) => day >= from && day <= to;
 
 /**
- * Whether a hygiene task still waits today: daily ones until done today, weekly ones from their
- * weekday until done in the same week (Monday to Sunday), monthly ones until done this month.
+ * Whether a hygiene task still waits today, by the same plan as the haccp page: daily ones until
+ * done today, weekly ones only on their weekday until done that day, monthly ones until done this
+ * month.
  */
 function hygieneDue(task: HygieneTask, checks: readonly HygieneCheck[], today: LocalDate) {
   const done = (from: LocalDate) => checks.some((check) => within(check.on, from, today));
   switch (task.frequency) {
     case 'daily':
       return !done(today);
-    case 'weekly': {
-      const reached =
-        task.weekday === undefined || WEEKDAYS.indexOf(task.weekday) <= weekdayIndex(today);
-      return reached && !done(addDays(today, -weekdayIndex(today)));
-    }
+    case 'weekly':
+      return task.weekday === WEEKDAYS[weekdayIndex(today)] && !done(today);
     case 'monthly':
       return !done(firstOfMonth(today));
   }
