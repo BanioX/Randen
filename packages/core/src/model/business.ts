@@ -3,6 +3,7 @@ import { CurrencyCodeSchema } from '../currency';
 import { IdSchema } from '../ids';
 import { BpsSchema, IsoDateTimeSchema, nameSchema, syncFields } from './primitives';
 
+/** The kind of business («Betriebsart», ADR-0015); it proposes the building blocks. */
 export const BusinessKindSchema = z.enum([
   'restaurant',
   'cafe',
@@ -12,8 +13,34 @@ export const BusinessKindSchema = z.enum([
   'takeaway',
   'bakery',
   'other',
+  // Since ADR-0015:
+  'bistro',
+  'lunch',
+  'mensa',
+  'central_kitchen',
+  'care',
+  'school',
 ]);
 export type BusinessKind = z.infer<typeof BusinessKindSchema>;
+
+/**
+ * The switchable functions of a business (ADR-0015; «Funktionen» in the app, «Bausteine» in the
+ * decision). Stock, articles, recipes and self-checks are the core and always there.
+ */
+export const ModuleIdSchema = z.enum([
+  'menu_card',
+  'ordering',
+  'market',
+  'production',
+  'planning',
+  'meals',
+  'dispatch',
+  'sales',
+  'numbers',
+  'places',
+  'team',
+]);
+export type ModuleId = z.infer<typeof ModuleIdSchema>;
 
 /**
  * One kitchen with its stock, recipes and numbers («Betrieb»). Everything else belongs to
@@ -29,6 +56,13 @@ export const BusinessSchema = z.object({
   targetFoodCostBps: BpsSchema,
   /** VAT of a dish unless the recipe says otherwise, e.g. 810 = 8.1 %. */
   defaultVatBps: BpsSchema,
+  /**
+   * The building blocks the business works with (ADR-0015). Missing on a business from before
+   * the decision: then every block is on, so nobody loses a function.
+   */
+  modules: z.array(ModuleIdSchema).max(20).optional(),
+  /** When the business went through «Randen einrichten»; until then the cockpit offers it. */
+  setupAt: IsoDateTimeSchema.optional(),
   /** True while the business holds the demo data, so the app can offer to clear it. */
   demo: z.boolean().optional(),
   createdAt: IsoDateTimeSchema,

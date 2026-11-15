@@ -272,6 +272,16 @@ export const ARTICLE_CATEGORIES = [
     declaresOrigin: false,
   },
   {
+    // Boxes, cups, foil: part of the cost of a take-away dish, so recipes can use them.
+    id: 'packaging',
+    label: 'Verpackung und Einweg',
+    area: 'dry',
+    shelfLifeDays: 3650,
+    dateKind: 'best_before',
+    diet: 'vegan',
+    declaresOrigin: false,
+  },
+  {
     id: 'nonfood',
     label: 'Non-Food',
     area: 'other',

@@ -125,6 +125,7 @@ All fields are controlled (`value` / `onChange`). Parsed fields keep the raw tex
 - `SearchField`: `{ label, hideLabel?, value: string, onChange(value: string), placeholder?, hint?, disabled?, id?, name?, className? }`. `type="search"`; clear button named «Suche leeren» appears when not empty.
 - `ChoiceChips<T extends string>` (single, radios): `{ legend, options: readonly { value: T; label; description?; danger?; disabled? }[], value: T | null, onChange(value: T), hideLegend?, segmented?, hint?, error?, disabled?, className? }`. `getByRole('group', { name: legend })`, `getByRole('radio', { name: label })`.
 - `MultiChoiceChips<T extends string>` (checkboxes, same file): same but `value: readonly T[]`, `onChange(value: T[])` in the order of `options`; no `segmented`.
+- `ChoiceTiles<T extends string>` / `MultiChoiceTiles<T>` (`ui/ChoiceTiles.tsx`): large tiles for a question that stands alone on a screen («Randen einrichten»): `{ legend, options: readonly { value: T; label; detail? }[], value, onChange, hideLegend?, hint?, error?, columns?: 1 | 2 }`. Radios or checkboxes underneath; `getByRole('radio' | 'checkbox', { name: label })`.
 - `AllergenPicker`: `{ legend? (default «Allergene»), hideLegend?, value: readonly AllergenId[], onChange(value: AllergenId[]) (sorted by the ordinance), unavailable?: readonly AllergenId[] (shown disabled), hint?, error?, disabled?, className? }`. 14 checkboxes named by `allergenLabel`; `allergenOfficial` as tooltip and description.
 
 ## Pickers (`pickers.tsx`)

@@ -99,8 +99,9 @@ interface Fixtures {
   /** `test.use({ newBusiness: true })`: start like a new business, with the essentials (ADR-0014). */
   newBusiness: boolean;
   /**
-   * Every other test sees all functions. Set only when nothing is chosen yet, so a switch flipped
-   * in a test survives the next page load (after Rettich ADR-0095).
+   * Every other test sees all functions: a business without a setup on a device with the
+   * detailed view has every function (ADR-0015). Set only when nothing is chosen yet, so a switch
+   * flipped in a test survives the next page load (after Rettich ADR-0095).
    */
   allExtras: undefined;
 }
@@ -112,7 +113,7 @@ export const test = base.extend<Fixtures>({
       if (!newBusiness) {
         await context.addInitScript(() => {
           if (window.localStorage.getItem('randen:extras') === null) {
-            window.localStorage.setItem('randen:extras', JSON.stringify({ on: true, groups: {} }));
+            window.localStorage.setItem('randen:extras', JSON.stringify({ on: true }));
           }
         });
       }

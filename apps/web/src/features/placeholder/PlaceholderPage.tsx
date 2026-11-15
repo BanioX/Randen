@@ -1,10 +1,12 @@
+import type { ReactNode } from 'react';
 import { messages } from '../../app/messages';
 
 /** Stands in for an area until its module lands, so the whole navigation works from day one. */
-export function PlaceholderPage({ title }: { title: string }) {
+export function PlaceholderPage({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="space-y-3">
       <h1 className="large-title">{title}</h1>
+      {children}
       <p className="text-ink-muted">{messages.placeholder.text}</p>
     </div>
   );

@@ -489,7 +489,7 @@ describe('pickers with a short list', () => {
       </>,
     );
     const category = screen.getByLabelText<HTMLSelectElement>('Warengruppe');
-    expect(category.options).toHaveLength(28);
+    expect(category.options).toHaveLength(29);
     await user.selectOptions(category, 'Fisch und Meeresfrüchte');
     expect(onCategory).toHaveBeenLastCalledWith('fish');
     const country = screen.getByLabelText<HTMLSelectElement>('Herkunft');

@@ -1,4 +1,5 @@
 export * from './allergens';
+export * from './business-profiles';
 export * from './categories';
 export * from './costing';
 export * from './declaration';

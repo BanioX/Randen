@@ -11,7 +11,8 @@ import { AreaKindSchema, ArticleCategoryIdSchema } from '../../domain/categories
 import { IdSchema } from '../../ids';
 import { RappenSchema } from '../../money';
 import { ArticleKindSchema, UnitPriceSchema } from '../../model/article';
-import { BusinessSchema, StaffRoleSchema } from '../../model/business';
+import { BusinessSchema, ModuleIdSchema, StaffRoleSchema } from '../../model/business';
+import { EatingSchema, GoodsSourcesSchema, TeamSizeSchema } from '../../domain/business-profiles';
 import {
   BpsSchema,
   DateKindSchema,
@@ -89,16 +90,37 @@ export const lookupContract = {
   'business.update': command({
     name: 'business.update',
     summary: {
-      de: 'Name, Art und Zielwerte des Betriebs ändern.',
-      en: 'Change name, kind and targets of the business.',
+      de: 'Name, Betriebsart, Bausteine und Zielwerte des Betriebs ändern.',
+      en: 'Change name, kind, building blocks and targets of the business.',
     },
     scopes: ['business:write'],
     input: z.object({
       ...commandBase,
       name: BusinessSchema.shape.name.optional(),
       kind: BusinessSchema.shape.kind.optional(),
+      /** The complete list of switched-on building blocks (ADR-0015). */
+      modules: z.array(ModuleIdSchema).max(20).optional(),
       targetFoodCostBps: BpsSchema.min(500).max(9000).optional(),
       defaultVatBps: BpsSchema.max(3000).optional(),
+    }),
+    output: z.object({ business: BusinessSchema }),
+  }),
+  'business.setup': command({
+    name: 'business.setup',
+    summary: {
+      de: 'Den Betrieb einrichten: Betriebsart, Herkunft der Ware, Team, Name und Funktionen.',
+      en: 'Set the business up: kind, where goods come from, team, name and functions.',
+    },
+    scopes: ['business:write'],
+    input: z.object({
+      ...commandBase,
+      kind: BusinessSchema.shape.kind,
+      sources: GoodsSourcesSchema,
+      team: TeamSizeSchema,
+      eating: EatingSchema.optional(),
+      name: BusinessSchema.shape.name,
+      /** The functions a person chose; without, the business takes what the answers propose. */
+      modules: z.array(ModuleIdSchema).max(20).optional(),
     }),
     output: z.object({ business: BusinessSchema }),
   }),

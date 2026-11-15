@@ -4,7 +4,7 @@ Kurzfassung der Regeln. Karte des Codes: [`AGENTS.md`](AGENTS.md) · Stand: [`do
 
 **Name:** Randen, mit grossem R (Alban, 14.11.2026). Technische Namen (Pakete `@randen/*`, Datenbank `randen`) bleiben klein. Farben: Rotwein `#6D1F2F`, Traube `#3F0F1C`, Kork `#E8D9C0`, Schrift Onyx.
 
-**Produkt:** Local-first PWA für iPhone, iPad und Web (ADR-0013), für Küchen vom Imbiss bis zur Grossküche: Lager mit Ablaufdaten, «Wo ist was?» mit Fotos, Rezepte mit Kalkulation und Marge, Produktion, Menüplan, der Reste verwertet, digitale Speisekarte mit Allergenen, Einkauf, Budget, Zahlen und Selbstkontrolle (HACCP). Product Owner: Alban Hyseni. Randen ist die Schwester von Rettich (Haushalte) und übernimmt dessen Architektur und Lektionen.
+**Produkt:** Local-first PWA für iPhone, iPad und Web (ADR-0013), für jede Küche vom Imbiss, der im Cash & Carry einkauft, bis zur Produktionsküche (ADR-0015): Lager mit Ablaufdaten, «Wo ist was?» mit Fotos, Rezepte mit Kalkulation und Marge, Produktion, Menüplan, der Reste verwertet, digitale Speisekarte mit Allergenen, Einkauf, Budget, Zahlen und Selbstkontrolle (HACCP). Product Owner: Alban Hyseni. Randen ist die Schwester von Rettich (Haushalte) und übernimmt dessen Architektur und Lektionen.
 
 ## Sprache
 - UI-Texte und Doku: Deutsch (Schweiz), «ss» statt «ß», inklusive Schreibweise (Mitarbeitende, Köch:innen).
@@ -20,7 +20,7 @@ Kurzfassung der Regeln. Karte des Codes: [`AGENTS.md`](AGENTS.md) · Stand: [`do
 5. **Strategie hat ihren Ort:** Dieses Repo ist privat. Was mit Randen Geld verdienen soll, Preise und Vergleiche mit anderen Produkten stehen in `rettich-intern/ideen/gastro.md` (`BanioX/SWELPER`) oder hier unter `docs/intern/`, nie in UI-Texten, Demo-Daten oder Commits, und **nie im öffentlichen Rettich-Repo**. Der Rest der Doku beschreibt, was gebaut ist und wie.
 6. **Lokal zuerst prüfen:** `pnpm check` vor jedem Push; die Zeile `ALL=` lesen und bei `RED` jede Zeile mit `exit=` ungleich 0.
 7. **Aus Rettich übernehmen** (Alban, 15.11.2026): Funktionen aus Rettich laufend kopieren und an die Küche anpassen, wenn sie nützen; Claude entscheidet nach Nützlichkeit und führt [`docs/rettich.md`](docs/rettich.md). Von Randen fliesst nichts zurück ins öffentliche Rettich-Repo.
-8. **Grundfunktionen zuerst** (ADR-0014): Neue Nutzer:innen sehen nur, was eine Küche jeden Tag braucht. Alles Weitere ist ein Extra unter «Betrieb › Funktionen». Jede neue Funktion ist ausdrücklich Grundfunktion oder gehört in eine Gruppe (`useExtra`).
+8. **Jede Küche wählt ihre Komplexität** (ADR-0014, ADR-0015): Die Betriebsart, die Herkunft der Ware und die Teamgrösse schlagen beim Einrichten die Funktionen vor; jede lässt sich unter «Betrieb › Funktionen» schalten. Jeder neue Einstieg gehört zum Kern oder zu einer Funktion (`useModule`), jede neue Auswertung zur Ansicht «Erweitert» (`useDetailed`).
 9. **Wenig technische Schulden:** Abkürzungen in `docs/schulden.md`, Nebenwirkungen in `docs/nebenwirkungen.md` (Test prüft), Lektionen in `docs/lernbuch.md`, Begriffe im Glossar.
 
 ## Harte Regeln
@@ -61,5 +61,5 @@ pnpm e2e            # Playwright; lokal PW_CHROMIUM_EXECUTABLE setzen, Port übe
 - [ ] UI-Texte de-CH mit «du» und «ss», a11y-Basics (Labels, Kontrast, Fokus, 44 px)
 - [ ] iPhone, iPad hochkant, iPad quer und Web angeschaut (ADR-0013): kein seitliches Scrollen, nichts hinter Leisten, kein Feld unter 16 px, hell und dunkel
 - [ ] Neue Funktion auf den Flächen nachgezogen oder bewusst weggelassen (Cockpit, Liste, Detail, Zahlen, Druck/Export, Demo-Daten)
-- [ ] Grundfunktion oder Extra entschieden (ADR-0014), Extras blenden sich mit `useExtra` aus
+- [ ] Kern oder Funktion entschieden (ADR-0015), Einstiege mit `useModule`, Auswertungen mit `useDetailed`
 - [ ] Doku/ADR aktualisiert, Schulden und Nebenwirkungen eingetragen

@@ -18,9 +18,18 @@ import {
 } from './primitives';
 
 /** A business that delivers goods («Lieferant»). Contact data is business data, typed by the user. */
+/**
+ * `supplier` delivers and is ordered from; `market` is where the kitchen fetches goods itself:
+ * a cash & carry, a market, a wholesaler with pick-up (ADR-0015). Missing means `supplier`.
+ */
+export const SupplierKindSchema = z.enum(['supplier', 'market']);
+export type SupplierKind = z.infer<typeof SupplierKindSchema>;
+
 export const SupplierSchema = z.object({
   ...syncFields,
   name: nameSchema(80),
+  kind: SupplierKindSchema.optional(),
+  /** The customer number, at a market the number of the customer card. */
   customerNumber: nameSchema(40).optional(),
   phone: nameSchema(40).optional(),
   email: z.email().max(120).optional(),
@@ -28,6 +37,11 @@ export const SupplierSchema = z.object({
   orderDays: z.array(WeekdaySchema).max(7),
   deliveryDays: z.array(WeekdaySchema).max(7),
   minOrderRappen: RappenSchema.min(0).optional(),
+  /**
+   * A market: the groups of goods in the order of a walk through its halls, for the shopping
+   * list. Missing groups follow in the usual order.
+   */
+  categoryOrder: z.array(ArticleCategoryIdSchema).max(40).optional(),
   note: textSchema(500).optional(),
 });
 export type Supplier = z.infer<typeof SupplierSchema>;

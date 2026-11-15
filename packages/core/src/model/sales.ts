@@ -42,6 +42,8 @@ export const BudgetSchema = z.object({
   /** What the month costs whether a guest comes or not (rent, wages, energy): for the break-even. */
   fixedCostsRappen: RappenSchema.min(0).optional(),
   targetFoodCostBps: BpsSchema.optional(),
+  /** Goods per meal the month may cost (communal catering, ADR-0015). */
+  costPerMealRappen: RappenSchema.min(0).optional(),
   note: textSchema(300).optional(),
 });
 export type Budget = z.infer<typeof BudgetSchema>;

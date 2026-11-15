@@ -50,6 +50,9 @@ export const paths = {
   productionRun: (productionId: string) => `/production/${productionId}`,
   plan: () => '/plan',
 
+  // Auslieferung an Aussenstellen und Events (ADR-0015)
+  dispatch: () => '/dispatch',
+
   // Speisekarte
   menu: () => '/menu',
   menuCard: (cardId: string) => `/menu/${cardId}`,
@@ -85,6 +88,8 @@ export const paths = {
   team: () => '/more/team',
   /** «Funktionen»: the essentials and the extras of ADR-0014. */
   features: () => '/more/features',
+  /** «Randen einrichten»: kind of business, goods, team, name, functions (ADR-0015). */
+  setup: () => '/setup',
   data: () => '/more/data',
   demo: () => '/more/demo',
   about: () => '/more/about',

@@ -12,9 +12,10 @@ import {
   ShieldCheck,
   ShoppingCart,
   Tags,
+  Truck,
   type LucideIcon,
 } from 'lucide-react';
-import { isShown, type ExtrasState, type ExtraGroup } from './extras';
+import type { ModuleId } from '@randen/core';
 import { messages } from './messages';
 import { paths } from './paths';
 
@@ -26,8 +27,11 @@ export interface NavItem {
   also?: readonly string[];
   /** «Erfassen» is the main action on the phone: its icon sits in a filled circle. */
   primary?: boolean;
-  /** An extra (ADR-0014): shown only while its group is switched on. Without: an essential. */
-  extra?: ExtraGroup;
+  /**
+   * The functions this entry belongs to (ADR-0015): shown while the business uses at least one
+   * of them. Without: the core, always there.
+   */
+  modules?: readonly ModuleId[];
 }
 
 export interface NavGroup {
@@ -53,9 +57,10 @@ export const navGroups: readonly NavGroup[] = [
     label: t.groups.kitchen,
     items: [
       { to: paths.recipes(), label: t.recipes, icon: BookOpen },
-      { to: paths.production(), label: t.production, icon: CookingPot, extra: 'production' },
-      { to: paths.plan(), label: t.plan, icon: CalendarDays, extra: 'production' },
-      { to: paths.menu(), label: t.menu, icon: ClipboardList },
+      { to: paths.production(), label: t.production, icon: CookingPot, modules: ['production'] },
+      { to: paths.plan(), label: t.plan, icon: CalendarDays, modules: ['planning'] },
+      { to: paths.dispatch(), label: t.dispatch, icon: Truck, modules: ['dispatch'] },
+      { to: paths.menu(), label: t.menu, icon: ClipboardList, modules: ['menu_card'] },
     ],
   },
   {
@@ -63,8 +68,13 @@ export const navGroups: readonly NavGroup[] = [
     label: t.groups.stock,
     items: [
       { to: paths.stock(), label: t.stock, icon: Package },
-      { to: paths.purchasing(), label: t.purchasing, icon: ShoppingCart },
-      { to: paths.areas(), label: t.areas, icon: MapPin, extra: 'places' },
+      {
+        to: paths.purchasing(),
+        label: t.purchasing,
+        icon: ShoppingCart,
+        modules: ['ordering', 'market'],
+      },
+      { to: paths.areas(), label: t.areas, icon: MapPin, modules: ['places'] },
       // Suppliers are master data next to the articles: reached from there, not a destination
       // of their own, so the whole navigation fits an iPad on its side without scrolling.
       { to: paths.articles(), label: t.articles, icon: Tags, also: [paths.suppliers()] },
@@ -74,7 +84,12 @@ export const navGroups: readonly NavGroup[] = [
     id: 'control',
     label: t.groups.control,
     items: [
-      { to: paths.numbers(), label: t.numbers, icon: ChartColumn, extra: 'numbers' },
+      {
+        to: paths.numbers(),
+        label: t.numbers,
+        icon: ChartColumn,
+        modules: ['numbers', 'sales', 'meals'],
+      },
       { to: paths.haccp(), label: t.haccp, icon: ShieldCheck },
     ],
   },
@@ -87,39 +102,45 @@ export const businessNavItem: NavItem = {
   icon: CircleEllipsis,
 };
 
+const navPaths = [...navGroups.flatMap((group) => group.items.map((item) => item.to))];
+
+const recipesTab: NavItem = { to: paths.recipes(), label: t.recipes, icon: BookOpen };
+const purchasingTab: NavItem = { to: paths.purchasing(), label: t.purchasing, icon: ShoppingCart };
+
 /**
  * Five tabs on the phone, like on the iPhone: where you are, what is in the house, the one
- * main action in the middle, what you cook, and everything else.
+ * main action in the middle, what you cook, and everything else. A kitchen that fetches its
+ * goods itself and orders nothing ahead (ADR-0015) gets its shopping list as the fourth tab
+ * instead: it is open in the hand while walking through the halls, the recipes move to «Mehr».
  */
-export const tabItems: readonly NavItem[] = [
-  { to: paths.cockpit(), label: t.cockpit, icon: LayoutDashboard },
-  { to: paths.stock(), label: t.stock, icon: Package },
-  { to: paths.add(), label: t.add, icon: Plus, primary: true },
-  { to: paths.recipes(), label: t.recipes, icon: BookOpen },
-  {
-    to: paths.more(),
-    label: t.more,
-    icon: CircleEllipsis,
-    also: [
-      paths.production(),
-      paths.plan(),
-      paths.menu(),
-      paths.purchasing(),
-      paths.areas(),
-      paths.articles(),
-      paths.suppliers(),
-      paths.numbers(),
-      paths.haccp(),
-    ],
-  },
-];
+export function tabItemsFor(modules: ReadonlySet<ModuleId>): readonly NavItem[] {
+  const fourth = modules.has('market') && !modules.has('ordering') ? purchasingTab : recipesTab;
+  const shown = new Set([paths.cockpit(), paths.stock(), paths.add(), fourth.to]);
+  return [
+    { to: paths.cockpit(), label: t.cockpit, icon: LayoutDashboard },
+    { to: paths.stock(), label: t.stock, icon: Package },
+    { to: paths.add(), label: t.add, icon: Plus, primary: true },
+    fourth,
+    {
+      to: paths.more(),
+      label: t.more,
+      icon: CircleEllipsis,
+      also: [...navPaths.filter((to) => !shown.has(to)), paths.suppliers()],
+    },
+  ];
+}
 
-/** The groups of the navigation with what this device shows (ADR-0014); empty groups drop out. */
-export function visibleNavGroups(extras: ExtrasState): NavGroup[] {
+/** The tabs of a kitchen without the market: the usual five. */
+export const tabItems: readonly NavItem[] = tabItemsFor(new Set());
+
+/** The groups of the navigation with the functions in use (ADR-0015); empty groups drop out. */
+export function visibleNavGroups(modules: ReadonlySet<ModuleId>): NavGroup[] {
   return navGroups
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => item.extra === undefined || isShown(extras, item.extra)),
+      items: group.items.filter(
+        (item) => item.modules === undefined || item.modules.some((id) => modules.has(id)),
+      ),
     }))
     .filter((group) => group.items.length > 0);
 }

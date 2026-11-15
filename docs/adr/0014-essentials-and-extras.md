@@ -1,6 +1,6 @@
 # ADR-0014: Grundfunktionen zuerst, alles Weitere zum Einschalten
 
-- **Status:** angenommen
+- **Status:** angenommen, teilweise ersetzt durch [ADR-0015](0015-betriebsarten-und-funktionen.md): Die Gruppen sind jetzt Funktionen des Betriebs; «Erweitert» bleibt als Ansicht pro Gerät und zeigt die Tiefe, nicht mehr die Funktionen. Speisekarte und Bestellvorschlag sind seither schaltbar.
 - **Datum:** 2026-11-15
 - **Entscheid von:** Claude, nach Albans Wunsch (15.11.2026): «Ziel ist, Nutzer nicht mit Features zu erschlagen. Wer mehr Infos, mehr Dashboards will, kann es erweitern. Für Nerds und Buchhalter, aber der einfache Nutzer wird nicht überfordert.» Übernommen aus Rettich (ADR-0095, PR #341) und an die Küche angepasst.
 

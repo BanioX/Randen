@@ -19,14 +19,16 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | Werkzeuge | `pnpm check`, E2E mit axe auf iPhone, iPad und Web (hell und dunkel), Vorschaubilder in vier Ansichten, CI, Register der Nebenwirkungen mit Test, Cloudflare-Vorschau |
 | Artikel und Lieferanten | Stammdaten mit Allergenen, Herkunft, Ausbeute, Mindest- und Sollbestand; «Mehrere auf einmal»; Preisverlauf |
 | Lager | Bestand nach Charge, Ablauf zuerst, Wareneingang mit Kontrolle an der Tür, Abschreiber, Entnahme, Verschieben, Inventur, Journal |
-| Doku | Entscheide 0001 bis 0013, Regeln für Texte und Screens, Fakten mit Quellen, Glossar, Schulden, Lernbuch, Vorschau-Links |
+| Betriebsarten und Funktionen | 14 Betriebsarten, 11 schaltbare Funktionen, «Randen einrichten» mit Fragen nach Betriebsart, Ware, Team und Ort des Essens; «Betrieb › Funktionen»; Ansicht pro Gerät; Modell für Menülinien, Mahlzeiten, Tellerrücklauf, Märkte (ADR-0015) |
+| Doku | Entscheide 0001 bis 0015, Regeln für Texte und Screens, Fakten mit Quellen, Glossar, Schulden, Lernbuch, Vorschau-Links |
 
 ## In Arbeit
 
 | Teil | Inhalt |
 | --- | --- |
 | Module, Welle 1 | Wo ist was? mit Fotos und Rundgang · Rezepte mit Kalkulation, Deklaration und Kochansicht |
-| Module, Welle 2 | Produktion und Menüplan mit «Reste verwerten» · Speisekarte mit Gästeansicht · Einkauf mit Bestellvorschlag · Verkäufe, Margen, Menu-Engineering · Zahlen mit Budget, Break-even, Abschreiber nach Art, Monatsbericht · Cockpit · Selbstkontrolle · Betrieb, Team, Sicherung · Demo-Betrieb |
+| Module, Welle 2 | Produktion und Menüplan mit Menülinien, Znüni und Zvieri, Allergenen je Linie und «Reste verwerten» · Speisekarte mit Gästeansicht · Einkauf mit Bestellvorschlag und Einkaufsliste für den Markt, Beleg mit Depot und Privatem · Verkäufe, Mahlzeiten, Tellerrücklauf, Margen, Menu-Engineering · Zahlen mit Budget, Wareneinsatz pro Mahlzeit, Break-even, Abschreiber nach Art, Monatsbericht · Cockpit · Selbstkontrolle · Betrieb, Team, Sicherung · Demo-Bistro |
+| Danach | Auslieferung an Aussenstellen und Anlässe · Schritte «Kühlgeräte» und «Menülinien» beim Einrichten · Cook-&-Chill-Kontrollen · Beleg fotografieren und lesen (aus Rettich) |
 
 ## Danach
 

@@ -23,7 +23,7 @@ import { browserClock, browserIds } from '../data/adapters';
 import { RandenDb } from '../data/db';
 import { dexieStorage } from '../data/dexie-storage';
 import { requestPersistentStorage } from '../data/persistence';
-import { startWithEssentials } from './extras';
+import { startWithEssentials } from './view';
 import { messages } from './messages';
 
 export interface AppData {
@@ -84,7 +84,7 @@ export function AppDataProvider({
         member: messages.defaults.memberName,
         areas: messages.defaults.areas,
       });
-      // A new business starts with the essentials (ADR-0014); an existing one keeps its choice.
+      // A new business starts with the essentials (ADR-0014) until its setup (ADR-0015).
       if (local.created) {
         startWithEssentials();
       }

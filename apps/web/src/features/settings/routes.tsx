@@ -9,6 +9,10 @@ export const settingsRoutes: RouteObject[] = [
     lazy: async () => ({ Component: (await import('./MorePage')).MorePage }),
   },
   {
+    path: 'setup',
+    lazy: async () => ({ Component: (await import('./SetupPage')).SetupPage }),
+  },
+  {
     path: 'more/features',
     lazy: async () => ({ Component: (await import('./FeaturesPage')).FeaturesPage }),
   },

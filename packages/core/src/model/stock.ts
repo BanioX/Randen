@@ -8,6 +8,7 @@ import {
   IsoDateTimeSchema,
   LocalDateSchema,
   nameSchema,
+  PhotoSchema,
   PositiveQuantitySchema,
   QuantityDeltaSchema,
   QuantitySchema,
@@ -166,8 +167,33 @@ export const DeliveryLineSchema = z.object({
   valueRappen: RappenSchema.min(0),
   expiresOn: LocalDateSchema.optional(),
   lotCode: nameSchema(40).optional(),
+  /** How many packs («Kolli») the line was, e.g. 2 for «2 Kolli à 6 × 2.5 kg». */
+  packs: z.int().min(1).max(10_000).optional(),
+  /** Bought on offer («Aktion»): not taken as the article's price for costing (ADR-0015). */
+  promo: z.boolean().optional(),
 });
 export type DeliveryLine = z.infer<typeof DeliveryLineSchema>;
+
+/**
+ * An amount on a receipt that is not goods in stock (ADR-0015): deposit paid or returned, a
+ * discount on the whole receipt, something bought privately, or goods not kept in stock. Signed:
+ * what the receipt adds is positive, what it takes off (deposit returned, discount) negative.
+ */
+export const ReceiptAmountKindSchema = z.enum([
+  'deposit',
+  'deposit_return',
+  'discount',
+  'private',
+  'not_stocked',
+]);
+export type ReceiptAmountKind = z.infer<typeof ReceiptAmountKindSchema>;
+
+export const ReceiptAmountSchema = z.object({
+  kind: ReceiptAmountKindSchema,
+  amountRappen: RappenSchema,
+  note: textSchema(120).optional(),
+});
+export type ReceiptAmount = z.infer<typeof ReceiptAmountSchema>;
 
 /**
  * Goods received («Wareneingang»): one delivery note with its lines. The check at the door
@@ -184,10 +210,38 @@ export const DeliverySchema = z.object({
   /** Temperature measured at the door, and whether the goods were accepted as in order. */
   tempDeciC: DeciCelsiusSchema.optional(),
   checkOk: z.boolean(),
+  /**
+   * A purchase at a market (ADR-0015): the total printed on the receipt and what on it is not
+   * goods in stock. The receipt adds up when lines plus other amounts equal the total.
+   */
+  documentTotalRappen: RappenSchema.min(0).optional(),
+  otherAmounts: z.array(ReceiptAmountSchema).max(30).optional(),
+  /** A photo of the receipt, kept on the device. */
+  photo: PhotoSchema.optional(),
   note: textSchema(500).optional(),
   receivedBy: IdSchema,
 });
 export type Delivery = z.infer<typeof DeliverySchema>;
+
+/**
+ * A line of the shopping list for a market (ADR-0015): an article or free text, added by hand,
+ * by «Fehlt» on a stock page, or kept from a proposal. Ticked in the market, cleared when the
+ * purchase is booked.
+ */
+export const ShoppingLineSchema = z.object({
+  ...syncFields,
+  articleId: IdSchema.optional(),
+  /** Free text when no article fits, e.g. «Servietten». */
+  text: nameSchema(80).optional(),
+  quantity: PositiveQuantitySchema.optional(),
+  /** The market it is meant for; missing: any. */
+  supplierId: IdSchema.optional(),
+  source: z.enum(['manual', 'missing', 'proposal']),
+  checked: z.boolean(),
+  /** Set when a purchase booked the line. */
+  deliveryId: IdSchema.optional(),
+});
+export type ShoppingLine = z.infer<typeof ShoppingLineSchema>;
 
 export const OrderLineSchema = z.object({
   articleId: IdSchema,

@@ -19,6 +19,7 @@ export const messages = {
     recipes: 'Rezepte',
     production: 'Produktion',
     plan: 'Menüplan',
+    dispatch: 'Auslieferung',
     menu: 'Speisekarte',
     numbers: 'Zahlen',
     haccp: 'Selbstkontrolle',

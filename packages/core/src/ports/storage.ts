@@ -9,7 +9,13 @@ import type { Id } from '../ids';
 import { ArticleSchema, SupplierSchema } from '../model/article';
 import { StaffMemberSchema, type Business } from '../model/business';
 import { HygieneCheckSchema, HygieneTaskSchema, TemperatureLogSchema } from '../model/haccp';
-import { MenuCardSchema, PlanEntrySchema } from '../model/menu';
+import {
+  MealCountSchema,
+  MenuCardSchema,
+  MenuLineSchema,
+  PlanEntrySchema,
+  WasteWeighingSchema,
+} from '../model/menu';
 import type { IsoDateTime } from '../model/primitives';
 import { ProductionSchema, RecipeSchema } from '../model/recipe';
 import { BudgetSchema, SaleSchema } from '../model/sales';
@@ -17,6 +23,7 @@ import {
   DeliverySchema,
   InventoryCountSchema,
   PurchaseOrderSchema,
+  ShoppingLineSchema,
   StockLotSchema,
   StockMovementSchema,
 } from '../model/stock';
@@ -36,11 +43,15 @@ export const TABLE_SCHEMAS = {
   movements: StockMovementSchema,
   deliveries: DeliverySchema,
   orders: PurchaseOrderSchema,
+  shoppingLines: ShoppingLineSchema,
   counts: InventoryCountSchema,
   recipes: RecipeSchema,
   productions: ProductionSchema,
   menuCards: MenuCardSchema,
   planEntries: PlanEntrySchema,
+  menuLines: MenuLineSchema,
+  mealCounts: MealCountSchema,
+  wasteWeighings: WasteWeighingSchema,
   sales: SaleSchema,
   budgets: BudgetSchema,
   temperatureLogs: TemperatureLogSchema,

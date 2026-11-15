@@ -5,8 +5,8 @@ import { ToastProvider } from '../ui/Toast';
 import { useBusiness } from './hooks';
 import { useEdgeSwipeBack } from './use-edge-swipe-back';
 import { messages } from './messages';
-import { useExtras } from './extras';
-import { activeItem, businessNavItem, tabItems, visibleNavGroups, type NavItem } from './nav';
+import { useModules } from './modules';
+import { activeItem, businessNavItem, tabItemsFor, visibleNavGroups, type NavItem } from './nav';
 import { paths } from './paths';
 
 /**
@@ -43,7 +43,9 @@ function SideLink({ item, active }: { item: NavItem; active: boolean }) {
 export function AppShell() {
   const { pathname } = useLocation();
   const business = useBusiness();
-  const navGroups = visibleNavGroups(useExtras());
+  const modules = useModules();
+  const navGroups = visibleNavGroups(modules);
+  const tabItems = tabItemsFor(modules);
   const sideItems: readonly NavItem[] = [
     ...navGroups.flatMap((group) => group.items),
     businessNavItem,

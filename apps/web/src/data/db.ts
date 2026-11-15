@@ -21,8 +21,21 @@ export interface MetaEntry {
   value: string;
 }
 
-/** Indexes per table; every table of business data is found by `businessId`. */
-const INDEXES: Record<TableName, string> = {
+/** Tables added after version 1, with the Dexie version that brought them. */
+const LATER_TABLES = {
+  /** ADR-0015: menu lines, meal counts, weighed leftovers and the shopping list for a market. */
+  2: {
+    menuLines: 'id, businessId',
+    mealCounts: 'id, businessId, date',
+    wasteWeighings: 'id, businessId, date',
+    shoppingLines: 'id, businessId',
+  },
+} as const satisfies Record<number, Partial<Record<TableName, string>>>;
+
+type LaterTable = keyof (typeof LATER_TABLES)[2];
+
+/** Indexes per table of version 1; every table of business data is found by `businessId`. */
+const INDEXES: Record<Exclude<TableName, LaterTable>, string> = {
   staff: 'id, businessId',
   areas: 'id, businessId',
   spots: 'id, businessId, areaId',
@@ -64,6 +77,7 @@ export class RandenDb extends Dexie {
       commands: 'commandId',
       meta: 'key',
     });
+    this.version(2).stores(LATER_TABLES[2]);
   }
 
   /** The table of one kind of business data, typed by its name. */

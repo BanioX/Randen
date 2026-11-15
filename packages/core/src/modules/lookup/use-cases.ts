@@ -7,7 +7,8 @@ import {
 import { CONTRACT_V1 } from '../../contract';
 import { roundQuantity } from '../../domain/units';
 import type { Id } from '../../ids';
-import { BusinessSchema } from '../../model/business';
+import { proposeSetup, withRequirements } from '../../domain/business-profiles';
+import { BusinessSchema, type ModuleId } from '../../model/business';
 import { alive } from '../../ports/storage';
 
 const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name, 'de-CH');
@@ -30,13 +31,20 @@ export function createLookupUseCases(ctx: AppContext) {
     return { business: await business(input.businessId) };
   };
 
+  const sameModules = (a: readonly ModuleId[], b: readonly ModuleId[] | undefined) =>
+    a.length === b?.length && a.every((id) => b.includes(id));
+
   const updateBusiness: UseCase<'business.update'> = async (raw) => {
     const input = CONTRACT_V1['business.update'].input.parse(raw);
     return runCommand('business.update', input.commandId, async () => {
       const row = await business(input.businessId);
-      const fields = (['name', 'kind', 'targetFoodCostBps', 'defaultVatBps'] as const).filter(
-        (field) => input[field] !== undefined && input[field] !== row[field],
-      );
+      const modules = input.modules === undefined ? undefined : withRequirements(input.modules);
+      const fields = [
+        ...(['name', 'kind', 'targetFoodCostBps', 'defaultVatBps'] as const).filter(
+          (field) => input[field] !== undefined && input[field] !== row[field],
+        ),
+        ...(modules === undefined || sameModules(modules, row.modules) ? [] : ['modules' as const]),
+      ];
       if (fields.length === 0) {
         return { business: row };
       }
@@ -44,6 +52,7 @@ export function createLookupUseCases(ctx: AppContext) {
         ...row,
         ...(input.name === undefined ? {} : { name: input.name }),
         ...(input.kind === undefined ? {} : { kind: input.kind }),
+        ...(modules === undefined ? {} : { modules }),
         ...(input.targetFoodCostBps === undefined
           ? {}
           : { targetFoodCostBps: input.targetFoodCostBps }),
@@ -52,6 +61,35 @@ export function createLookupUseCases(ctx: AppContext) {
       });
       await storage.businesses.put(next);
       await emit(input.businessId, 'business.updated', { fields });
+      return { business: next };
+    });
+  };
+
+  const setupBusiness: UseCase<'business.setup'> = async (raw) => {
+    const input = CONTRACT_V1['business.setup'].input.parse(raw);
+    return runCommand('business.setup', input.commandId, async () => {
+      const row = await business(input.businessId);
+      const now = clock.now();
+      const proposal = proposeSetup({
+        kind: input.kind,
+        sources: input.sources,
+        team: input.team,
+        ...(input.eating === undefined ? {} : { eating: input.eating }),
+      });
+      const next = BusinessSchema.parse({
+        ...row,
+        name: input.name,
+        kind: input.kind,
+        modules: input.modules === undefined ? proposal.modules : withRequirements(input.modules),
+        ...(proposal.defaultVatBps === undefined ? {} : { defaultVatBps: proposal.defaultVatBps }),
+        setupAt: now,
+        updatedAt: now,
+      });
+      await storage.businesses.put(next);
+      await emit(input.businessId, 'business.set_up', {
+        kind: next.kind,
+        modules: next.modules ?? [],
+      });
       return { business: next };
     });
   };
@@ -162,6 +200,7 @@ export function createLookupUseCases(ctx: AppContext) {
   return {
     'business.get': getBusiness,
     'business.update': updateBusiness,
+    'business.setup': setupBusiness,
     'lookup.staff': staff,
     'lookup.areas': areas,
     'lookup.suppliers': suppliers,

@@ -47,4 +47,16 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Selbstkontrolle | `haccp` | Temperaturen, Reinigungsplan, Wareneingangskontrolle |
 | Richtwert | – | Ein Vorschlag ohne rechtliche Verbindlichkeit, den der Betrieb ändern kann (ADR-0012) |
 | Sicherung | `settings.export` | Der ganze Betrieb als eine Datei |
-| Grundfunktionen, Erweitert | `extras.ts`, `useExtra` | Was jede Küche jeden Tag braucht, und was man unter «Betrieb › Funktionen» dazuschaltet: Wo ist was?, Produktion und Menüplan, Zahlen und Auswertung, Team (ADR-0014) |
+| Betriebsart | `BusinessKind` | Was für ein Betrieb das ist, vom Imbiss bis zur Produktionsküche; schlägt die Funktionen vor (ADR-0015) |
+| Funktion | `ModuleId`, `useModule` | Womit der Betrieb arbeitet, unter «Betrieb › Funktionen» schaltbar: Speisekarte, Bestellen, Einkauf im Markt, Produktion, Menüplan, Mahlzeiten zählen, Auslieferung, Verkäufe, Budget und Zahlen, Wo ist was?, Team. Im Entscheid «Baustein» (ADR-0015) |
+| Randen einrichten | `business.setup`, `/setup` | Die Fragen nach Betriebsart, Ware, Team und Name, die die Funktionen vorschlagen |
+| Grundfunktionen, Erweitert | `view.ts`, `useDetailed` | Die Ansicht eines Geräts: «Erweitert» zeigt ausführliche Auswertungen, Verlauf und Journal, sonst das Wichtigste (ADR-0014, ADR-0015) |
+| Markt, Cash & Carry | `Supplier.kind = 'market'` | Wo die Küche selbst einkauft und an der Kasse zahlt; keine Bestell- und Liefertage |
+| Beleg | – | Die Quittung eines Einkaufs im Markt; sie muss mit Belegtotal, Depot und Privatem aufgehen |
+| Kolli | – | Eine Verpackungseinheit im Handel, zum Beispiel 6 × 2.5 kg |
+| Menülinie | `MenuLine` | Eine feste Linie des Menüplans, etwa «Menü 1», «Vegi», «Leichte Vollkost»; auch Kostformen sind Linien |
+| Mahlzeiten | `MealCount` | Erwartete und ausgegebene Mahlzeiten je Tag, Mahlzeit und Linie; kein Verkauf |
+| Wareneinsatz pro Mahlzeit | – | Verbrauch im Lager-Ledger geteilt durch die ausgegebenen Mahlzeiten; berechnet |
+| Tellerrücklauf, Ausgaberest | `WasteWeighing` | Was auf den Tellern zurückkommt oder an der Ausgabe übrig bleibt, in Gramm gewogen; kein Abschreiber |
+| Znüni, Zvieri | `morning_snack`, `afternoon_snack` | Zwischenmahlzeiten am Vormittag und am Nachmittag, in Heimen, Kitas und Schulen |
+| Auslieferung | `dispatch` | Lieferung an Aussenstellen und Anlässe, mit Lieferschein, Etikett und Rückverfolgung; nicht zu verwechseln mit dem Wareneingang (`Delivery`) |
