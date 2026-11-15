@@ -25,7 +25,7 @@ pnpm check          # Format, Lint, Typen, Kontrast, Tests, Build
 | --- | --- |
 | `packages/core` | Die Logik, reines TypeScript: Modell, Rechenregeln (Einheiten, Ablauf, FEFO, Kalkulation, Deklaration, Break-even), Lager-Ledger, Schnittstelle, Module |
 | `apps/web` | Die App: React, Tailwind, IndexedDB; UI-Kit, Seiten pro Bereich |
-| `docs` | Entscheide (`adr/`), Design, Regeln, Fakten mit Quellen, Glossar, Schulden, Lernbuch |
+| `docs` | Entscheide (`adr/`, Index in [`adr/README.md`](docs/adr/README.md)), Design, Regeln, Fakten mit Quellen, Glossar, Schulden, Lernbuch |
 
 Karte für alle, die am Code arbeiten: [`AGENTS.md`](AGENTS.md). Regeln: [`CLAUDE.md`](CLAUDE.md).
 
@@ -36,6 +36,7 @@ Karte für alle, die am Code arbeiten: [`AGENTS.md`](AGENTS.md). Regeln: [`CLAUD
 - **Allergene, Herkunft, Wareneinsatz und Marge werden berechnet**, nie gespeichert ([ADR-0008](docs/adr/0008-computed-not-stored.md)).
 - **Nichts verlässt das Gerät** ([ADR-0006](docs/adr/0006-data-stays-on-the-device.md)).
 - **Rechtliche Angaben nur mit Quelle** ([`docs/fakten.md`](docs/fakten.md), [ADR-0012](docs/adr/0012-facts-with-sources.md)).
+- **Jede Küche wählt ihre Komplexität.** Die Betriebsart und die Antworten beim Einrichten schlagen die Funktionen vor; jede Funktion lässt sich einzeln schalten ([ADR-0015](docs/adr/0015-betriebsarten-und-funktionen.md)).
 
 ## Lizenz
 

@@ -14,9 +14,9 @@ Randen ist eine local-first PWA für Gastrobetriebe: Lager, Rezepte, Kalkulation
 
 | Schicht | Ort | Darf importieren | Inhalt |
 | --- | --- | --- | --- |
-| Logik | `packages/core/src` | nur sich selbst und `zod` | `model/` Zeilen jeder Tabelle (Zod) · `domain/` reine Regeln: Einheiten und Preise, Ablauf, FEFO, Kalkulation, Deklaration, Menu-Engineering · `contract/` Schnittstelle v1 · `application/` Command-Kit, Lager-Ledger, Bootstrap · `modules/<name>/` Befehle und Abfragen eines Moduls (`contract.ts`, `use-cases.ts`) · `ports/` Speicher · `testing/` Test-Küche |
+| Logik | `packages/core/src` | nur sich selbst und `zod` | `model/` Zeilen jeder Tabelle (Zod) · `domain/` reine Regeln: Einheiten und Preise, Ablauf, FEFO, Kalkulation, Deklaration, Menu-Engineering, Betriebsarten und Funktionen (`business-profiles.ts`), Preisänderung (`price-change.ts`) · `contract/` Schnittstelle v1 · `application/` Command-Kit, Lager-Ledger, Bootstrap · `modules/<name>/` Befehle und Abfragen eines Moduls (`contract.ts`, `use-cases.ts`) · `ports/` Speicher · `testing/` Test-Küche |
 | Daten | `apps/web/src/data` | core, Dexie | `db.ts` (IndexedDB), `dexie-storage.ts` (Ports auf IndexedDB) |
-| Präsentation | `apps/web/src/features/<bereich>`, `apps/web/src/ui`, `apps/web/src/app` | core, `app/hooks`, `ui`; nie `data/` oder `dexie` (ESLint) | Seiten pro Bereich (`routes.tsx`, `messages.ts`) · UI-Kit · Shell, Navigation, Pfade |
+| Präsentation | `apps/web/src/features/<bereich>`, `apps/web/src/ui`, `apps/web/src/app` | core, `app/hooks`, `ui`; nie `data/` oder `dexie` (ESLint) | Seiten pro Bereich (`routes.tsx`, `messages.ts`) · UI-Kit · Shell, Navigation, Pfade · Funktionen des Betriebs (`app/modules.ts`) und Ansicht des Geräts (`app/view.ts`) |
 | Tests | `packages/core/test`, `apps/web/src/**/*.test.ts(x)`, `apps/web/e2e` | – | Vitest (Logik auf `createMemoryStorage`, Seiten auf fake-indexeddb über `renderApp`), Playwright mit axe |
 
 ## Ein Modul
@@ -35,6 +35,13 @@ apps/web/src/features/<name>/*.tsx              Seiten und ihre Tests
 - Module rufen einander nicht auf. Gemeinsames liegt im Kern: `domain/` (rechnen), `createStockLedger` (Bestand ändern), `lookup.*` (leichte Listen für Auswahlfelder).
 - Seiten lesen mit `useQuery('modul.abfrage', {…})`, schreiben mit `useCommand()`; Links nur über `paths` (`app/paths.ts`).
 - Geld zeigen mit `useMoney().format`, Mengen mit `formatQuantity`, Stückpreise mit `formatUnitPrice`, Anteile mit `formatPercent`.
+
+## Funktionen und Ansicht (ADR-0015)
+
+- Eine **Funktion des Betriebs** (Speisekarte, Einkauf im Markt, Produktion, Menüplan, Mahlzeiten, Auslieferung, Verkäufe, Zahlen, Wo ist was?, Team) ist optional. Ein Einstieg, der nur dann gilt, prüft `useModule('market')` oder `useModules()`. Die Navigation filtert über `NavItem.modules` (`app/nav.ts`). Der Kern ist immer da: Cockpit, Lager, Artikel, Rezepte, Selbstkontrolle.
+- **Auswertungen** (Verlauf, Journal, Diagramme, Menu-Engineering, Break-even) zeigt nur die Ansicht «Erweitert»: `useDetailed()`. Die Ansicht gehört dem Gerät und steht nicht in der Sicherung (SE-13).
+- Ausgeschaltete Funktionen blenden nur ihre Einstiege aus; ihre Daten bleiben und ihre Adressen funktionieren weiter.
+- Das Einrichten (`/setup`, `business.setup`) schlägt die Funktionen aus drei Antworten vor: Betriebsart, Herkunft der Ware, Teamgrösse (`proposeSetup` in `domain/business-profiles.ts`).
 
 ## Befehle
 

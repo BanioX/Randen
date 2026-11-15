@@ -1,6 +1,6 @@
 # Randen – Stand und Plan
 
-> **Stand 15.11.2026:** Version 0.1.0 im Aufbau. Fundament, Design, UI-Kit und Werkzeuge stehen; Artikel, Lieferanten und Lager sind gebaut, die weiteren Module in Arbeit.
+> **Stand 15.11.2026:** Version 0.1.0 im Aufbau. Fundament, Design, UI-Kit, Werkzeuge, Artikel, Lager, Rezepte mit Kalkulation, Betriebsarten und Funktionen, Cockpit und Preisänderung stehen; Einkauf, Produktion, Betrieb und der Demo-Betrieb sind in Arbeit.
 
 Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. Entscheide stehen in den [ADRs](adr/README.md), Regeln in [`regeln.md`](regeln.md).
 
