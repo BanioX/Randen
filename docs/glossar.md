@@ -65,3 +65,9 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Tellerrücklauf, Ausgaberest | `WasteWeighing` | Was auf den Tellern zurückkommt oder an der Ausgabe übrig bleibt, in Gramm gewogen; kein Abschreiber |
 | Znüni, Zvieri | `morning_snack`, `afternoon_snack` | Zwischenmahlzeiten am Vormittag und am Nachmittag, in Heimen, Kitas und Schulen |
 | Auslieferung | `dispatch` | Lieferung an Aussenstellen und Anlässe, mit Lieferschein, Etikett und Rückverfolgung; nicht zu verwechseln mit dem Wareneingang (`Delivery`) |
+| Liste für das Personal | `menu.allergenSheet` | Die Speisekarte als Blatt für die Küche: jedes Gericht mit Allergenen, Diät und Herkunft; nicht für Gäste |
+| Allergenmatrix | `menu.allergenSheet` | Gerichte gegen die vierzehn Allergene: gefüllter Punkt «enthält», leerer Punkt «Spuren» |
+| Abschnitt | `menu.setSections` | Eine Gruppe der Speisekarte, zum Beispiel Vorspeisen oder Desserts, mit ihren Gerichten in einer Reihenfolge |
+| Ohne … (Filter) | Adresse der Gästeansicht | Ausschluss eines Allergens in der Gästeansicht; die Gerichte mit diesem Allergen erscheinen nicht. Der Filter steht in der Adresse |
+| Reinigungsplan | `hygiene.tasks` | Die Aufgaben der Selbstkontrolle: täglich, wöchentlich am festen Wochentag oder monatlich, mit einem Standardplan von zehn Aufgaben |
+| Monatsbericht | `numbers.monthReport` | Der ganze Monat in einer Ansicht zum Drucken: Einkauf, Budget, Break-even, Abschreiber, Gerichte |

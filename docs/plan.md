@@ -1,6 +1,6 @@
 # Randen – Stand und Plan
 
-> **Stand 15.11.2026:** Version 0.1.0 im Aufbau. Gebaut sind Fundament, Design, UI-Kit, Werkzeuge, Artikel, Lager, Rezepte mit Kalkulation, Betriebsarten und Funktionen, Cockpit, Preisänderung, Einkauf, Produktion und Menüplan, Betrieb mit Sicherung und der Demo-Betrieb. In Arbeit sind Speisekarte, Zahlen, Selbstkontrolle und Auslieferung.
+> **Stand 15.11.2026:** Version 0.1.0 im Aufbau. Gebaut sind Fundament, Design, UI-Kit, Werkzeuge, Artikel, Lager, Rezepte mit Kalkulation, Betriebsarten und Funktionen, Cockpit, Preisänderung, Einkauf, Produktion und Menüplan, Speisekarte, Zahlen, Selbstkontrolle, Betrieb mit Sicherung und der Demo-Betrieb. In Arbeit sind Verkauf und Auslieferung.
 
 Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. Entscheide stehen in den [ADRs](adr/README.md), Regeln in [`regeln.md`](regeln.md).
 
@@ -23,16 +23,19 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | Betriebsarten und Funktionen | 14 Betriebsarten, 11 schaltbare Funktionen, «Randen einrichten» mit Fragen nach Betriebsart, Ware, Team und Ort des Essens; «Betrieb › Funktionen»; Ansicht pro Gerät; Modell für Menülinien, Mahlzeiten, Tellerrücklauf, Märkte (ADR-0015) |
 | Einkauf | Einkaufsliste für den Markt, Bestellvorschlag je Lieferant, Bestellungen, Einkauf im Markt mit Beleg, der aufgehen muss (Depot, Privates, Rabatt), Preisbeobachtung (ADR-0015) |
 | Produktion und Menüplan | Produktionsläufe mit Charge und Etikett, Menüplan mit Menülinien und Allergenen je Tag, Woche füllen, Mahlzeiten zählen, Tellerrücklauf in Gramm (ADR-0015) |
+| Speisekarte | Karten aus den Rezepten mit Abschnitten, Preisen, Fotos und offenen Punkten; veröffentlichen oder zurück in den Entwurf; Allergenmatrix und Liste für das Personal; Gästeansicht im Vollbild mit Filtern in der Adresse; Export als eigenständige HTML-Datei ohne Skript (ADR-0018, Funktion Speisekarte) |
+| Zahlen | Übersicht mit Zeitraum, Einkauf, Wareneinsatz, Abschreiber nach Art und Grund, Budget pro Monat, Break-even, Monatsbericht; Wareneinsatz im Cockpit und in den Zahlen nach einer Regel (`domain/meals.ts`); die Definition des Wareneinsatzes pro Mahlzeit bleibt offen (TD-27) |
+| Selbstkontrolle | Temperaturen mit Richtwerten und Massnahme bei Abweichung, Reinigungsplan mit Standardplan, Heute, Bericht für die Kontrolle mit Druckansicht; das Verlaufsdiagramm nur in «Erweitert» |
 | Betrieb, Team, Sicherung | Betrieb bearbeiten, Team, Sicherung mit optionalem Passwort und Wiederherstellen mit Prüfung, Alles löschen, Über Randen (ADR-0017) |
 | Cockpit | Heute: was verfällt, was heute fällig ist, Temperaturen, Selbstkontrolle, Mindestbestand; Lagerwert, Weggeworfen diesen Monat, Suche über Artikel, Rezepte, Lieferanten und Plätze; Erfassen nach Funktionen (ADR-0015) |
-| Doku | Entscheide 0001 bis 0017, Regeln für Texte und Screens, Fakten mit Quellen, Glossar, Schulden, Lernbuch, Vorschau-Links |
+| Doku | Entscheide 0001 bis 0018, Regeln für Texte und Screens, Fakten mit Quellen, Glossar, Schulden, Lernbuch, Vorschau-Links |
 
 ## In Arbeit
 
 | Teil | Inhalt |
 | --- | --- |
-| Module, Welle 3 | Speisekarte mit Gästeansicht und Allergenliste · Zahlen mit Wareneinsatz pro Mahlzeit, Budget, Break-even, Abschreiber nach Art, Monatsbericht (die Definition ist offen, siehe unten) · Selbstkontrolle mit Temperaturen und Reinigungsplan · Auslieferung an Aussenstellen und Anlässe |
-| Demo-Betrieb | Gebaut, aber die Verweise auf Zahlen, Selbstkontrolle und Auslieferung führen noch auf Platzhalter |
+| Module, Welle 3 | Verkauf mit Slot (Mittag, Abend; offen, TD-25) · Auslieferung an Aussenstellen und Anlässe mit Lieferschein und Etikett |
+| Demo-Betrieb | Gebaut; die Verweise auf Verkauf und Auslieferung führen noch auf Platzhalter (TD-44) |
 
 ## Danach
 
