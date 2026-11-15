@@ -47,7 +47,8 @@ export async function goTo(view: AppView, address: string): Promise<void> {
 export async function addDishTo(
   view: AppView,
   name: string,
-  fields: { priceRappen?: number; ingredientIds?: Id[] } = {},
+  /** A `null` price leaves the dish without one. */
+  fields: { priceRappen?: number | null; ingredientIds?: Id[] } = {},
 ): Promise<Id> {
   const t = view.t;
   const { RecipeSchema } = await import('@randen/core');
@@ -68,7 +69,7 @@ export async function addDishTo(
     extraTraces: [],
     labels: [],
     active: true,
-    priceRappen: fields.priceRappen ?? 1200,
+    ...(fields.priceRappen === null ? {} : { priceRappen: fields.priceRappen ?? 1200 }),
   });
   await t.storage.recipes.add(row);
   return row.id;

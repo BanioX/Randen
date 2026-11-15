@@ -55,6 +55,7 @@ function DishLine({
   dish,
   first,
   last,
+  showPrices,
   onMove,
   onRemove,
   disabled,
@@ -62,13 +63,19 @@ function DishLine({
   dish: EditorDish;
   first: boolean;
   last: boolean;
+  /** Whether the card shows prices: a missing price is an open point only then (as in the core). */
+  showPrices: boolean;
   onMove: (direction: -1 | 1) => void;
   onRemove: () => void;
   disabled: boolean;
 }) {
   const money = useMoney();
   const price =
-    dish.priceRappen === undefined ? t.sections.priceMissing : money.format(dish.priceRappen);
+    dish.priceRappen !== undefined
+      ? money.format(dish.priceRappen)
+      : showPrices
+        ? t.sections.priceMissing
+        : undefined;
   return (
     <GroupedListItem inset="icon">
       <div className="flex min-w-0 items-center gap-3 px-4 py-2.5">
@@ -82,7 +89,13 @@ function DishLine({
         <div className="min-w-0 flex-1">
           <p className="leading-snug font-semibold break-words">{dish.name}</p>
           <p className="text-[0.8125rem] text-ink-muted">
-            {courseLabel(dish.course)} · <span className="tabular-nums">{price}</span>
+            {courseLabel(dish.course)}
+            {price === undefined ? null : (
+              <>
+                {' · '}
+                <span className="tabular-nums">{price}</span>
+              </>
+            )}
             {dish.active ? null : ` · ${t.status.inactive}`}
           </p>
           {dish.problems.length === 0 ? null : (
@@ -155,9 +168,11 @@ function IconButton({
 export function SectionsEditor({
   cardId,
   sections,
+  showPrices,
 }: {
   cardId: Id;
   sections: readonly EditorSection[];
+  showPrices: boolean;
 }) {
   const run = useCommand();
   const toast = useToast();
@@ -365,6 +380,7 @@ export function SectionsEditor({
                       dish={dish}
                       first={dishIndex === 0}
                       last={dishIndex === section.dishes.length - 1}
+                      showPrices={showPrices}
                       disabled={busy}
                       onMove={(direction) => {
                         moveDish(sectionIndex, dishIndex, direction);

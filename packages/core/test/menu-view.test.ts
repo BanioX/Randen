@@ -6,9 +6,15 @@ import {
   GUEST_NOTICE,
   INCOMPLETE_NOTICE,
 } from '../src/modules/menu/html';
-import { analyseDish, menuBook, UNKNOWN_DISH } from '../src/modules/menu/view';
+import {
+  allergenRows,
+  analyseDish,
+  guestContent,
+  menuBook,
+  UNKNOWN_DISH,
+} from '../src/modules/menu/view';
 import { DEFAULT_CURRENCY, rappen, uuidV7 } from '../src';
-import { addDish, setup, without, type Setup } from './menu-support';
+import { addCard, addDish, setup, without, type Setup } from './menu-support';
 
 /** The book the rules read, from the rows of the test kitchen. */
 async function bookOf(s: Setup) {
@@ -54,9 +60,44 @@ describe('analyseDish', () => {
     expect(state.problems.map((problem) => problem.text)).toEqual(['Komponente, kein Gericht']);
   });
 
+  it('gives a dish without ingredients an open point, and no diet to claim (ADR-0008)', async () => {
+    const s = await setup();
+    const empty = await addDish(s, { name: 'Leerer Teller' });
+    const book = await bookOf(s);
+    const state = analyseDish(empty, card, book);
+    expect(state.problems.map((problem) => problem.text)).toContain('Zutaten fehlen');
+    expect(state.declaration?.incomplete).toBe(true);
+    expect(state.diet).toBeUndefined();
+  });
+
+  it('keeps a dish without ingredients out of the vegan claim in the guest view and the list', async () => {
+    const s = await setup();
+    const empty = await addDish(s, { name: 'Leerer Teller' });
+    const cardId = await addCard(s, 'Karte', [{ title: 'Hauptgänge', recipeIds: [empty] }], {
+      published: true,
+    });
+    const card = await s.t.storage.menuCards.get(cardId);
+    if (card === undefined) {
+      throw new Error('The card is missing');
+    }
+    const book = await bookOf(s);
+    const dish = guestContent(card, book).sections[0]?.dishes[0];
+    expect(dish).toMatchObject({ name: 'Leerer Teller', incomplete: true });
+    expect(dish?.diet).toBeUndefined();
+    expect(guestContent(card, book).diets).toEqual([]);
+    const [row] = allergenRows(card, book);
+    expect(row).toMatchObject({ name: 'Leerer Teller', incomplete: true });
+    expect(row?.diet).toBeUndefined();
+  });
+
   it('counts a price of zero as missing, and an inactive dish as an open point', async () => {
     const s = await setup();
-    const free = await addDish(s, { name: 'Gratis', priceRappen: rappen(0), active: false });
+    const free = await addDish(s, {
+      name: 'Gratis',
+      priceRappen: rappen(0),
+      active: false,
+      ingredients: [{ articleId: s.kitchen.articles.cream.id, quantity: 100 }],
+    });
     const book = await bookOf(s);
     const state = analyseDish(free, card, book);
     expect(state.problems.map((problem) => problem.kind)).toEqual(['inactive', 'price', 'photo']);
@@ -88,6 +129,60 @@ describe('fileNameOf and escapeHtml', () => {
     expect(fileNameOf('Ölküche & Grill')).toBe('speisekarte-oelkueche-grill.html');
     expect(fileNameOf('Straße')).toBe('speisekarte-strasse.html');
     expect(fileNameOf('!!!')).toBe('speisekarte-karte.html');
+  });
+
+  it('keeps the line breaks of the intro and the footer, on the screen and in the file', () => {
+    const html = renderGuestHtml({
+      businessName: 'Bistro',
+      currency: DEFAULT_CURRENCY,
+      card: {
+        id: uuidV7(1_800_000_000_000, new Uint8Array(10)),
+        name: 'Abend',
+        intro: 'Saisonal gekocht.\nFrisch vom Markt.',
+        footer: 'Montags geschlossen.\nBis bald.',
+        showPrices: true,
+        showPhotos: true,
+        published: true,
+      },
+      sections: [],
+    });
+    expect(html).toContain('<p class="intro">Saisonal gekocht.\nFrisch vom Markt.</p>');
+    expect(html).toContain('<p class="footer">Montags geschlossen.\nBis bald.</p>');
+    expect(html).toMatch(/\.cover \.intro\{[^}]*white-space:pre-line/);
+    expect(html).toMatch(/\.footer\{[^}]*white-space:pre-line/);
+  });
+
+  it('shows a dish without a declared diet with no diet tag and with the incomplete notice', () => {
+    const html = renderGuestHtml({
+      businessName: 'Bistro',
+      currency: DEFAULT_CURRENCY,
+      card: {
+        id: uuidV7(1_800_000_000_000, new Uint8Array(10)),
+        name: 'Leer',
+        showPrices: true,
+        showPhotos: true,
+        published: true,
+      },
+      sections: [
+        {
+          id: uuidV7(1_800_000_000_000, new Uint8Array(10)),
+          title: 'Hauptgänge',
+          dishes: [
+            {
+              id: uuidV7(1_800_000_000_000, new Uint8Array(10)),
+              name: 'Leerer Teller',
+              allergens: [],
+              traces: [],
+              labels: [],
+              origins: [],
+              incomplete: true,
+            },
+          ],
+        },
+      ],
+    });
+    expect(html).not.toContain('Vegan');
+    expect(html).toContain(`<p class="incomplete">${INCOMPLETE_NOTICE}</p>`);
   });
 
   it('escapes the five characters that matter', () => {

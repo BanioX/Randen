@@ -46,10 +46,16 @@ export function writeFilter(params: URLSearchParams, filter: GuestFilter): URLSe
   return next;
 }
 
-/** Whether a dish is of the diet asked for: vegetarian includes vegan. */
-export function matchesDiet(diet: Diet, filter: DietFilter): boolean {
+/**
+ * Whether a dish is of the diet asked for: vegetarian includes vegan. A dish without a declared
+ * diet (no ingredients yet) is not claimed to be vegan or vegetarian, so only «Alle» shows it.
+ */
+export function matchesDiet(diet: Diet | undefined, filter: DietFilter): boolean {
   if (filter === 'all') {
     return true;
+  }
+  if (diet === undefined) {
+    return false;
   }
   return filter === 'vegan' ? diet === 'vegan' : diet !== 'omnivore';
 }

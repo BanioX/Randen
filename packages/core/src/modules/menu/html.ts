@@ -29,7 +29,7 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:-apple-syste
 .cover .kicker{margin:0;color:var(--cork);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
 .cover h1{margin:6px 0 0;font-size:34px;line-height:1.1;font-weight:700}
 .cover .card-name{margin:6px 0 0;color:var(--cork);font-size:18px}
-.cover .intro{margin:14px 0 0;color:#EDE3D6;max-width:36rem}
+.cover .intro{margin:14px 0 0;color:#EDE3D6;max-width:36rem;white-space:pre-line}
 main,footer{max-width:40rem;margin:0 auto;padding-left:24px;padding-right:24px}
 main{padding-top:8px;padding-bottom:16px}
 .group{padding-top:20px}
@@ -49,7 +49,7 @@ h3{margin:0;font-size:17px;font-weight:600}
 .origin{margin:6px 0 0;font-size:14px;color:var(--muted)}
 .incomplete{margin:6px 0 0;font-size:14px;color:var(--danger)}
 footer{padding-top:12px;padding-bottom:40px;border-top:1px solid var(--line)}
-.footer{margin:0;color:var(--muted)}
+.footer{margin:0;color:var(--muted);white-space:pre-line}
 .notice{margin:12px 0 0;font-size:14px;color:var(--muted)}
 @media print{body{background:#fff;color:#000;font-size:12pt}.cover{background:#fff;color:#000;border-bottom:1px solid #000;padding-left:0;padding-right:0}.cover .kicker,.cover .card-name,.cover .intro{color:#000}.photo{display:none}.dish{break-inside:avoid;padding:8px 0}.tag{background:#fff;color:#000;border-color:#000}.incomplete{color:#000;font-weight:600}.origin,.desc,.notice,.footer{color:#000}}
 `;
@@ -94,7 +94,7 @@ function dishHtml(dish: GuestDish, input: GuestFileInput): string {
     ...dish.traces.map(
       (item) => `<span class="tag trace">Spuren: ${escapeHtml(item.label)}</span>`,
     ),
-    ...(dish.diet === 'omnivore'
+    ...(dish.diet === undefined || dish.diet === 'omnivore'
       ? []
       : [`<span class="tag">${escapeHtml(dietLabel(dish.diet))}</span>`]),
     ...dish.labels.map((label) => `<span class="tag">${escapeHtml(label.text)}</span>`),

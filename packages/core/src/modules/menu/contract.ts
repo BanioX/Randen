@@ -83,7 +83,8 @@ export const GuestDishSchema = z.object({
   photo: PhotoSchema.optional(),
   allergens: z.array(AllergenRefSchema),
   traces: z.array(AllergenRefSchema),
-  diet: DietSchema,
+  /** Absent while the dish has no ingredients: the card claims no diet then. */
+  diet: DietSchema.optional(),
   labels: z.array(z.object({ id: DishLabelSchema, text: z.string() })),
   origins: z.array(DishOriginSchema),
   /** The declaration is not complete: the guest is asked to ask the staff. */
@@ -107,7 +108,8 @@ export const AllergenSheetRowSchema = z.object({
   name: z.string(),
   section: z.string(),
   active: z.boolean(),
-  diet: DietSchema,
+  /** Absent while the dish has no ingredients. */
+  diet: DietSchema.optional(),
   origins: z.array(DishOriginSchema),
   incomplete: z.boolean(),
   /** The fourteen allergens in the order of the ordinance. */

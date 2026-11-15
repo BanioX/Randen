@@ -157,6 +157,71 @@ describe('GuestPage', () => {
     });
   });
 
+  it('says an empty card has no dishes yet, and does not speak of a filter', async () => {
+    const view = await renderApp(<GuestPage />, {
+      route: `/guest/${NOT_A_CARD}`,
+      path: '/guest/:cardId',
+    });
+    const cardId = await makeCard(view, 'Leere Karte', [], { published: true });
+    await view.router.navigate(paths.guest(cardId));
+    expect(await screen.findByText(t.emptyCard)).toBeTruthy();
+    expect(screen.queryByText(t.noneLeft)).toBeNull();
+  });
+
+  it('says the same for a card whose dishes are all inactive', async () => {
+    const view = await renderApp(<GuestPage />, {
+      route: `/guest/${NOT_A_CARD}`,
+      path: '/guest/:cardId',
+    });
+    const dishId = await addDishTo(view, 'Ruhender Teller', {
+      ingredientIds: [view.kitchen.articles.cream.id],
+    });
+    const row = await view.t.storage.recipes.get(dishId);
+    if (row === undefined) {
+      throw new Error('The dish is missing');
+    }
+    await view.t.storage.recipes.put({ ...row, active: false });
+    const cardId = await makeCard(
+      view,
+      'Ruhende Karte',
+      [{ title: 'Hauptgänge', recipeIds: [dishId] }],
+      { published: true },
+    );
+    await view.router.navigate(paths.guest(cardId));
+    expect(await screen.findByText(t.emptyCard)).toBeTruthy();
+    expect(screen.queryByText(t.noneLeft)).toBeNull();
+  });
+
+  it('keeps the line breaks the staff typed in the intro and the footer', async () => {
+    const view = await renderGuest();
+    await view.t.useCases['menu.update']({
+      commandId: view.t.cmd(),
+      businessId: view.t.businessId,
+      cardId: view.cardId,
+      intro: 'Saisonal gekocht.\nFrisch vom Markt.',
+      footer: 'Montags geschlossen.\nBis bald.',
+    });
+    const intro = await screen.findByText(/Saisonal gekocht/);
+    expect(intro.className).toContain('whitespace-pre-line');
+    expect(screen.getByText(/Montags geschlossen/).className).toContain('whitespace-pre-line');
+  });
+
+  it('shows a dish without ingredients as incomplete, with no diet pill', async () => {
+    const view = await renderApp(<GuestPage />, {
+      route: `/guest/${NOT_A_CARD}`,
+      path: '/guest/:cardId',
+    });
+    const dishId = await addDishTo(view, 'Leerer Teller');
+    const cardId = await makeCard(view, 'Karte', [{ title: 'Hauptgänge', recipeIds: [dishId] }], {
+      published: true,
+    });
+    await view.router.navigate(paths.guest(cardId));
+    const dish = await screen.findByRole('button', { name: /Leerer Teller/ });
+    expect(within(dish).getByText(t.incomplete)).toBeTruthy();
+    expect(within(dish).queryByText(t.vegan)).toBeNull();
+    expect(within(dish).queryByText(t.vegetarian)).toBeNull();
+  });
+
   it('says the card is not there for an address that leads nowhere', async () => {
     await renderApp(<GuestPage />, { route: `/guest/${NOT_A_CARD}`, path: '/guest/:cardId' });
     expect(await screen.findByRole('heading', { level: 1, name: t.notFoundTitle })).toBeTruthy();

@@ -138,7 +138,9 @@ export function MenuAllergensPage() {
                       </td>
                     );
                   })}
-                  <td className="px-3 py-2 whitespace-nowrap">{dietLabel(row.diet)}</td>
+                  <td className="px-3 py-2 whitespace-nowrap">
+                    {row.diet === undefined ? t.dietMissing : dietLabel(row.diet)}
+                  </td>
                   <td className="px-3 py-2">
                     {row.origins.length === 0
                       ? ''

@@ -91,7 +91,12 @@ export function MenuCardPage() {
       });
   }
 
-  const guestAddress = card.published ? paths.guest(card.id) : `${paths.guest(card.id)}?preview=1`;
+  const guestPath = paths.guest(card.id);
+  const guestAddress = card.published ? guestPath : `${guestPath}?preview=1`;
+  // A draft prints from its preview: the guest address alone is not found for it.
+  const printAddress = card.published
+    ? `${guestPath}?drucken=1`
+    : `${guestPath}?preview=1&drucken=1`;
 
   return (
     <>
@@ -125,13 +130,13 @@ export function MenuCardPage() {
 
         <CardSettings key={card.id} card={card} />
 
-        <SectionsEditor cardId={card.id} sections={data.sections} />
+        <SectionsEditor cardId={card.id} sections={data.sections} showPrices={card.showPrices} />
 
         <section aria-label={t.actions.staffList} className="flex flex-wrap gap-2">
           <ButtonLink to={paths.menuAllergens(card.id)} variant="secondary" icon={ClipboardList}>
             {t.actions.staffList}
           </ButtonLink>
-          <ButtonLink to={`${paths.guest(card.id)}?drucken=1`} variant="secondary" icon={Printer}>
+          <ButtonLink to={printAddress} variant="secondary" icon={Printer}>
             {t.actions.print}
           </ButtonLink>
           <Button

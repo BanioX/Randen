@@ -251,11 +251,43 @@ describe('MenuCardPage', () => {
       paths.menuAllergens(cardId),
     );
     expect(screen.getByRole('link', { name: t.actions.print }).getAttribute('href')).toBe(
-      `${paths.guest(cardId)}?drucken=1`,
+      `${paths.guest(cardId)}?preview=1&drucken=1`,
     );
     expect(screen.getByRole('link', { name: t.actions.guest }).getAttribute('href')).toBe(
       `${paths.guest(cardId)}?preview=1`,
     );
+  });
+
+  it('prints a published card from its guest address, without a preview', async () => {
+    const { cardId } = await renderEditor(async (view) =>
+      makeCard(view, 'Abendkarte', [], { published: true }),
+    );
+    expect(screen.getByRole('link', { name: t.actions.print }).getAttribute('href')).toBe(
+      `${paths.guest(cardId)}?drucken=1`,
+    );
+  });
+
+  it('asks for a price only while the card shows prices, as the core does', async () => {
+    const view = await renderEditor(async (built) => {
+      const dish = await addDishTo(built, 'Ohne Preis', {
+        priceRappen: null,
+        ingredientIds: [built.kitchen.articles.cream.id],
+      });
+      return makeCard(built, 'Abendkarte', [{ title: 'Hauptgänge', recipeIds: [dish] }], {
+        showPrices: false,
+      });
+    });
+    expect(screen.getByText('Ohne Preis')).toBeTruthy();
+    expect(screen.queryByText(t.sections.priceMissing)).toBeNull();
+    await view.t.useCases['menu.update']({
+      commandId: view.t.cmd(),
+      businessId: view.t.businessId,
+      cardId: view.cardId,
+      showPrices: true,
+    });
+    await waitFor(() => {
+      expect(screen.getAllByText(t.sections.priceMissing).length).toBeGreaterThan(0);
+    });
   });
 
   it('says the card is not there when the address does not lead to one', async () => {

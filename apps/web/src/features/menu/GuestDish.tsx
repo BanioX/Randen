@@ -84,7 +84,9 @@ export function GuestDishRow({ entry }: { entry: FilteredDish }) {
             {dish.traces.map((item) => (
               <Pill key={`trace-${item.id}`} trace>{`${t.traces}: ${item.label}`}</Pill>
             ))}
-            {dish.diet === 'omnivore' ? null : <Pill>{dietLabel(dish.diet)}</Pill>}
+            {dish.diet === undefined || dish.diet === 'omnivore' ? null : (
+              <Pill>{dietLabel(dish.diet)}</Pill>
+            )}
             {dish.labels.map((label) => (
               <Pill key={label.id}>{label.text}</Pill>
             ))}
@@ -165,7 +167,9 @@ export function DishSheet({
         </p>
         {dish.description === undefined ? null : <p>{dish.description}</p>}
         <div className="flex flex-wrap gap-1.5">
-          {dish.diet === 'omnivore' ? null : <Pill>{dietLabel(dish.diet)}</Pill>}
+          {dish.diet === undefined || dish.diet === 'omnivore' ? null : (
+            <Pill>{dietLabel(dish.diet)}</Pill>
+          )}
           {dish.labels.map((label) => (
             <Pill key={label.id}>{label.text}</Pill>
           ))}

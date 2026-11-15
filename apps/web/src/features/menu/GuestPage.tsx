@@ -128,7 +128,9 @@ export function GuestPage() {
           </h1>
           <p className="mt-1 text-[1.125rem] text-cork print:text-black">{card.name}</p>
           {card.intro === undefined ? null : (
-            <p className="mt-4 max-w-prose text-[#EDE3D6] print:text-black">{card.intro}</p>
+            <p className="mt-4 max-w-prose whitespace-pre-line text-[#EDE3D6] print:text-black">
+              {card.intro}
+            </p>
           )}
         </div>
       </header>
@@ -171,7 +173,8 @@ export function GuestPage() {
         )}
 
         {visible.length === 0 ? (
-          <p className="text-ink-muted">{t.noneLeft}</p>
+          // Nothing to filter out when the card has no dishes; the filter sentence is for a filter.
+          <p className="text-ink-muted">{sections.length === 0 ? t.emptyCard : t.noneLeft}</p>
         ) : (
           visible.map(({ section, entries }) => (
             <section
@@ -240,7 +243,7 @@ export function GuestPage() {
 
       <footer className="mx-auto max-w-2xl space-y-4 border-t border-line px-5 pt-5 pb-10 md:px-10 print:max-w-none print:px-0 print:pt-3">
         {card.footer === undefined ? null : (
-          <p className="text-ink-muted print:text-black">{card.footer}</p>
+          <p className="whitespace-pre-line text-ink-muted print:text-black">{card.footer}</p>
         )}
         <p className="text-[0.9375rem] text-ink-muted print:text-black">{t.notice}</p>
         <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">

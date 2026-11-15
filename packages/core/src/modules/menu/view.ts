@@ -63,7 +63,14 @@ export function menuBook(
 }
 
 export type DishProblemKind =
-  'missing' | 'not_dish' | 'inactive' | 'price' | 'photo' | 'declaration' | 'origin';
+  | 'missing'
+  | 'not_dish'
+  | 'inactive'
+  | 'ingredients'
+  | 'price'
+  | 'photo'
+  | 'declaration'
+  | 'origin';
 
 export interface DishProblem {
   kind: DishProblemKind;
@@ -81,6 +88,11 @@ export interface DishState {
   active: boolean;
   recipe?: Recipe;
   declaration?: Declaration;
+  /**
+   * The diet of the dish. Undefined while it has no ingredients: nothing is declared, so the
+   * card claims no diet (combineDiets of nothing would say vegan, ADR-0008).
+   */
+  diet?: Diet | undefined;
   problems: DishProblem[];
 }
 
@@ -118,10 +130,16 @@ export function analyseDish(
       problems: [{ kind: 'not_dish', text: 'Komponente, kein Gericht' }],
     };
   }
-  const declaration = declarationOf(row, book.declaration);
+  const declared = declarationOf(row, book.declaration);
+  const hasIngredients = row.ingredients.length > 0;
+  // Without ingredients the declaration is open, not vegan and free of allergens.
+  const declaration: Declaration = hasIngredients ? declared : { ...declared, incomplete: true };
   const problems: DishProblem[] = [];
   if (!row.active) {
     problems.push({ kind: 'inactive', text: 'Rezept ist nicht aktiv' });
+  }
+  if (!hasIngredients) {
+    problems.push({ kind: 'ingredients', text: 'Zutaten fehlen' });
   }
   if (card.showPrices && (row.priceRappen === undefined || row.priceRappen <= 0)) {
     problems.push({ kind: 'price', text: 'Preis fehlt' });
@@ -129,10 +147,10 @@ export function analyseDish(
   if (card.showPhotos && row.photo === undefined) {
     problems.push({ kind: 'photo', text: 'Foto fehlt' });
   }
-  if (declaration.incomplete) {
+  if (declared.incomplete) {
     problems.push({ kind: 'declaration', text: 'Deklaration unvollständig' });
   }
-  const missingOrigin = declaration.origins.filter((origin) => origin.country === undefined);
+  const missingOrigin = declared.origins.filter((origin) => origin.country === undefined);
   if (missingOrigin.length > 0) {
     problems.push({
       kind: 'origin',
@@ -147,6 +165,7 @@ export function analyseDish(
     active: row.active,
     recipe: row,
     declaration,
+    diet: hasIngredients ? declared.diet : undefined,
     problems,
   };
 }
@@ -230,7 +249,7 @@ function originOf(origin: { name: string; country: string | undefined }): DishOr
 
 /** A dish as the guest reads it. Only what the card is set to show. */
 function guestDish(state: DishState, card: MenuCard): GuestDish | undefined {
-  const { recipe, declaration } = state;
+  const { recipe, declaration, diet } = state;
   if (recipe === undefined || declaration === undefined || !state.isDish || !state.active) {
     return undefined;
   }
@@ -243,7 +262,7 @@ function guestDish(state: DishState, card: MenuCard): GuestDish | undefined {
     ...(card.showPhotos && recipe.photo !== undefined ? { photo: recipe.photo } : {}),
     allergens: declaration.allergens.map(allergenRef),
     traces: declaration.traces.map(allergenRef),
-    diet: declaration.diet,
+    ...(diet === undefined ? {} : { diet }),
     labels: recipe.labels.map((label) => ({ id: label, text: dishLabelText(label) })),
     origins: declaration.origins.map(originOf),
     incomplete: isIncomplete(declaration),
@@ -299,7 +318,7 @@ export function allergenRows(card: MenuCard, book: MenuBook): AllergenSheetRow[]
         name: recipe.name,
         section: section.title,
         active: state.active,
-        diet: declaration.diet,
+        ...(state.diet === undefined ? {} : { diet: state.diet }),
         origins: declaration.origins.map(originOf),
         incomplete: isIncomplete(declaration),
         cells: ALLERGENS.map((allergen) => ({

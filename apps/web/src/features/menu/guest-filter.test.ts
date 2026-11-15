@@ -49,6 +49,12 @@ describe('matchesDiet', () => {
     expect(matchesDiet('vegetarian', 'vegan')).toBe(false);
     expect(matchesDiet('vegan', 'vegan')).toBe(true);
   });
+
+  it('claims no diet for a dish without one: only «Alle» lets it through', () => {
+    expect(matchesDiet(undefined, 'all')).toBe(true);
+    expect(matchesDiet(undefined, 'vegetarian')).toBe(false);
+    expect(matchesDiet(undefined, 'vegan')).toBe(false);
+  });
 });
 
 describe('filterDishes', () => {
