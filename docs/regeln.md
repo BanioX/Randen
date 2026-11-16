@@ -162,3 +162,7 @@ Jede Seite von Randen folgt einem von fünf Mustern. Wer eine Seite baut, wählt
 - Am iPhone liegt das Ende jeder Seite frei über der Tab-Leiste; nichts scrollt seitwärts bei 390 px. Ab `md:` gibt es keine Tab-Leiste mehr, sondern die Leiste links.
 - Seiten laden über `lazy` in `routes.tsx`, ausser dem Cockpit.
 - Während eine Abfrage lädt, steht der Kopf der Seite; es flackert kein Ladezeichen.
+
+## I. Alle Apps der Firma
+
+Randen und Rettich sind getrennte Apps derselben Firma (ADR-0020). Die Regeln für Sprache und Ton (Abschnitt A) gelten für alle Apps der Firma. Das Wort «Suite» steht in keinem Text einer App; wo eine App die andern nennt, heisst es «Apps der Firma». Die Firma steht nur unter «Über …», auf ihrer Startseite und in rechtlichen Texten, nie im Kopf einer App.

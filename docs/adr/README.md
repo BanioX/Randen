@@ -22,3 +22,4 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | [0016](0016-preisaenderung-durchrechnen.md) | Preisänderung durchrechnen: eine Frage, kein Eingriff | angenommen | 2026-11-15 |
 | [0017](0017-sicherung-format-und-verschluesselung.md) | Sicherung: Format und Verschlüsselung | Entwurf, zur Bestätigung durch Alban | 2026-11-15 |
 | [0018](0018-speisekarte.md) | Speisekarte: aus den Rezepten, Gästeansicht auf dem Gerät, Export als Datei | angenommen | 2026-11-15 |
+| [0020](0020-suite-der-firma.md) | Suite der Firma: getrennte Apps, eine Herkunft pro Produkt, ein ruhiger Absender | Entwurf, zur Bestätigung durch Alban | 2026-11-16 |

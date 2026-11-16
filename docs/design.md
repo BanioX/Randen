@@ -112,3 +112,28 @@ Eine weisse Rande mit rosa Schulter und drei Blättern auf Rotwein `#6D1F2F` (`a
 ## Druck
 
 Berichte, Bestellungen, Rezeptkarten und Speisekarten drucken über den Browser (`@media print`): ohne Navigation, schwarz auf weiss, mit Betrieb und Datum, Tabellen mit Haarlinien.
+
+## Gemeinsam mit Rettich
+
+Randen und Rettich sind getrennte Apps derselben Firma (ADR-0020): Jede hat ihre Leitfarbe, beide folgen denselben Regeln für Gestaltung und Sprache. Geprüft am 16.11.2026 gegen dieses Dokument, [`regeln.md`](regeln.md), `apps/web/src/index.css` und `apps/web/public/icon.svg` beider Apps sowie das Markenbuch und die Design-Doku von Rettich (`docs/marke.md`, `docs/design.md`, Stand von `main` am 15.11.2026). Wo die Apps abweichen, steht, was jede tut.
+
+| Wert | Rettich | Randen |
+| --- | --- | --- |
+| Leitfarbe (was du tippst und was gewählt ist) | Smaragd `#135E42` | Rotwein `#6D1F2F` |
+| Schrift | `#14161A`, dort «Tinte»; «Onyx» heisst das dunklere `#0D1012` | `#14161A` als `ink`; `onyx` ist auch hier das dunklere `#0D1012` (`index.css`), «Schrift Onyx» meint in diesem Dokument `ink` |
+| Schriftart | Systemschrift, Grössen in `rem`, nichts wird geladen | gleich |
+| Ziele | mindestens 44 px | gleich |
+| Felder | erben die 17 px des Texts; eine eigene Regel gibt es nicht | mindestens 16 px, Regel `max(16px, 1em)` in `index.css` |
+| Radien | 12 px (Knopf, Eingabe), 16 px (Karte), 24 px (Sheet), Pille; dazu 10 px für Segmente | 12, 16, 24 px und Pille |
+| Raster | 4-px-Schritte (Markenbuch) | Abstände von Tailwind in Schritten von 0.25 rem, also 4 px; hier bisher nicht ausgeschrieben |
+| Symbole | Lucide, Strich 1.75, 22 bis 24 px | Lucide, Strich 1.75, 20 bis 22 px |
+| Bewegung | 150 bis 200 ms, ease-out; `prefers-reduced-motion` schaltet sie ab | gleich |
+| Emojis | keine | keine |
+| Farbe | eine Bedeutung pro Farbe (Rettich-ADR-0075) | eine Bedeutung pro Farbe (ADR-0009) |
+| Dunkelmodus | nach Gerät (Rettich-ADR-0081) | nach Gerät |
+| Breiten | 768 px: breiterer Inhalt; 1024 px: Seitenleiste. Darunter die Tab-Leiste (Rettich-ADR-0092) | 768 px: schmale Leiste in Traube, 96 px; 1024 px: Seitenleiste (ADR-0013) |
+| Seitenleiste | 256 px, hell | 256 px, Traube |
+| Inhaltsbreite | 576 px, ab 768 px 672 px, ab 1024 px 768 px | 576 px (`max-w-xl`) am iPhone, ab 768 px 768 px (`max-w-3xl`), ab 1024 px 1152 px (`max-w-6xl`); jeweils mit Innenabstand (`AppShell.tsx`) |
+| App-Symbol | das Gemüse auf der Leitfarbe, 512 × 512, Eckenradius 112 | gleich |
+
+Ändert Rettich einen dieser Werte, zieht Randen nach, wenn es der Küche nützt ([`rettich.md`](rettich.md)). Von Randen fliesst nichts zurück.

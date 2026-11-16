@@ -34,3 +34,20 @@
 | Abzeichen, wachsender Rettich, Retten als Ritual | 0042, 0043, 0054, 0084 | nicht übernommen: passt nicht zu einem Werkzeug für Profis | – |
 | Laden-Buchstaben, Open Food Facts, Nährwerte | 0037, 0016, 0064 | nicht jetzt: Grosshandel statt Detailhandel | – |
 | Feedback-Frage nach einer Woche | 0089 | später, mit dem ersten Pilotbetrieb | offen |
+
+## Gemeinsamer Kern (Kopie)
+
+Fünf Dateien in `packages/core/src` stammen aus Rettich (dort ebenfalls `packages/core/src`). Sie werden kopiert, nicht geteilt (ADR-0020): Ein gemeinsames Kern-Paket wartet auf den Namen der Firma und einen Server.
+
+Gemessen am 16.11.2026 mit `diff` je Datei gegen Rettich, Stand `a84ffda9` vom 14.11.2026; `main` von Rettich (`0ac1fd2e`, 15.11.2026) hat dieselben fünf Dateien.
+
+| Datei | Zeilen (beide) | Stand |
+| --- | --- | --- |
+| `ids.ts` | 63 | gleich |
+| `format.ts` | 25 | gleich |
+| `money.ts` | 160 | Code gleich; 2 Zeilen im Kopfkommentar verschieden («in Randen» statt «in rettich», Verweis auf ADR-0004) |
+| `currency.ts` | 128 | Code gleich; 4 Kommentarzeilen verschieden (eine Währung pro Betrieb statt pro Haushalt, ADR-0004 statt Rettich-ADR-0019, Name des Typs `Rappen`, «business» statt «household») |
+| `dates.ts` | 168 | Code gleich; 2 Kommentarzeilen verschieden («in Randen» statt «in rettich», ohne Verweis auf einen Schritt im Plan von Rettich) |
+
+- Ändert Rettich eine dieser Dateien, zieht Randen nach und hält den neuen Stand hier fest. Von Randen fliesst nichts zurück.
+- Den Vermerk der Herkunft tragen die Dateien heute nicht in ihrem Kopf; er steht nur hier. Nachtragen, wenn `packages/core` das nächste Mal geändert wird.

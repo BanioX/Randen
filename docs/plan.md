@@ -58,5 +58,9 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | Wareneinsatz pro Mahlzeit | Was zählt: der ganze Verbrauch des Monats oder nur die Mittag-Linien? Solange offen zeigt die Demo kein Ziel pro Mahlzeit (TD-27) |
 | Verkäufe mit Slot | Bekommt ein Verkauf Mittag oder Abend? Ohne Slot zählen die Mahlzeiten einer Linie auch die Abendportionen desselben Gerichts (TD-26) |
 | MWST 2.6 % für Mitnehmen | Die Abgrenzung der Belege nach `fakten.md` 3.2 fehlt in ADR-0015 (Zeile 66) und in der App (TD-25) |
-| Domain | Nicht gekauft; kostet Geld |
+| Domain | Nicht gekauft; kostet Geld. Wofür sie dient: «Adressen der Suite» (ADR-0020) |
+| Marke und Name der Firma | Offen; eine eigene Suche läuft, bis dahin «die Firma». Vorschlag: Die Produkte führen, die Firma ist ruhiger Absender nur unter «Über …», auf ihrer Startseite und in rechtlichen Texten; Namensmuster Schweizer Gartengemüse mit einer Leitfarbe (ADR-0020, Entwurf) |
+| Adressen der Suite | Heute je Produkt eine eigene Adresse `<app>.<konto>.workers.dev`; Projekt- und Kontonamen bleiben. Vorschlag: mit einer Domain die Startseite auf `<domain>`, die Produkte auf Unteradressen. Die Adresse von Randen muss vor dem ersten Pilotbetrieb feststehen (ADR-0020) |
+| Startseite der Firma sichtbar | Entwurf in `docs/intern/suite/`, nicht ausgeliefert und nicht in `wrangler.jsonc`, bis Alban Randen zeigen will (ADR-0020) |
+| Desktop und Stores | Gebaut ist die PWA, aus dem Browser installiert, mit dem Rahmen ab 1024 px. App Store und Google Play kosten Geld, der Microsoft Store laut Microsoft keine Registrierungsgebühr; Beträge mit Quellen in `docs/intern/suite.md` (ADR-0020) |
 | Cloudflare-Vorschau | Projekt `randen` eingerichtet (15.11.2026), Production vorläufig auf dem Arbeits-Branch ([`previews.md`](previews.md)) |

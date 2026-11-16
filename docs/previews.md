@@ -26,6 +26,8 @@ Damit du jeden Stand am Handy und am Tablet anschauen kannst: `main` läuft unte
 
 Danach gibt es `https://randen.<dein-name>.workers.dev` (Production) und pro anderem Branch eine eigene Vorschau-Adresse. Die feste Adresse hängt am Projektnamen, nicht am Branch.
 
+**Namen bleiben:** Die Projektnamen `randen` und `fridgeai` (Rettich) und der Name des Kontos werden nie umbenannt, denn sie bilden die Adresse: Eine neue Adresse ist für den Browser eine andere App mit leerem Speicher, und die Daten blieben auf jedem Gerät an der alten Adresse liegen (ADR-0020).
+
 **Vor dem ersten Pilotbetrieb** wird `main` zur Production: Den Arbeits-Branch per PR nach `main` bringen und unter **Branch control** wieder `main` wählen. Die Adresse bleibt gleich, das Symbol auf dem Home-Bildschirm passt weiter.
 
 ## So schaust du eine Vorschau an

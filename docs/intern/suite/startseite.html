@@ -1,0 +1,117 @@
+<!doctype html>
+<!--
+  Entwurf der Startseite der Firma (ADR-0020, docs/intern/suite.md). Nicht ausgeliefert.
+  «Firma» und <domain> sind Platzhalter, bis der Name der Firma feststeht.
+  Statisch: kein Skript, kein Manifest, kein Speicher, keine Cookies, nicht installierbar.
+-->
+<html lang="de-CH">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'"
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Firma</title>
+    <link rel="stylesheet" href="startseite.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="head">
+        <h1 class="sender">Firma</h1>
+        <p class="lead">
+          Zwei Apps, damit weniger Lebensmittel im Abfall landen: Rettich für den Haushalt, Randen
+          für die Küche.
+        </p>
+      </header>
+
+      <main>
+        <ul class="apps" role="list">
+          <li class="app app-rettich">
+            <article aria-labelledby="rettich-name">
+              <div class="app-head">
+                <img class="icon" src="rettich.svg" width="64" height="64" alt="" />
+                <div>
+                  <h2 id="rettich-name" class="name">Rettich</h2>
+                  <p class="audience">Für Haushalte, WGs und Paare</p>
+                </div>
+              </div>
+              <p class="what">Rettich weiss, was du zu Hause hast und was bald abläuft.</p>
+              <a class="open" href="https://rettich.&lt;domain&gt;/" aria-describedby="rettich-name"
+                >Öffnen</a
+              >
+              <h3 class="install-title">So installierst du</h3>
+              <dl class="install">
+                <div>
+                  <dt>iPhone und iPad</dt>
+                  <dd>In Safari «Teilen › Zum Home-Bildschirm»</dd>
+                </div>
+                <div>
+                  <dt>Mac mit Safari</dt>
+                  <dd>«Ablage › Zum Dock hinzufügen»</dd>
+                </div>
+                <div>
+                  <dt>Android mit Chrome</dt>
+                  <dd>Chrome-Menü › «App installieren»</dd>
+                </div>
+                <div>
+                  <dt>Windows und Mac mit Chrome oder Edge</dt>
+                  <dd>«Installieren» in der Adresszeile</dd>
+                </div>
+              </dl>
+            </article>
+          </li>
+
+          <li class="app app-randen">
+            <article aria-labelledby="randen-name">
+              <div class="app-head">
+                <img
+                  class="icon"
+                  src="../../../apps/web/public/icon.svg"
+                  width="64"
+                  height="64"
+                  alt=""
+                />
+                <div>
+                  <h2 id="randen-name" class="name">Randen</h2>
+                  <p class="audience">Für Küchen vom Imbiss bis zur Produktionsküche</p>
+                </div>
+              </div>
+              <p class="what">
+                Lager mit Ablaufdaten, Rezepte mit Kalkulation und Selbstkontrolle.
+              </p>
+              <a class="open" href="https://randen.&lt;domain&gt;/" aria-describedby="randen-name"
+                >Öffnen</a
+              >
+              <h3 class="install-title">So installierst du</h3>
+              <dl class="install">
+                <div>
+                  <dt>iPhone und iPad</dt>
+                  <dd>In Safari «Teilen › Zum Home-Bildschirm»</dd>
+                </div>
+                <div>
+                  <dt>Mac mit Safari</dt>
+                  <dd>«Ablage › Zum Dock hinzufügen»</dd>
+                </div>
+                <div>
+                  <dt>Android mit Chrome</dt>
+                  <dd>Chrome-Menü › «App installieren»</dd>
+                </div>
+                <div>
+                  <dt>Windows und Mac mit Chrome oder Edge</dt>
+                  <dd>«Installieren» in der Adresszeile</dd>
+                </div>
+              </dl>
+            </article>
+          </li>
+        </ul>
+      </main>
+
+      <footer class="foot">
+        <p>Kein Konto. Jede App hält ihre Daten getrennt auf deinem Gerät.</p>
+      </footer>
+    </div>
+  </body>
+</html>
