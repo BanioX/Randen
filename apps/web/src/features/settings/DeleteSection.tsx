@@ -74,8 +74,13 @@ export function DeleteSection() {
             <Button variant="secondary" onClick={close}>
               {t.deleteCancel}
             </Button>
-            <Button variant="danger" disabled={!confirmed || busy} onClick={() => void remove()}>
-              {busy ? t.deleting : t.deleteConfirm}
+            <Button
+              variant="danger-solid"
+              disabled={!confirmed}
+              busy={busy}
+              onClick={() => void remove()}
+            >
+              {t.deleteConfirm}
             </Button>
           </div>
         </div>

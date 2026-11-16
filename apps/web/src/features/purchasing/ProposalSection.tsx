@@ -238,7 +238,7 @@ function SupplierCard({ group, horizonDays, primary }: CardProps) {
             icon={PackageCheck}
             fullWidth
             className="md:w-auto"
-            disabled={busy}
+            busy={busy}
             aria-label={t.createFor(name)}
             onClick={() => {
               void create();

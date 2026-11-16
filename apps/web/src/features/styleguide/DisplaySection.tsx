@@ -25,6 +25,7 @@ import {
   Plus,
   Soup,
   Trash2,
+  TriangleAlert,
   Wheat,
   type LucideIcon,
 } from 'lucide-react';
@@ -255,11 +256,11 @@ const MENU_CLASSES = [
   { label: menuClassLabel('dog'), value: 2 },
 ] as const;
 
-const CHIP_TONES: readonly { tone: Tone; label: string }[] = [
+const CHIP_TONES: readonly { tone: Tone; label: string; icon?: LucideIcon }[] = [
   { tone: 'ok', label: 'In Ordnung' },
   { tone: 'soon', label: 'Bald' },
-  { tone: 'today', label: 'Heute' },
-  { tone: 'danger', label: 'Abgelaufen' },
+  { tone: 'today', label: 'Heute zu tun' },
+  { tone: 'danger', label: 'Abgelaufen', icon: TriangleAlert },
   { tone: 'cold', label: 'Kühlzelle' },
   { tone: 'frozen', label: 'Tiefkühlzelle' },
   { tone: 'dry', label: 'Trockenlager' },
@@ -290,8 +291,8 @@ function Buttons() {
         <ButtonLink size="sm" variant="ghost" to={paths.journal()}>
           Zum Journal
         </ButtonLink>
-        <Button size="sm" disabled>
-          Gesichert
+        <Button size="sm" busy>
+          Sichern
         </Button>
       </div>
     </Card>
@@ -301,38 +302,56 @@ function Buttons() {
 function KeyFigures() {
   const money = useMoney();
   return (
-    <KpiGrid>
-      <StatTile
-        variant="premium"
-        label="Lagerwert"
-        unit={money.symbol}
-        value={money.format(rappen(1_842_050), { currency: false })}
-        hint="62 Artikel an Lager"
-        trend={
-          <Sparkline
-            onDark
-            values={[1_712_000, 1_698_400, 1_731_900, 1_790_300, 1_768_200, 1_815_600, 1_842_050]}
-            summary="Der Lagerwert ist in sieben Tagen von CHF 17’120 auf CHF 18’420.50 gestiegen."
-          />
-        }
-        to={paths.stock()}
-      />
-      <StatTile
-        label="Wareneinsatz"
-        value={formatPercent(3120)}
-        tone="ok"
-        hint="Ziel 32 %"
-        to={paths.margins()}
-      />
-      <StatTile
-        label="Abschreiber diese Woche"
-        unit={money.symbol}
-        value={money.format(rappen(21_240), { currency: false })}
-        tone="soon"
-        hint="CHF 38.20 mehr als letzte Woche"
-      />
-      <StatTile label="Läuft heute ab" value="6" tone="danger" hint="Zuerst verarbeiten" />
-    </KpiGrid>
+    <div className="space-y-4">
+      <KpiGrid>
+        <StatTile
+          variant="premium"
+          label="Lagerwert"
+          unit={money.symbol}
+          value={money.format(rappen(1_842_050), { currency: false })}
+          hint="62 Artikel an Lager"
+          trend={
+            <Sparkline
+              onDark
+              values={[1_712_000, 1_698_400, 1_731_900, 1_790_300, 1_768_200, 1_815_600, 1_842_050]}
+              summary="Der Lagerwert ist in sieben Tagen von CHF 17’120 auf CHF 18’420.50 gestiegen."
+            />
+          }
+          to={paths.stock()}
+        />
+        <StatTile
+          label="Wareneinsatz"
+          value={formatPercent(3120)}
+          tone="ok"
+          hint="Ziel 32 %"
+          to={paths.margins()}
+        />
+        <StatTile
+          label="Abschreiber diese Woche"
+          unit={money.symbol}
+          value={money.format(rappen(21_240), { currency: false })}
+          tone="soon"
+          hint="CHF 38.20 mehr als letzte Woche"
+        />
+        <StatTile label="Läuft heute ab" value="6" tone="today" hint="Zuerst verarbeiten" />
+      </KpiGrid>
+      {/* A seven-digit amount in two tiles: the figure breaks inside its tile, never out of it. */}
+      <KpiGrid>
+        <StatTile
+          variant="premium"
+          label="Lagerwert, grosser Betrieb"
+          unit={money.symbol}
+          value={money.format(rappen(1_234_567_890), { currency: false })}
+          hint="Über eine Million"
+        />
+        <StatTile
+          label="Lagerwert, grosser Betrieb"
+          unit={money.symbol}
+          value={money.format(rappen(1_234_567_890), { currency: false })}
+          hint="Über eine Million"
+        />
+      </KpiGrid>
+    </div>
   );
 }
 
@@ -471,8 +490,8 @@ function Badges() {
         <div className="md:col-span-2">
           <dt className="text-sm font-semibold text-ink-muted">Töne</dt>
           <dd className="mt-2 flex flex-wrap gap-2">
-            {CHIP_TONES.map(({ tone, label }) => (
-              <StatusChip key={tone} tone={tone}>
+            {CHIP_TONES.map(({ tone, label, icon }) => (
+              <StatusChip key={tone} tone={tone} icon={icon}>
                 {label}
               </StatusChip>
             ))}

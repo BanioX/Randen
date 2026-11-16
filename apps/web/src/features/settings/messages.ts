@@ -282,7 +282,6 @@ export const settingsMessages = {
     deleteHint: (name: string) => `Tippe «${name}», um das Löschen zu bestätigen.`,
     deleteConfirm: 'Alles löschen',
     deleteCancel: 'Abbrechen',
-    deleting: 'Wird gelöscht …',
     deleted: 'Alles gelöscht. Randen startet neu.',
     deleteFailed: 'Es wurde nichts gelöscht. Versuche es noch einmal.',
     storageTitle: 'Speicher des Geräts',

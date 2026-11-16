@@ -52,9 +52,12 @@
   --color-ok-bg: #e5f6ea;
   --color-soon: #854f06;
   --color-soon-bg: #fdf1dc;
+  /* Zinnober is only for what is wrong; «heute zu tun» takes the wine accent (one meaning per
+     colour, docs/design.md). */
   --color-danger: #c33701;
-  --color-today: #c33701;
-  --color-today-bg: #ffeee8;
+  --color-danger-bg: #ffeee8;
+  --color-today: #571825;
+  --color-today-bg: #fef3f3;
 
   /* Storage areas: cold room, freezer, dry store, bar and cellar. */
   --color-cold: #13676f;
@@ -87,8 +90,8 @@
   :root {
     color-scheme: dark;
     --color-ground: #110a0b;
-    --color-surface: #1f1718;
-    --color-surface-muted: #2f2525;
+    --color-surface: #261d1f;
+    --color-surface-muted: #352a2a;
     --color-line: #3f3334;
     --color-line-strong: #837671;
     --color-mist: #c1b6a2;
@@ -107,8 +110,9 @@
     --color-soon: #f2b772;
     --color-soon-bg: #34220b;
     --color-danger: #cf3d07;
-    --color-today: #cf3d07;
-    --color-today-bg: #3f1a12;
+    --color-danger-bg: #3f1a12;
+    --color-today: #b04a58;
+    --color-today-bg: #421f24;
     --color-cold: #82ccd5;
     --color-cold-bg: #0b292c;
     --color-frozen: #9ec0f2;
@@ -123,8 +127,9 @@
     --color-chart-4: #8a80e0;
     --color-chart-5: #4fae7b;
     --color-chart-6: #c29be8;
-    --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.05);
-    --shadow-float: 0 0 0 1px rgb(255 255 255 / 0.07), 0 8px 24px rgb(0 0 0 / 0.55);
+    /* The card edge: a 10 % white hairline, so a dark card separates from the ground. */
+    --shadow-card: 0 0 0 1px rgb(255 255 255 / 0.1);
+    --shadow-float: 0 0 0 1px rgb(255 255 255 / 0.1), 0 8px 24px rgb(0 0 0 / 0.55);
   }
 
   /* Wine, green and vermilion as TEXT need a lighter tone on the dark ground; as a fill with
@@ -132,14 +137,14 @@
   .text-wine-600,
   .text-wine-700,
   .text-wine-800,
-  .text-wine-900 {
+  .text-wine-900,
+  .text-today {
     color: #e79ea6;
   }
   .text-ok {
     color: #81d39f;
   }
-  .text-danger,
-  .text-today {
+  .text-danger {
     color: #fd9376;
   }
 }

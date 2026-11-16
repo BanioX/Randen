@@ -44,15 +44,17 @@ export const toneClasses: Record<Tone, ToneClasses> = {
     solid: 'bg-soon text-surface',
     text: 'text-soon',
   },
+  // Due today, not wrong yet: the wine accent, never an alarm colour and never a red edge.
   today: {
     chip: 'bg-today-bg text-today',
     dot: 'bg-today',
     solid: 'bg-today text-white',
     text: 'text-today',
   },
-  // Stronger than `today`: what is wrong is a full vermilion chip, what is due today a tint.
+  // What is wrong (expired, out of range, over the target): vermilion text on a light vermilion
+  // tint with a fine edge and a warning symbol, so it never reads as «heute».
   danger: {
-    chip: 'bg-danger text-white',
+    chip: 'border border-danger/40 bg-danger-bg text-danger',
     dot: 'bg-danger',
     solid: 'bg-danger text-white',
     text: 'text-danger',

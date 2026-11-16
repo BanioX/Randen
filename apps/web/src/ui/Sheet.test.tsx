@@ -246,7 +246,10 @@ describe('ConfirmDialog', () => {
     render(<DeletePage tone="danger" onConfirm={vi.fn()} onCancel={vi.fn()} />);
     await userEvent.setup().click(screen.getByRole('button', { name: 'Rezept löschen' }));
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Abbrechen' }));
-    expect(screen.getByRole('button', { name: 'Löschen' }).className).toContain('bg-danger');
+    const confirm = screen.getByRole('button', { name: 'Löschen' });
+    expect(confirm.className).toContain('bg-danger');
+    expect(confirm.className).toContain('text-white');
+    expect(confirm.className).not.toContain('border-danger/40');
   });
 
   it('starts on the confirming button for a harmless step', async () => {

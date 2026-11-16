@@ -385,7 +385,8 @@ function OrderDetail({ detail, onLeaving }: OrderDetailProps) {
       <Button
         size="sm"
         icon={Send}
-        disabled={busy || dirty}
+        busy={busy}
+        disabled={dirty}
         onClick={() => {
           void markSent();
         }}
@@ -585,14 +586,15 @@ function OrderDetail({ detail, onLeaving }: OrderDetailProps) {
             <div className="flex flex-wrap gap-2">
               <Button
                 icon={PackageCheck}
-                disabled={busy || !dirty}
+                busy={busy}
+                disabled={!dirty}
                 onClick={() => {
                   void save();
                 }}
               >
                 {t.save}
               </Button>
-              <Button variant="secondary" disabled={busy || !dirty} onClick={discard}>
+              <Button variant="secondary" busy={busy} disabled={!dirty} onClick={discard}>
                 {t.discard}
               </Button>
             </div>
@@ -658,7 +660,7 @@ function OrderDetail({ detail, onLeaving }: OrderDetailProps) {
               <Button
                 variant="secondary"
                 icon={Ban}
-                disabled={busy}
+                busy={busy}
                 onClick={() => {
                   setDialog('cancel');
                 }}
@@ -669,7 +671,7 @@ function OrderDetail({ detail, onLeaving }: OrderDetailProps) {
                 <Button
                   variant="ghost"
                   icon={Trash2}
-                  disabled={busy}
+                  busy={busy}
                   onClick={() => {
                     setDialog('remove');
                   }}

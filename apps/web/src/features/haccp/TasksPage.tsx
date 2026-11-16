@@ -75,7 +75,7 @@ export function TasksPage() {
           text={t.plan.empty.text}
           action={
             <Button
-              disabled={busy}
+              busy={busy}
               onClick={() => {
                 setBusy(true);
                 run('hygiene.standardPlan', {})

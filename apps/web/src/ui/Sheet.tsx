@@ -184,7 +184,7 @@ interface ConfirmDialogProps {
   /** Names the deed: «Abschreiben», «Löschen». */
   confirmLabel: string;
   cancelLabel?: string | undefined;
-  /** `danger` for what cannot be undone: a vermilion button, and the focus starts on «Abbrechen». */
+  /** `danger` for what cannot be undone: a filled vermilion button, and the focus starts on «Abbrechen». */
   tone?: 'danger' | 'default' | undefined;
   onConfirm: () => void;
   onCancel: () => void;
@@ -215,7 +215,7 @@ export function ConfirmDialog({
             {cancelLabel}
           </Button>
           <Button
-            variant={danger ? 'danger' : 'primary'}
+            variant={danger ? 'danger-solid' : 'primary'}
             onClick={onConfirm}
             data-autofocus={danger ? undefined : ''}
           >

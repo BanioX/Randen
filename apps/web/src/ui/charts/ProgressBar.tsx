@@ -29,7 +29,7 @@ const looks: Record<ProgressTone, { fill: string; track: string }> = {
   wine: { fill: 'var(--color-wine-700)', track: 'var(--color-wine-100)' },
   ok: { fill: 'var(--color-ok)', track: 'var(--color-ok-bg)' },
   soon: { fill: 'var(--color-soon)', track: 'var(--color-soon-bg)' },
-  danger: { fill: 'var(--color-danger)', track: 'var(--color-today-bg)' },
+  danger: { fill: 'var(--color-danger)', track: 'var(--color-danger-bg)' },
   neutral: { fill: 'var(--color-ink-muted)', track: 'var(--color-surface-muted)' },
 };
 

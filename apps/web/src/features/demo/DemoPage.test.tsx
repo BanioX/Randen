@@ -62,7 +62,8 @@ describe('DemoPage', () => {
 
     await user.click(screen.getByRole('button', { name: t.load }));
     expect(screen.getByRole('progressbar', { name: t.progressLabel })).toBeTruthy();
-    expect(screen.getByRole('button', { name: t.loading })).toHaveProperty('disabled', true);
+    // While it loads the button is busy: it keeps its label and cannot be pressed again.
+    expect(screen.getByRole('button', { name: t.loading }).getAttribute('aria-busy')).toBe('true');
 
     // The end of the load: the toast and the figures of the loaded demo.
     expect(await screen.findByText(t.loaded(50, 11, 8), {}, { timeout: 60_000 })).toBeTruthy();

@@ -171,7 +171,7 @@ export function BusinessPage() {
       {error === null ? null : <Notice tone="danger">{error}</Notice>}
       <FormActions
         primaryLabel={messages.actions.save}
-        primaryDisabled={busy}
+        primaryBusy={busy}
         secondaryLabel={messages.actions.cancel}
         onSecondary={() => {
           void navigate(paths.more());

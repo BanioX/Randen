@@ -62,10 +62,21 @@ describe('ExpiryChip', () => {
     expect(chip.className).toContain('text-today');
   });
 
-  it('expired: a Verbrauchsdatum that is over says «abgelaufen», in full vermilion with an icon', () => {
+  it('today and expired never share a colour: heute is the wine accent, abgelaufen is vermilion', () => {
+    const today = expiry(0, 'use_by');
+    const expired = expiry(-3, 'use_by');
+    expect(today.className).toContain('text-today');
+    expect(today.className).not.toContain('danger');
+    expect(expired.className).toContain('text-danger');
+    expect(expired.className).not.toContain('text-today');
+  });
+
+  it('expired: a Verbrauchsdatum that is over says «abgelaufen», vermilion text on a fine edge with an icon', () => {
     const chip = expiry(-3, 'use_by');
     expect(chip.textContent).toBe('abgelaufen seit 3 Tagen');
-    expect(chip.className).toContain('bg-danger');
+    expect(chip.className).toContain('bg-danger-bg');
+    expect(chip.className).toContain('text-danger');
+    expect(chip.className).toContain('border-danger/40');
     expect(chip.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
     expect(expiry(-1, 'use_by').textContent).toBe('abgelaufen seit gestern');
   });
@@ -176,7 +187,7 @@ describe('MarginBadge', () => {
   it('over: vermilion, «über dem Ziel»', () => {
     const { container } = render(<MarginBadge status="over" foodCostBps={3810} />);
     expect(container.textContent).toBe('38.1 % Wareneinsatz, über dem Ziel');
-    expect(container.firstElementChild?.className).toContain('bg-today-bg');
+    expect(container.firstElementChild?.className).toContain('bg-danger-bg');
   });
 
   it('unknown: says «Preis fehlt» instead of a number', () => {
@@ -206,7 +217,7 @@ describe('TemperatureBadge', () => {
   it('outside the range: vermilion with a warning sign', () => {
     const { container } = render(<TemperatureBadge deciC={-124} ok={false} />);
     expect(container.textContent).toBe('-12.4 °C, ausserhalb des Bereichs');
-    expect(container.firstElementChild?.className).toContain('bg-danger');
+    expect(container.firstElementChild?.className).toContain('bg-danger-bg');
   });
 
   it('tells the two apart by the icon as well as by the colour', () => {

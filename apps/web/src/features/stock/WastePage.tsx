@@ -251,7 +251,7 @@ function WasteForm({ initial, booked, onBooked }: WasteFormProps) {
 
       <FormActions
         primaryLabel={t.action}
-        primaryDisabled={busy}
+        primaryBusy={busy}
         summary={
           article !== undefined && lot !== undefined && fits && draft.quantity !== null
             ? t.summary(

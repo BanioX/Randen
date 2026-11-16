@@ -172,7 +172,8 @@ function AssignForm({ target, onClose }: { target: AssignTarget; onClose: () => 
         onPrimary={() => {
           void save();
         }}
-        primaryDisabled={busy || chosen === null}
+        primaryBusy={busy}
+        primaryDisabled={chosen === null}
         secondaryLabel={t.cancel}
         onSecondary={onClose}
         summary={count === 0 ? t.noneChecked : t.checked(areasMessages.counts.articles(count))}

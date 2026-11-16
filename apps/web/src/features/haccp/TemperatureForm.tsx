@@ -139,7 +139,8 @@ export function TemperatureForm({ areas, proposals, initialKind }: TemperatureFo
       ) : null}
       <FormActions
         primaryLabel={t.temperatures.recordSave}
-        primaryDisabled={busy || value === null}
+        primaryBusy={busy}
+        primaryDisabled={value === null}
         error={error}
         placement="inline"
       />

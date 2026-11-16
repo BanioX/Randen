@@ -68,9 +68,15 @@ for (const [mode, t, text] of [
   [
     'light',
     light,
-    { wine: light.get('wine-800'), ok: light.get('ok'), danger: light.get('danger') },
+    {
+      wine: light.get('wine-800'),
+      ok: light.get('ok'),
+      danger: light.get('danger'),
+      today: light.get('today'),
+    },
   ],
-  ['dark', dark, darkText],
+  // «heute» is set in the wine text colour on the dark ground, as `.text-today` does in index.css.
+  ['dark', dark, { ...darkText, today: darkText.wine }],
 ]) {
   const surfaces = ['ground', 'surface', 'surface-muted'];
   for (const surface of surfaces) {
@@ -78,6 +84,7 @@ for (const [mode, t, text] of [
     check(mode, `ink-muted on ${surface}`, t.get('ink-muted'), t.get(surface), 4.5);
     check(mode, `wine text on ${surface}`, text.wine, t.get(surface), 4.5);
     check(mode, `danger text on ${surface}`, text.danger, t.get(surface), 4.5);
+    check(mode, `today text on ${surface}`, text.today, t.get(surface), 4.5);
     check(mode, `ok text on ${surface}`, text.ok, t.get(surface), 4.5);
     check(mode, `focus ring (wine-600) on ${surface}`, t.get('wine-600'), t.get(surface), 3);
     check(mode, `line-strong on ${surface}`, t.get('line-strong'), t.get(surface), 3);
@@ -86,6 +93,7 @@ for (const [mode, t, text] of [
   check(mode, 'white on wine-700 (button)', WHITE, t.get('wine-700'), 7);
   check(mode, 'white on wine-800 (hover)', WHITE, t.get('wine-800'), 7);
   check(mode, 'white on danger (button)', WHITE, t.get('danger'), 4.5);
+  check(mode, 'white on today (solid, due today)', WHITE, t.get('today'), 4.5);
   check(mode, 'white on ok (button)', WHITE, t.get('ok'), 4.5);
   check(mode, 'white on grape (sidebar, dark card)', WHITE, t.get('grape'), 7);
   check(mode, 'cork on grape', t.get('cork'), t.get('grape'), 7);
@@ -99,12 +107,15 @@ for (const [mode, t, text] of [
   check(mode, 'ink on wine-50', t.get('ink'), t.get('wine-50'), 7);
   check(mode, 'ok text on ok-bg', text.ok, t.get('ok-bg'), 4.5);
   check(mode, 'soon on soon-bg', t.get('soon'), t.get('soon-bg'), 4.5);
-  check(mode, 'danger text on today-bg', text.danger, t.get('today-bg'), 4.5);
+  check(mode, 'danger text on danger-bg (expired)', text.danger, t.get('danger-bg'), 4.5);
+  check(mode, 'today text on today-bg (due today)', text.today, t.get('today-bg'), 4.5);
   for (const area of ['cold', 'frozen', 'dry', 'bar']) {
     check(mode, `${area} on ${area}-bg`, t.get(area), t.get(`${area}-bg`), 4.5);
     check(mode, `${area} on surface`, t.get(area), t.get('surface'), 4.5);
   }
   check(mode, 'soon on surface', t.get('soon'), t.get('surface'), 4.5);
+  // The dot of «heute» stands beside its words: a graphic, 3:1 against the card.
+  check(mode, 'today dot on surface', t.get('today'), t.get('surface'), 3);
   // Chart marks are graphics: 3:1 against the card they sit on.
   for (let index = 1; index <= 6; index += 1) {
     check(mode, `chart-${index} on surface`, t.get(`chart-${index}`), t.get('surface'), 3);

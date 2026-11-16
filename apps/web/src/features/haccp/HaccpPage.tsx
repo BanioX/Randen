@@ -127,7 +127,7 @@ function OfferPlan() {
         <p className="mt-2 text-ink-muted">{t.today.offer.text}</p>
         <div className="mt-4">
           <Button
-            disabled={busy}
+            busy={busy}
             onClick={() => {
               setBusy(true);
               run('hygiene.standardPlan', {})

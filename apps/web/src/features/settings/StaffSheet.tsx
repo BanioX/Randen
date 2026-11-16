@@ -143,7 +143,7 @@ function StaffForm({ member, lastActive, onClose }: Omit<StaffSheetProps, 'open'
         />
         <FormActions
           primaryLabel={messages.actions.save}
-          primaryDisabled={busy}
+          primaryBusy={busy}
           error={error}
           placement="inline"
         />

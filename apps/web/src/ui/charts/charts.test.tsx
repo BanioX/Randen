@@ -468,7 +468,7 @@ describe('ProgressBar', () => {
     const [track, fill] = [...container.querySelectorAll('svg rect')];
     expect(fill?.getAttribute('width')).toBe('100%');
     expect(fill?.getAttribute('fill')).toBe('var(--color-danger)');
-    expect(track?.getAttribute('fill')).toBe('var(--color-today-bg)');
+    expect(track?.getAttribute('fill')).toBe('var(--color-danger-bg)');
   });
 
   it('keeps the label of the marker inside the bar at both ends', () => {

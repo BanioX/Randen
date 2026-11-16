@@ -261,7 +261,7 @@ export function SupplierForm({ supplier, placement, onSaved, onCancel }: Supplie
       <FormActions
         placement={placement}
         primaryLabel={t.save}
-        primaryDisabled={saving}
+        primaryBusy={saving}
         secondaryLabel={t.cancel}
         onSecondary={onCancel}
         error={failure === null ? null : errorText(failure)}

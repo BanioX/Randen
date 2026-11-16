@@ -1,5 +1,19 @@
-import type { ReactNode } from 'react';
+import { Children, Fragment, isValidElement, type ReactNode } from 'react';
 import { BackLink } from './BackLink';
+
+/** How many actions the header holds; a fragment of buttons counts its buttons. */
+function countActions(actions: ReactNode): number {
+  const items = Children.toArray(actions);
+  const only = items[0];
+  if (
+    items.length === 1 &&
+    isValidElement<{ children?: ReactNode }>(only) &&
+    only.type === Fragment
+  ) {
+    return countActions(only.props.children);
+  }
+  return items.length;
+}
 
 interface PageHeaderProps {
   title: string;
@@ -28,7 +42,14 @@ export function PageHeader({ title, subtitle, back, actions, level = 1 }: PageHe
           {subtitle === undefined ? null : <p className="mt-1 text-ink-muted">{subtitle}</p>}
         </div>
         {actions === undefined ? null : (
-          <div className="mt-4 flex flex-wrap gap-2 md:mt-0 md:shrink-0 md:justify-end">
+          <div
+            className={
+              countActions(actions) >= 2
+                ? // Two or more: equal-width cells on the phone, as on the tablet they sit in a row.
+                  'mt-4 grid grid-cols-[repeat(auto-fit,minmax(8.5rem,1fr))] gap-2 md:mt-0 md:flex md:shrink-0 md:flex-wrap md:justify-end [&>*]:w-full md:[&>*]:w-auto'
+                : 'mt-4 flex flex-wrap gap-2 md:mt-0 md:shrink-0 md:justify-end'
+            }
+          >
             {actions}
           </div>
         )}

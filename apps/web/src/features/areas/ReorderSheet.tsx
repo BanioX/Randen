@@ -140,7 +140,7 @@ function ReorderForm({ areas, onClose }: { areas: readonly Row[]; onClose: () =>
         onPrimary={() => {
           void save();
         }}
-        primaryDisabled={busy}
+        primaryBusy={busy}
         secondaryLabel={t.cancel}
         onSecondary={onClose}
         error={error}

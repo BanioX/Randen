@@ -105,7 +105,8 @@ export function BackupSection() {
           <div>
             <Button
               icon={Download}
-              disabled={running !== null || (protect && problem !== null)}
+              busy={running !== null}
+              disabled={protect && problem !== null}
               onClick={() => {
                 setMessage(null);
                 setRunning({ password: protect ? password : null });

@@ -138,7 +138,7 @@ export function TaskSheet({ task, onClose }: TaskSheetProps) {
           />
           <FormActions
             primaryLabel={t.plan.sheet.save}
-            primaryDisabled={busy}
+            primaryBusy={busy}
             secondaryLabel={t.plan.sheet.cancel}
             onSecondary={onClose}
             error={error}

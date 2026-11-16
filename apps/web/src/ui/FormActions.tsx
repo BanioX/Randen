@@ -7,8 +7,10 @@ export interface FormActionsProps {
   /** Without it the main button sends the form around it (`type="submit"`). */
   onPrimary?: (() => void) | undefined;
   primaryIcon?: LucideIcon | undefined;
-  /** Keeps the main button from being used: while saving, or while the form has nothing to save. */
+  /** Keeps the main button from being used: while the form has nothing to save. */
   primaryDisabled?: boolean | undefined;
+  /** The save is running: the main button turns and cannot be pressed again; the label stays. */
+  primaryBusy?: boolean | undefined;
   /** The quiet second button, e.g. «Abbrechen». Shown only with both label and action. */
   secondaryLabel?: string | undefined;
   onSecondary?: (() => void) | undefined;
@@ -45,6 +47,7 @@ export function FormActions({
   onPrimary,
   primaryIcon,
   primaryDisabled = false,
+  primaryBusy = false,
   secondaryLabel,
   onSecondary,
   summary,
@@ -77,6 +80,7 @@ export function FormActions({
           {...(onPrimary === undefined ? {} : { onClick: onPrimary })}
           {...(primaryIcon === undefined ? {} : { icon: primaryIcon })}
           disabled={primaryDisabled}
+          busy={primaryBusy}
           className="flex-1 lg:flex-none"
         >
           {primaryLabel}

@@ -302,7 +302,7 @@ export function ProductionNewPage() {
             onPrimary={() => {
               void produce();
             }}
-            primaryDisabled={busy}
+            primaryBusy={busy}
             error={error}
           />
         </>

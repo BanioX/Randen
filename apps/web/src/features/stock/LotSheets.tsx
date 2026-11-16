@@ -98,7 +98,7 @@ function LotForm({
       <FormActions
         placement="inline"
         primaryLabel={action}
-        primaryDisabled={busy}
+        primaryBusy={busy}
         secondaryLabel={t.cancel}
         onSecondary={onClose}
         summary={summary}

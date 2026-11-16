@@ -56,12 +56,45 @@ describe('Button and ButtonLink', () => {
       <>
         <Button fullWidth>Abschreiben</Button>
         <Button variant="danger">Löschen</Button>
+        <Button variant="danger-solid">Endgültig löschen</Button>
         <Button variant="ghost">Journal</Button>
       </>,
     );
     expect(screen.getByRole('button', { name: 'Abschreiben' }).className).toContain('w-full');
-    expect(screen.getByRole('button', { name: 'Löschen' }).className).toContain('bg-danger');
+    expect(screen.getByRole('button', { name: 'Löschen' }).className).toContain('border-danger/40');
+    expect(screen.getByRole('button', { name: 'Löschen' }).className).toContain('text-danger');
+    expect(screen.getByRole('button', { name: 'Löschen' }).className).not.toMatch(
+      /(^|\s)bg-danger(\s|$)/,
+    );
+    expect(screen.getByRole('button', { name: 'Endgültig löschen' }).className).toContain(
+      'bg-danger',
+    );
+    expect(screen.getByRole('button', { name: 'Endgültig löschen' }).className).toContain(
+      'text-white',
+    );
     expect(screen.getByRole('button', { name: 'Journal' }).className).toContain('text-wine-700');
+  });
+});
+
+describe('Button busy', () => {
+  it('turns its symbol, keeps its label, cannot be pressed again and does not fade', () => {
+    render(
+      <>
+        <Button busy icon={Package}>
+          Sichern
+        </Button>
+        <Button>Weiter</Button>
+      </>,
+    );
+    const busy = screen.getByRole<HTMLButtonElement>('button', { name: 'Sichern' });
+    expect(busy.getAttribute('aria-busy')).toBe('true');
+    expect(busy.getAttribute('aria-disabled')).toBe('true');
+    expect(busy.disabled).toBe(false);
+    expect(busy.querySelector('svg')?.getAttribute('class')).toContain('animate-spin');
+    expect(busy.className).not.toContain('disabled:opacity-50');
+    const idle = screen.getByRole<HTMLButtonElement>('button', { name: 'Weiter' });
+    expect(idle.hasAttribute('aria-busy')).toBe(false);
+    expect(idle.disabled).toBe(false);
   });
 });
 
@@ -110,6 +143,36 @@ describe('PageHeader', () => {
     page(<PageHeader title="Zahlen" />);
     expect(screen.getByRole('heading', { level: 1, name: 'Zahlen' })).toBeTruthy();
     expect(screen.queryByRole('link')).toBeNull();
+  });
+});
+
+describe('PageHeader actions below tablet width', () => {
+  it('sets two or more actions in equal-width cells, also when they come as one fragment', () => {
+    page(
+      <PageHeader
+        title="Kühlzelle 1"
+        actions={
+          <>
+            <Button>Wareneingang</Button>
+            <Button variant="secondary">Inventur</Button>
+          </>
+        }
+      />,
+    );
+    const row = screen.getByRole('button', { name: 'Wareneingang' }).parentElement;
+    expect(row?.classList.contains('grid')).toBe(true);
+    expect(row?.classList.contains('grid-cols-[repeat(auto-fit,minmax(8.5rem,1fr))]')).toBe(true);
+    expect(row?.className).toContain('[&>*]:w-full');
+    expect(row?.className).toContain('md:flex');
+    expect(row?.className).toContain('md:[&>*]:w-auto');
+  });
+
+  it('keeps a single action in its natural width', () => {
+    page(<PageHeader title="Zahlen" actions={<Button>Drucken</Button>} />);
+    const row = screen.getByRole('button', { name: 'Drucken' }).parentElement;
+    expect(row?.classList.contains('grid')).toBe(false);
+    expect(row?.classList.contains('flex')).toBe(true);
+    expect(row?.className).not.toContain('[&>*]:w-full');
   });
 });
 
@@ -235,13 +298,57 @@ describe('GroupedList and ListRow', () => {
   });
 });
 
+describe('ListRow title and amount', () => {
+  it('gives the title 14 rem before the amount takes the width, and keeps the trailing words on one line', () => {
+    page(
+      <GroupedList>
+        <ListRow
+          title="Rindsfilet"
+          subtitle="2.4 kg"
+          trailing={<StatusChip tone="danger">Nicht mehr verwenden</StatusChip>}
+        />
+      </GroupedList>,
+    );
+    const titleColumn = screen.getByText('Rindsfilet').parentElement;
+    expect(titleColumn?.className).toContain('min-w-[min(14rem,100%)]');
+    expect(screen.getByText('Nicht mehr verwenden').closest('.whitespace-nowrap')).not.toBeNull();
+  });
+
+  it('lets free words in the trailing slot wrap inside the row, and keeps an amount on one line', () => {
+    const words =
+      'Kerntemperatur nachmessen, Charge sperren und die Küchenleitung vor dem Ausgeben informieren';
+    page(
+      <GroupedList>
+        <ListRow title="Massnahme" trailing={words} trailingWords />
+        <ListRow title="Wert" trailing="CHF 412.60" />
+      </GroupedList>,
+    );
+    const text = screen.getByText(words);
+    expect(text.className).toContain('break-words');
+    expect(text.className).toContain('whitespace-normal');
+    expect(text.className).not.toContain('whitespace-nowrap');
+    expect(text.parentElement?.className).not.toContain('whitespace-nowrap');
+    const amount = screen.getByText('CHF 412.60');
+    expect(amount.className).toContain('whitespace-nowrap');
+    expect(amount.className).not.toContain('break-words');
+  });
+});
+
 describe('StatTile and KpiGrid', () => {
   it('shows label, figure in tabular numbers, unit and hint', () => {
     page(<StatTile label="Lagerwert" unit="CHF" value="18’420.50" hint="62 Artikel an Lager" />);
-    expect(screen.getByText('Lagerwert')).toBeTruthy();
+    expect(screen.getByText('Lagerwert').className).toContain('min-h-[2lh]');
     expect(screen.getByText('CHF')).toBeTruthy();
     expect(screen.getByText('18’420.50').className).toContain('tabular-nums');
     expect(screen.getByText('62 Artikel an Lager')).toBeTruthy();
+  });
+
+  it('lets a seven-digit figure shrink inside its tile: a flex item may break, not run out', () => {
+    page(<StatTile variant="premium" label="Lagerwert" unit="CHF" value="1’234’567.89" />);
+    const figure = screen.getByText('1’234’567.89');
+    expect(figure.className).toContain('min-w-0');
+    expect(figure.className).toContain('break-words');
+    expect(figure.className).toContain('max-w-full');
   });
 
   it('says its tone in words: the hint of the page, or a standard word', () => {
@@ -288,17 +395,54 @@ describe('StatTile and KpiGrid', () => {
     expect(container.querySelector('.text-ok')).toBeNull();
   });
 
-  it('lays the tiles out two by two on the phone and four across with room', () => {
+  it.each([
+    [2, '@2xl:grid-cols-2'],
+    [3, '@2xl:grid-cols-3'],
+    [4, '@2xl:grid-cols-4'],
+  ])('shows %i figures in %s from tablet width', (count, columns) => {
+    const { container } = page(
+      <KpiGrid>
+        {Array.from({ length: count }, (_, index) => (
+          <StatTile key={index} label={`Kennzahl ${index + 1}`} value={String(index + 1)} />
+        ))}
+      </KpiGrid>,
+    );
+    const grid = container.querySelector('.grid');
+    expect(grid?.classList.contains('grid-cols-2')).toBe(true);
+    expect(grid?.classList.contains(columns)).toBe(true);
+    expect(grid?.children).toHaveLength(count);
+  });
+
+  it('lets the last of an odd count span both phone columns, and only from tablet width one', () => {
     const { container } = page(
       <KpiGrid>
         <StatTile label="A" value="1" />
         <StatTile label="B" value="2" />
+        <StatTile label="C" value="3" />
       </KpiGrid>,
     );
     const grid = container.querySelector('.grid');
-    expect(grid?.className).toContain('grid-cols-2');
-    expect(grid?.className).toContain('@2xl:grid-cols-4');
-    expect(grid?.children).toHaveLength(2);
+    expect(grid?.classList.contains('[&>*:last-child:nth-child(odd)]:col-span-2')).toBe(true);
+    expect(grid?.classList.contains('@2xl:[&>*:last-child:nth-child(odd)]:col-span-1')).toBe(true);
+  });
+
+  it('gives the lead figure of the premium tile the largest step its width allows', () => {
+    page(
+      <>
+        <StatTile label="Lagerwert" value="18’420.50" />
+        <StatTile variant="premium" label="Lagerwert Leitzahl" value="18’420.50" />
+      </>,
+    );
+    const [plain, lead] = screen.getAllByText('18’420.50');
+    // Both start at the phone size, so a seven-digit lead figure fits a 390 px tile.
+    expect(plain?.className).toContain('text-xl');
+    expect(plain?.className).toContain('@[12.5rem]:text-2xl');
+    expect(plain?.className).toContain('@[14.5rem]:text-[1.75rem]');
+    expect(lead?.className).toContain('text-xl');
+    expect(lead?.className).toContain('@[12.5rem]:text-2xl');
+    expect(lead?.className).toContain('@[15.25rem]:text-3xl');
+    expect(lead?.className).toContain('@[17rem]:text-[2.125rem]');
+    expect(lead?.className).toContain('break-words');
   });
 });
 
@@ -347,7 +491,7 @@ describe('Notice', () => {
     ]);
     const alert = screen.getByRole('alert');
     expect(alert.textContent).toBe('Tiefkühlzelle zu warmGemessen -12.4 °C.');
-    expect(alert.className).toContain('bg-today-bg');
+    expect(alert.className).toContain('bg-danger-bg');
     for (const notice of [...statuses, alert]) {
       expect(notice.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
     }
@@ -390,6 +534,20 @@ describe('StatusChip and tones', () => {
       }
       expect(classes.chip, tone).toMatch(/\bbg-\S+ text-\S+/);
     }
+  });
+
+  it('shows «wrong» as a vermilion tint with a fine edge, not as a filled chip', () => {
+    expect(toneClasses.danger.chip).toContain('bg-danger-bg');
+    expect(toneClasses.danger.chip).toContain('text-danger');
+    expect(toneClasses.danger.chip).toContain('border-danger/40');
+    expect(toneClasses.danger.chip).not.toMatch(/(^|\s)bg-danger(\s|$)/);
+  });
+
+  it('gives «due today» the wine accent: no vermilion, no red edge', () => {
+    expect(toneClasses.today.chip).toBe('bg-today-bg text-today');
+    expect(toneClasses.today.text).toBe('text-today');
+    expect(toneClasses.today.chip).not.toContain('danger');
+    expect(toneClasses.today.chip).not.toContain('border');
   });
 
   it('marks «Beste Marge» in Kork on Traube', () => {

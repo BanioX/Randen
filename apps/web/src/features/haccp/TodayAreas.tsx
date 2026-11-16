@@ -109,7 +109,7 @@ function AreaCard({ area }: { area: TodayArea }) {
             className="w-full"
           />
         </div>
-        <Button type="submit" disabled={busy || value === null} className="w-full sm:w-auto">
+        <Button type="submit" busy={busy} disabled={value === null} className="w-full sm:w-auto">
           {t.today.record} <span className="sr-only">für {area.name}</span>
         </Button>
       </form>

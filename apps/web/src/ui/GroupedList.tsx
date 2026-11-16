@@ -68,6 +68,11 @@ interface ListRowProps {
   picture?: ReactNode | undefined;
   /** On the right: a chip, an amount. Goes under the text when the row gets too narrow. */
   trailing?: ReactNode | undefined;
+  /**
+   * The trailing slot holds free words («Kerntemperatur nachmessen»), not an amount or a chip:
+   * they wrap inside the row. Money and chips keep their line (the default).
+   */
+  trailingWords?: boolean | undefined;
   /** Makes the whole row a link (with a chevron). */
   to?: string | undefined;
   /** Makes the whole row a button (with a chevron). Ignored when `to` is set. */
@@ -87,6 +92,7 @@ export function ListRow({
   iconTone,
   picture,
   trailing,
+  trailingWords = false,
   to,
   onClick,
 }: ListRowProps) {
@@ -107,7 +113,7 @@ export function ListRow({
       {leading === undefined ? null : <span className="shrink-0">{leading}</span>}
       {/* The trailing slot wraps under the text before either of them would be cut off. */}
       <span className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <span className="min-w-[min(9rem,100%)] flex-1">
+        <span className="min-w-[min(14rem,100%)] flex-1">
           <span className="block font-semibold break-words hyphens-calm">{title}</span>
           {subtitle === undefined ? null : (
             <span className="block text-sm break-words text-ink-muted">{subtitle}</span>
@@ -117,8 +123,16 @@ export function ListRow({
           )}
         </span>
         {trailing === undefined ? null : (
-          <span className="flex max-w-full shrink-0 items-center gap-2 text-right tabular-nums">
-            {trailing}
+          <span
+            className={`flex max-w-full items-center gap-2 text-right tabular-nums ${
+              trailingWords ? 'min-w-0' : 'shrink-0 whitespace-nowrap'
+            }`}
+          >
+            {trailingWords ? (
+              <span className="min-w-0 break-words whitespace-normal">{trailing}</span>
+            ) : (
+              trailing
+            )}
           </span>
         )}
       </span>

@@ -652,7 +652,7 @@ function RecordForm({ draft, onBooked }: { draft: Draft; onBooked: (marketId?: I
 
       <FormActions
         primaryLabel={t.submit}
-        primaryDisabled={busy}
+        primaryBusy={busy}
         summary={shown.length === 0 ? undefined : t.summary(shown.length, money.format(linesTotal))}
         error={error}
       />

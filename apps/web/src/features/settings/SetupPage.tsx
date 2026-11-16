@@ -276,7 +276,8 @@ export function SetupPage() {
 
           <FormActions
             primaryLabel={step === 'functions' ? t.done : t.next}
-            primaryDisabled={saving || (step !== 'goods' && !answered[step])}
+            primaryBusy={saving}
+            primaryDisabled={step !== 'goods' && !answered[step]}
             secondaryLabel={t.back}
             onSecondary={() => {
               go(-1);

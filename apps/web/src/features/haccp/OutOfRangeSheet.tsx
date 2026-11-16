@@ -53,7 +53,8 @@ export function OutOfRangeSheet({
         />
         <FormActions
           primaryLabel={t.action.save}
-          primaryDisabled={busy || text === ''}
+          primaryBusy={busy}
+          primaryDisabled={text === ''}
           secondaryLabel={t.action.cancel}
           onSecondary={onClose}
           error={error}

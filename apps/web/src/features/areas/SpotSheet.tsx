@@ -140,7 +140,7 @@ function SpotForm({ areaId, spot, total, onClose, onRemove }: SpotFormProps) {
       <FormActions
         placement="inline"
         primaryLabel={t.save}
-        primaryDisabled={busy}
+        primaryBusy={busy}
         secondaryLabel={t.cancel}
         onSecondary={onClose}
         error={error}

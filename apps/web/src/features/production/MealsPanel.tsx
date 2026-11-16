@@ -269,7 +269,7 @@ export function MealsPanel({ week }: { week: PlanWeek }) {
             onPrimary={() => {
               void addWeighing();
             }}
-            primaryDisabled={busy}
+            primaryBusy={busy}
             error={error}
           />
         </div>

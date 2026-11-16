@@ -106,7 +106,7 @@ export function StockPage() {
             <StatTile
               label={t.kpi.today}
               value={stockMessages.lots(totals.today.count)}
-              tone={totals.today.count > 0 ? 'danger' : 'ok'}
+              tone={totals.today.count > 0 ? 'today' : 'ok'}
               hint={
                 totals.today.count > 0
                   ? t.kpi.worth(money.format(totals.today.valueRappen))

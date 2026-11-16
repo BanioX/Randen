@@ -945,7 +945,7 @@ function RecipeForm({ editor, recipe }: RecipeFormProps) {
 
         <FormActions
           primaryLabel={t.save}
-          primaryDisabled={saving}
+          primaryBusy={saving}
           secondaryLabel={t.cancel}
           onSecondary={() => {
             void navigate(back);

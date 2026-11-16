@@ -1,10 +1,10 @@
 import { ChevronRight } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { Children, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { displayMessages } from './messages.display';
 import { toneClasses } from './tones';
 
-export type StatTone = 'ok' | 'soon' | 'danger' | 'neutral';
+export type StatTone = 'ok' | 'soon' | 'today' | 'danger' | 'neutral';
 
 interface StatTileProps {
   /** What the figure is: «Lagerwert», «Wareneinsatz». */
@@ -51,11 +51,18 @@ export function StatTile({
     : tone === undefined || tone === 'neutral'
       ? 'text-ink-muted'
       : toneClasses[tone].text;
+  // The figure steps down before it would break: a seven-digit amount («CHF 12’345’678.90») needs
+  // about 7 px of tile width per point of font size, so each step starts where the tile is wide
+  // enough for it. The lead figure of the premium tile is one step larger than the others.
+  const figureSize = dark
+    ? 'text-xl @[12.5rem]:text-2xl @[15.25rem]:text-3xl @[17rem]:text-[2.125rem]'
+    : 'text-xl @[12.5rem]:text-2xl @[14.5rem]:text-[1.75rem]';
   const content = (
     <>
       <span className="flex items-start justify-between gap-2">
+        {/* Two lines reserved: the figures of one row start at the same height. */}
         <span
-          className={`block text-[0.8125rem] leading-snug font-semibold break-words hyphens-calm ${dark ? 'text-cork' : 'text-ink-muted'}`}
+          className={`block min-h-[2lh] text-[0.8125rem] leading-snug font-semibold break-words hyphens-calm ${dark ? 'text-cork' : 'text-ink-muted'}`}
         >
           {label}
         </span>
@@ -75,8 +82,10 @@ export function StatTile({
             {unit}
           </span>
         )}
+        {/* `min-w-0`: as a flex item the figure may shrink below its width and break inside the
+            tile, instead of running out of it at 390 px. */}
         <span
-          className={`text-xl leading-tight font-semibold tracking-tight tabular-nums @[12rem]:text-2xl @[14.5rem]:text-[1.75rem] ${dark ? 'text-white' : 'text-ink'}`}
+          className={`min-w-0 max-w-full break-words leading-tight font-semibold tracking-tight tabular-nums ${figureSize} ${dark ? 'text-white' : 'text-ink'}`}
         >
           {value}
         </span>
@@ -117,14 +126,35 @@ export function StatTile({
   );
 }
 
+/** Columns from tablet width for the number of tiles: two, three or four side by side. */
+function columnsFor(count: number): string {
+  if (count === 1) {
+    return '@2xl:grid-cols-1';
+  }
+  if (count === 2) {
+    return '@2xl:grid-cols-2';
+  }
+  if (count === 3) {
+    return '@2xl:grid-cols-3';
+  }
+  return '@2xl:grid-cols-4';
+}
+
 /**
- * The row of key figures of a page: two side by side on the phone, four from tablet width.
- * It follows the room it gets, so it also works inside a column.
+ * The row of key figures of a page: two side by side on the phone, and from tablet width as many
+ * across as there are figures (two, three or four). On the phone the last figure of an odd count
+ * spans both columns, so no gap is left. It follows the room it gets, so it also works inside a
+ * column.
  */
 export function KpiGrid({ children }: { children: ReactNode }) {
+  const count = Children.toArray(children).length;
   return (
     <div className="@container min-w-0">
-      <div className="grid grid-cols-2 gap-3 @2xl:grid-cols-4 @2xl:gap-4">{children}</div>
+      <div
+        className={`grid grid-cols-2 gap-3 @2xl:gap-4 ${columnsFor(count)} [&>*:last-child:nth-child(odd)]:col-span-2 @2xl:[&>*:last-child:nth-child(odd)]:col-span-1`}
+      >
+        {children}
+      </div>
     </div>
   );
 }

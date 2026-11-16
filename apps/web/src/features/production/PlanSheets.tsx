@@ -268,7 +268,7 @@ export function AddEntrySheet({
           onPrimary={() => {
             void add();
           }}
-          primaryDisabled={busy}
+          primaryBusy={busy}
           error={error}
         />
       </div>

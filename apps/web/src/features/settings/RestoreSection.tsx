@@ -155,7 +155,8 @@ export function RestoreSection() {
               <div>
                 <Button
                   variant="secondary"
-                  disabled={busy || password === ''}
+                  busy={busy}
+                  disabled={password === ''}
                   onClick={() => {
                     void open();
                   }}
@@ -211,7 +212,7 @@ function RestorePreview({ data }: { data: unknown }) {
             <Button
               variant="secondary"
               icon={RotateCcw}
-              disabled={busy}
+              busy={busy}
               onClick={() => {
                 setAsking(true);
               }}

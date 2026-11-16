@@ -132,8 +132,8 @@ function ReadingSheet({ reading, onClose }: { reading: LogRow; onClose: () => vo
               </StatusChip>
             }
           />
-          <ListRow title={f.action} trailing={reading.action ?? '–'} />
-          <ListRow title={f.who} trailing={reading.measuredByName} />
+          <ListRow title={f.action} trailing={reading.action ?? '–'} trailingWords />
+          <ListRow title={f.who} trailing={reading.measuredByName} trailingWords />
         </GroupedList>
         <div className="mt-5 space-y-3">
           {reading.removable ? (

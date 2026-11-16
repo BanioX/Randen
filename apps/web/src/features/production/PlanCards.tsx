@@ -111,7 +111,8 @@ export function SuggestionsCard({
                   <Button
                     variant="secondary"
                     size="sm"
-                    disabled={planned || busy}
+                    busy={busy}
+                    disabled={planned}
                     onClick={() => {
                       void plan(suggestion);
                     }}

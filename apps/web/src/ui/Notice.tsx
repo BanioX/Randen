@@ -21,7 +21,7 @@ const looks: Record<NoticeTone, { icon: LucideIcon; surface: string; mark: strin
   info: { icon: Info, surface: 'bg-wine-50', mark: 'text-wine-800' },
   ok: { icon: CircleCheck, surface: 'bg-ok-bg', mark: 'text-ok' },
   soon: { icon: Clock, surface: 'bg-soon-bg', mark: 'text-soon' },
-  danger: { icon: TriangleAlert, surface: 'bg-today-bg', mark: 'text-danger' },
+  danger: { icon: TriangleAlert, surface: 'bg-danger-bg', mark: 'text-danger' },
 };
 
 /**

@@ -397,7 +397,7 @@ export function SectionsEditor({
                 variant="secondary"
                 size="sm"
                 icon={Plus}
-                disabled={busy}
+                busy={busy}
                 onClick={() => {
                   openDish(section);
                 }}
@@ -411,7 +411,7 @@ export function SectionsEditor({
         <Button
           variant="secondary"
           icon={Plus}
-          disabled={busy}
+          busy={busy}
           onClick={() => {
             setSheetTitle('');
             setError(null);
@@ -435,7 +435,8 @@ export function SectionsEditor({
             )}
             <Button
               fullWidth
-              disabled={pickedDish === null || busy}
+              busy={busy}
+              disabled={pickedDish === null}
               onClick={() => {
                 if (dishSection !== null) {
                   addDish(dishSection.sectionId);
@@ -478,7 +479,7 @@ export function SectionsEditor({
             primaryLabel={t.sheets.sectionSubmit}
             error={error}
             placement="inline"
-            primaryDisabled={busy}
+            primaryBusy={busy}
           />
         </form>
       </Sheet>

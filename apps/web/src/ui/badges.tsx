@@ -175,7 +175,7 @@ const marginLooks: Record<
 > = {
   good: { tone: 'ok', icon: CircleCheck, words: t.margin.status.good },
   watch: { tone: 'soon', icon: CircleAlert, words: t.margin.status.watch },
-  over: { tone: 'today', icon: TriangleAlert, words: t.margin.status.over },
+  over: { tone: 'danger', icon: TriangleAlert, words: t.margin.status.over },
 };
 
 interface MarginBadgeProps {

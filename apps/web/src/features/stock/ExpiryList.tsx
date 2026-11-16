@@ -144,7 +144,7 @@ export function ExpiryList({ data, only, unfiltered }: ExpiryListProps) {
             <Button
               variant="secondary"
               size="sm"
-              disabled={busy}
+              busy={busy}
               onClick={() => {
                 setConfirming(true);
               }}

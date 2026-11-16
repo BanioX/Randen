@@ -385,7 +385,7 @@ export function CountPage() {
 
           <FormActions
             primaryLabel={t.submit}
-            primaryDisabled={busy}
+            primaryBusy={busy}
             summary={
               found.length === 0
                 ? t.summary(lines.length, lots.length, amount(totalDelta))

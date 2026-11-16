@@ -242,7 +242,8 @@ export function ArticlesImportPage() {
 
         <FormActions
           primaryLabel={valid === 0 ? t.submitNone : t.submit(valid)}
-          primaryDisabled={saving || valid === 0}
+          primaryBusy={saving}
+          primaryDisabled={valid === 0}
           secondaryLabel={t.cancel}
           onSecondary={() => {
             void navigate(paths.articles());

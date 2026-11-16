@@ -216,7 +216,8 @@ export function PlanPage() {
             <Button
               variant="secondary"
               icon={Sparkles}
-              disabled={week === undefined || busy}
+              busy={busy}
+              disabled={week === undefined}
               onClick={() => {
                 setAsking('fill');
               }}
@@ -226,7 +227,8 @@ export function PlanPage() {
             <Button
               variant="secondary"
               icon={Copy}
-              disabled={week === undefined || busy || week.entries === 0}
+              busy={busy}
+              disabled={week === undefined || week.entries === 0}
               onClick={() => {
                 setAsking('copy');
               }}

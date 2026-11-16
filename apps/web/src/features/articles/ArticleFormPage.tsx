@@ -608,7 +608,7 @@ function ArticleForm({ article, unitLock, recipeName }: ArticleFormProps) {
 
         <FormActions
           primaryLabel={t.save}
-          primaryDisabled={saving}
+          primaryBusy={saving}
           secondaryLabel={t.cancel}
           onSecondary={() => {
             void navigate(back);

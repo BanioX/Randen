@@ -410,7 +410,7 @@ function ReceiveForm({ draft, opening, booked, onBooked }: ReceiveFormProps) {
 
       <FormActions
         primaryLabel={opening ? t.submitOpening : t.submit}
-        primaryDisabled={busy}
+        primaryBusy={busy}
         summary={shown.length === 0 ? undefined : t.summary(shown.length, money.format(total))}
         error={error}
       />

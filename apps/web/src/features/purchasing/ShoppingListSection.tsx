@@ -277,7 +277,7 @@ function AddSheet({
           placement="inline"
           primaryLabel={t.submitAdd}
           primaryIcon={ListPlus}
-          primaryDisabled={busy}
+          primaryBusy={busy}
           error={mode === 'text' ? error : null}
         />
       </form>

@@ -28,7 +28,13 @@ export const displayMessages = {
     off: 'ausserhalb des Bereichs',
   },
   /** What a key figure says about its tone when the page gives no words of its own. */
-  tone: { ok: 'In Ordnung', soon: 'Im Blick behalten', danger: 'Prüfen', neutral: 'Ohne Wertung' },
+  tone: {
+    ok: 'In Ordnung',
+    soon: 'Im Blick behalten',
+    today: 'Heute zu tun',
+    danger: 'Prüfen',
+    neutral: 'Ohne Wertung',
+  },
   photo: { missing: 'Kein Foto' },
   table: { empty: 'Noch keine Einträge.' },
   chart: {

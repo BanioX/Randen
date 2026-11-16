@@ -142,8 +142,7 @@ export function DemoPage({ onCleared = startOver }: DemoPageProps) {
             onClick={() => {
               load();
             }}
-            disabled={loading}
-            aria-busy={loading}
+            busy={loading}
           >
             {loading ? t.loading : t.load}
           </Button>

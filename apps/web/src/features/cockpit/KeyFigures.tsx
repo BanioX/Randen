@@ -123,7 +123,7 @@ export function KeyFigures({ figures }: { figures: CockpitToday['figures'] }) {
       key="due-today"
       label={t.dueToday}
       value={cockpitMessages.lots(dueToday.count)}
-      tone={dueToday.count > 0 ? 'danger' : 'ok'}
+      tone={dueToday.count > 0 ? 'today' : 'ok'}
       hint={dueToday.count > 0 ? t.worth(money.format(dueToday.valueRappen)) : t.nothingDue}
       to={expiringPath('today')}
     />,

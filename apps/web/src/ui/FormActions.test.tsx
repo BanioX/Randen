@@ -64,6 +64,16 @@ describe('FormActions', () => {
     );
   });
 
+  it('shows the save as pending: turning symbol and the label, not a faded button', () => {
+    render(<FormActions primaryLabel="Sichern" primaryBusy />);
+    const save = screen.getByRole<HTMLButtonElement>('button', { name: 'Sichern' });
+    expect(save.getAttribute('aria-busy')).toBe('true');
+    expect(save.getAttribute('aria-disabled')).toBe('true');
+    expect(save.disabled).toBe(false);
+    expect(save.querySelector('svg')?.getAttribute('class')).toContain('animate-spin');
+    expect(save.className).not.toContain('disabled:opacity-50');
+  });
+
   it('sticks above the tab bar on the phone, unless it sits inside a sheet', () => {
     const { container, rerender } = render(<FormActions primaryLabel="Sichern" />);
     expect(container.firstElementChild?.className).toContain('sticky');
