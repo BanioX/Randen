@@ -258,6 +258,15 @@ html[data-transition='tab']::view-transition-old(root),
 html[data-transition='tab']::view-transition-new(root) {
   animation-duration: 160ms;
 }
+/* A step the system made (the edge swipe of iOS, the back button of the browser) has already moved
+   on screen; the page changes without a second movement (ADR-0021). */
+html[data-transition='none']::view-transition-old(root) {
+  animation: none;
+  opacity: 0;
+}
+html[data-transition='none']::view-transition-new(root) {
+  animation: none;
+}
 @keyframes page-in-right {
   from {
     transform: translateX(100%);

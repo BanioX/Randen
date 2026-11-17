@@ -80,7 +80,9 @@ export function canAnimate(win: Window = window): boolean {
 }
 
 /**
- * Creates the router with view transitions for every navigation: links, buttons and the history.
+ * Creates the router with view transitions for every navigation of Randen: links, buttons and its
+ * own steps in the history. A step the system makes in the history (the edge swipe of iOS, the back
+ * button of the browser) changes the page without a movement of its own (ADR-0021).
  * The kind lands on `<html data-transition>`, where the CSS in index.css picks the animation. The
  * history listener comes first, so the kind is set before the router handles a back or forward.
  */
@@ -94,10 +96,22 @@ export function withPageTransitions<R extends NavigatingRouter>(
       ? state.idx
       : null;
   let index = indexOf(win.history.state) ?? 0;
+  /** The next step in the history comes from Randen itself (`navigate(-1)`), not from the system. */
+  let ownStep = false;
   win.addEventListener('popstate', (event) => {
     const next = indexOf(event.state) ?? index;
-    html.dataset.transition = swipedBack ? 'swipe' : next < index ? 'back' : 'forward';
+    // A step the system made (the edge swipe of iOS, the back button or the swipe of the browser)
+    // has already moved on screen. The router would animate it once more, because the way there
+    // was animated; `none` changes the page without that second movement (ADR-0021).
+    html.dataset.transition = swipedBack
+      ? 'swipe'
+      : ownStep
+        ? next < index
+          ? 'back'
+          : 'forward'
+        : 'none';
     swipedBack = false;
+    ownStep = false;
   });
 
   const router = createRouter();
@@ -110,6 +124,9 @@ export function withPageTransitions<R extends NavigatingRouter>(
   ) => unknown;
   const wrapped = (to: To | number | null, options?: Record<string, unknown>) => {
     const from = win.location.pathname;
+    if (typeof to === 'number') {
+      ownStep = true;
+    }
     const kind =
       to === null
         ? 'none'

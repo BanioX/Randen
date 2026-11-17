@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { targetPath, transitionKind, withPageTransitions } from './page-transition';
+import { markSwipeBack, targetPath, transitionKind, withPageTransitions } from './page-transition';
 
 describe('transitionKind', () => {
   it('cross-fades between the tabs', () => {
@@ -83,13 +83,57 @@ describe('withPageTransitions', () => {
     expect(document.documentElement.dataset.transition).toBeUndefined();
   });
 
-  it('marks a step back in the history before the router sees it', () => {
+  /**
+   * A window of its own for each test: the history listener of an earlier test would otherwise
+   * hear the same event and decide too.
+   */
+  function ownWindow(idx: number) {
+    window.history.replaceState({ idx }, '');
+    const events = new EventTarget();
+    const win = Object.assign(events, {
+      document,
+      history: window.history,
+      location: window.location,
+      matchMedia: window.matchMedia.bind(window),
+    }) as unknown as Window;
+    const step = (to: number) => {
+      events.dispatchEvent(new PopStateEvent('popstate', { state: { idx: to } }));
+    };
+    return { win, step };
+  }
+
+  it('changes the page without a second movement after a step the system made', () => {
+    // The edge swipe of iOS, or the back button of the browser, moved on screen already.
     allowMotion(false);
-    window.history.replaceState({ idx: 3 }, '');
-    withPageTransitions(() => fakeRouter());
-    window.dispatchEvent(new PopStateEvent('popstate', { state: { idx: 2 } }));
+    const { win, step } = ownWindow(3);
+    withPageTransitions(() => fakeRouter(), win);
+    step(2);
+    expect(document.documentElement.dataset.transition).toBe('none');
+    step(3);
+    expect(document.documentElement.dataset.transition).toBe('none');
+  });
+
+  it('keeps the movement of a step back or forward that Randen makes itself', async () => {
+    allowMotion(false);
+    const { win, step } = ownWindow(3);
+    const router = withPageTransitions(() => fakeRouter(), win);
+    await router.navigate(-1);
+    step(2);
     expect(document.documentElement.dataset.transition).toBe('back');
-    window.dispatchEvent(new PopStateEvent('popstate', { state: { idx: 4 } }));
+    await router.navigate(1);
+    step(3);
     expect(document.documentElement.dataset.transition).toBe('forward');
+    // The next step comes from the system again.
+    step(2);
+    expect(document.documentElement.dataset.transition).toBe('none');
+  });
+
+  it('lets the page behind slide in after the edge swipe of Randen', () => {
+    allowMotion(false);
+    const { win, step } = ownWindow(3);
+    withPageTransitions(() => fakeRouter(), win);
+    markSwipeBack();
+    step(2);
+    expect(document.documentElement.dataset.transition).toBe('swipe');
   });
 });

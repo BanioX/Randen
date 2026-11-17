@@ -20,7 +20,7 @@
 | Seitenleiste auf iPad und Rechner, Sheets als Dialoge | 0092, 0093 | übernommen | ADR-0013 |
 | Grundfunktionen und Erweitert | 0095 | übernommen | ADR-0014 |
 | Seitenübergänge wie auf dem iPhone | 0088 | übernommen; die Hauptbereiche der Seitenleiste blenden über wie Tabs | 15.11.2026 |
-| Zurückwischen vom linken Rand (installierte App) | 0091 | übernommen | 15.11.2026 |
+| Zurückwischen vom linken Rand (installierte App) | 0091 | übernommen; abgewichen: Ein Schritt, den das System macht (die Geste von iOS 27, der Zurück-Knopf des Browsers), wechselt die Seite ohne zweite Bewegung (ADR-0021) | 15.11.2026, 17.11.2026 |
 | Kurzbefehle am App-Symbol | 0094 | übernommen: «Wareneingang», «Abschreiben», «Temperatur» (Android und Rechner; iOS kennt sie nicht) | 15.11.2026 |
 | Sicherung mit Passwort | 0087 | übernommen: Sicherung als Datei, auf Wunsch mit Passwort verschlüsselt (PBKDF2 mit 600'000 Runden, AES-GCM; `features/settings/backup-crypto.ts` nach Rettichs `app/backup-crypto.ts`) | ADR-0017 (Entwurf), 15.11.2026 |
 | PDF auf dem Gerät mit jsPDF, Teilen mit Download als Rückfall, PDFs hell für Papier | 0030, 0081, TD-15 | übernommen: Kit in Randens Farben (`ui/pdf/`), Teilen-Menü statt Druckdialog und Download in der installierten iOS-App (`ui/share-file.ts`, `ui/print.ts`); erstes PDF ist die Speisekarte für Gäste | ADR-0019, 16.11.2026 |

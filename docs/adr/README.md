@@ -24,3 +24,4 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | [0018](0018-speisekarte.md) | Speisekarte: aus den Rezepten, Gästeansicht auf dem Gerät, Export als Datei | angenommen, ergänzt durch 0019 | 2026-11-15 |
 | [0019](0019-drucken-und-sichern-ueber-pdf-und-teilen.md) | Drucken und Sichern über PDF und Teilen | angenommen | 2026-11-16 |
 | [0020](0020-suite-der-firma.md) | Suite der Firma: getrennte Apps, eine Herkunft pro Produkt, ein ruhiger Absender | Entwurf, zur Bestätigung durch Alban | 2026-11-16 |
+| [0021](0021-zurueck-durch-das-system-ohne-zweite-bewegung.md) | Zurück durch das System ohne zweite Bewegung | angenommen | 2026-11-17 |
