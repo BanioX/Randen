@@ -43,6 +43,15 @@ apps/web/src/features/<name>/*.tsx              Seiten und ihre Tests
 - Ausgeschaltete Funktionen blenden nur ihre Einstiege aus; ihre Daten bleiben und ihre Adressen funktionieren weiter.
 - Das Einrichten (`/setup`, `business.setup`) schlägt die Funktionen aus drei Antworten vor: Betriebsart, Herkunft der Ware, Teamgrösse (`proposeSetup` in `domain/business-profiles.ts`).
 
+## Kit-Regeln (Design-Stufe 2)
+
+- Eine laufende Aktion zeigt `busy` (`Button`) oder `primaryBusy` (`FormActions`), nie `disabled`. `disabled` heisst «geht gerade nicht».
+- `danger` ist ein Umriss für gewöhnliche Seiten; gefüllt (`danger-solid`) nur im Bestätigungsdialog.
+- Ton `today` (Rotwein, ruhig) heisst «heute dran», `danger` (Zinnober) heisst «falsch». Nie vertauschen ([`docs/design.md`](docs/design.md), «Eine Bedeutung pro Farbe»).
+- Freitext rechts in einer Listenzeile: `ListRow trailingWords`; Beträge und Chips ohne.
+- Kennzahlen immer in `KpiGrid`; das Raster zählt die Kacheln selbst.
+- Bekannte Fehler stehen in [`docs/fehler.md`](docs/fehler.md). Wer einen behebt, streicht ihn dort.
+
 ## Befehle
 
 ```

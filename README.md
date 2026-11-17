@@ -1,14 +1,14 @@
 # Randen
 
-Die Küche im Griff: Lager mit Ablaufdaten, «Wo ist was?» mit Fotos, Rezepte mit Kalkulation und Marge, Produktion, Menüplan, Speisekarte mit Allergenen, Einkauf, Zahlen und Selbstkontrolle. Für Betriebe vom Imbiss bis zur Grossküche. Local-first: Alles läuft auf dem Gerät, ohne Konto und ohne Server.
+Die Küche im Griff: Lager mit Ablaufdaten, «Wo ist was?» mit Fotos, Rezepte mit Kalkulation und Marge, Produktion, Menüplan, Speisekarte mit Allergenen, Einkauf, Zahlen und Selbstkontrolle. Für Betriebe vom Imbiss bis zur Grossküche. Local-first: Alles läuft auf dem Gerät, ohne Konto und ohne Server. Randen ist eine installierbare Web-App für iPhone, iPad und den Computer ([ADR-0013](docs/adr/0013-iphone-ipad-web.md)).
 
-Randen ist die Schwester von [Rettich](https://github.com/BanioX/FridgeAI) (Haushalte) und übernimmt dessen Architektur. Product Owner: Alban Hyseni. Dieses Repo ist privat.
+Randen ist die Schwester von [Rettich](https://github.com/BanioX/FridgeAI) (Haushalte) und übernimmt dessen Architektur. Beide sollen als getrennte Apps einer Firma auftreten (Entwurf [ADR-0020](docs/adr/0020-suite-der-firma.md)). Product Owner: Alban Hyseni. Dieses Repo ist privat.
 
 ![Entwurf: Cockpit, Lager, Speisekarte](docs/design/entwurf-2026-11-14.png)
 
 ## Stand
 
-Siehe [`docs/plan.md`](docs/plan.md).
+Was gebaut ist und was entsteht: [`docs/plan.md`](docs/plan.md). Bekannte, noch nicht behobene Fehler: [`docs/fehler.md`](docs/fehler.md).
 
 ## Schnellstart
 
@@ -25,7 +25,7 @@ pnpm check          # Format, Lint, Typen, Kontrast, Tests, Build
 | --- | --- |
 | `packages/core` | Die Logik, reines TypeScript: Modell, Rechenregeln (Einheiten, Ablauf, FEFO, Kalkulation, Deklaration, Break-even), Lager-Ledger, Schnittstelle, Module |
 | `apps/web` | Die App: React, Tailwind, IndexedDB; UI-Kit, Seiten pro Bereich |
-| `docs` | Entscheide (`adr/`, Index in [`adr/README.md`](docs/adr/README.md)), Design, Regeln, Fakten mit Quellen, Glossar, Schulden, Lernbuch |
+| `docs` | Entscheide (`adr/`, Index in [`adr/README.md`](docs/adr/README.md)), Design, Regeln, Fakten mit Quellen, Glossar, Schulden, bekannte Fehler, Lernbuch |
 
 Karte für alle, die am Code arbeiten: [`AGENTS.md`](AGENTS.md). Regeln: [`CLAUDE.md`](CLAUDE.md).
 

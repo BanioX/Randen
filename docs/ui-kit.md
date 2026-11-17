@@ -9,18 +9,18 @@ Diese Referenz stammt von den Erbauer:innen des Kits; bei Abweichungen gilt der 
 All paths under `apps/web/src/ui/`. Every optional prop also accepts `undefined`. Colours come from tokens only.
 
 ## Tones and chips
-- `tones.ts`: `type Tone = 'ok'|'soon'|'today'|'danger'|'cold'|'frozen'|'dry'|'bar'|'grape'|'neutral'|'wine'`; `toneClasses: Record<Tone, { chip; dot; solid; text }>` (class strings: tinted chip, dot background, full fill with readable text, tone as text).
+- `tones.ts`: `type Tone = 'ok'|'soon'|'today'|'danger'|'cold'|'frozen'|'dry'|'bar'|'grape'|'neutral'|'wine'`; `toneClasses: Record<Tone, { chip; dot; solid; text }>` (class strings: tinted chip, dot background, full fill with readable text, tone as text). `today` is the calm wine accent for «due today»; `danger` (vermilion on `danger-bg`, with a fine border) is only for what is wrong.
 - `StatusChip.tsx`: `StatusChip({ tone: Tone; children; icon?: LucideIcon; size?: 'md'|'sm'; outline?: boolean })`. Wraps instead of truncating.
 
 ## Buttons and cards
-- `Button.tsx`: `Button({ variant?: 'primary'|'secondary'|'ghost'|'danger'; size?: 'md'|'sm'; icon?: LucideIcon; fullWidth?: boolean; className?; ...button attributes })`. `md` is 48 px, `sm` is 44 px; `type` defaults to `'button'`.
+- `Button.tsx`: `Button({ variant?: 'primary'|'secondary'|'ghost'|'danger'|'danger-solid'; size?: 'md'|'sm'; icon?: LucideIcon; fullWidth?: boolean; busy?: boolean; className?; ...button attributes })`. `md` is 48 px, `sm` is 44 px; `type` defaults to `'button'`. `danger` is an outline for ordinary pages; `danger-solid` is only for the confirming step (`ConfirmDialog` with `tone="danger"`, `DeleteSection`). `busy` means the action runs: the label stays, the symbol turns, `aria-busy`, a press is ignored, focus stays (it is `aria-disabled`, not `disabled`). Use `disabled` only for «not possible now».
 - `ButtonLink({ to; variant?; size?; icon?; fullWidth?; className?; ...react-router LinkProps })`: same look as `Button`.
 - Types `ButtonVariant`, `ButtonSize`.
 - `Card.tsx` is unchanged: `Card({ children; variant?: 'default'|'tip'|'premium'; padding?: 'normal'|'compact'; className? })`.
 
 ## Page structure
 - `BackLink.tsx`: `BackLink({ to: string; label: string })`.
-- `PageHeader.tsx`: `PageHeader({ title: string; subtitle?: ReactNode; back?: { to: string; label: string }; actions?: ReactNode; level?: 1|2 })`. Renders the h1 with `large-title`; actions sit beside the title from md, below it on the phone.
+- `PageHeader.tsx`: `PageHeader({ title: string; subtitle?: ReactNode; back?: { to: string; label: string }; actions?: ReactNode; level?: 1|2 })`. Renders the h1 with `large-title`; actions sit beside the title from md, below it on the phone; two or more actions become equal-width rows on the phone.
 - `Section.tsx`: `Section({ title: string; titleStyle?: 'title'|'group'; action?: SectionAction; hint?: string; level?: 2|3; children; className? })`. `'title'` (default) is a 20 px heading, `'group'` the small caps iOS header. `type SectionAction = { label: string; to: string } | { label: string; onClick: () => void }`. Renders `<section aria-labelledby>`.
 - `EmptyState.tsx`: `EmptyState({ icon: LucideIcon; title: string; text: string; action?: ReactNode; variant?: 'card'|'plain' })`.
 - `Notice.tsx`: `Notice({ tone?: 'info'|'ok'|'soon'|'danger'; title?: string; children?: ReactNode; icon?: LucideIcon; action?: ReactNode; variant?: 'card'|'row' })`. `role="alert"` for danger, `role="status"` otherwise. Type `NoticeTone`.
@@ -29,15 +29,16 @@ All paths under `apps/web/src/ui/`. Every optional prop also accepts `undefined`
 - `GroupedList.tsx`: `GroupedList({ children; label?: string })` renders the `<ul>`.
 - `GroupedListItem({ children; inset?: 'icon'|'check'|'text'; className? })` for rows of your own.
 - `GROUPED_ROW_LINK`: class string for a block link that fills such a row.
-- `ListRow({ title: string; subtitle?: ReactNode; meta?: ReactNode; icon?: LucideIcon; iconTone?: Tone; picture?: ReactNode; trailing?: ReactNode; to?: string; onClick?: () => void })`. Must be a child of `GroupedList`. With `to` it is a link, with `onClick` a button, both with a chevron; min-h-14. `trailing` wraps under the text when the row is narrow. Pass only phrasing content (spans) into the slots.
+- `ListRow({ title: string; subtitle?: ReactNode; meta?: ReactNode; icon?: LucideIcon; iconTone?: Tone; picture?: ReactNode; trailing?: ReactNode; trailingWords?: boolean; to?: string; onClick?: () => void })`. `trailing` stays on one line (money, chips); with `trailingWords` it is free text that wraps. Must be a child of `GroupedList`. With `to` it is a link, with `onClick` a button, both with a chevron; min-h-14. `trailing` wraps under the text when the row is narrow. Pass only phrasing content (spans) into the slots.
 
 ## Key figures
 - `StatTile.tsx`: `StatTile({ label: string; value: string; unit?: string; hint?: string; tone?: 'ok'|'soon'|'danger'|'neutral'; to?: string; variant?: 'default'|'premium'; trend?: ReactNode })`.
   - `unit` is shown small before the figure. For money: `unit={money.symbol} value={money.format(amount, { currency: false })}`.
   - `tone` puts a dot before the hint; without a hint a standard word is shown.
   - `premium` is the one dark Traube tile.
+  - The label reserves two lines, so the values of a row stay on one line.
   - The tile is a size container: use it inside `KpiGrid` or another grid or block.
-- `KpiGrid({ children })`: 2 columns, 4 once it has 42rem of room. Type `StatTone`.
+- `KpiGrid({ children })`: 2 columns on the phone; from 42rem (`@2xl`) as many columns as tiles (2, 3 or 4). On the phone the last tile of an odd count spans both columns. Type `StatTone`.
 
 ## Choice and tables
 - `SegmentedControl.tsx`: `SegmentedControl<T extends string>({ label: string; options: readonly { value: T; label: string }[]; value: T; onChange: (value: T) => void; hideLabel?: boolean; className? })`. `role="radiogroup"` with `role="radio"` buttons; arrow keys, Home and End move and choose. Type `Segment<T>`.
@@ -143,7 +144,7 @@ All take base props with `label` optional, plus `placeholder?`.
 - `PhotoViewer.tsx`: `ZoomablePhoto({ src, title, className? })` (button «<title> gross anzeigen» opens full screen) and `PhotoViewer({ src, title, onClose })` (`role="dialog"` named by `title`, button «Schliessen», Escape, focus held and returned).
 
 ## FormActions
-`{ primaryLabel: string, onPrimary?: () => void, primaryIcon?: LucideIcon, primaryDisabled?: boolean, secondaryLabel?: string, onSecondary?: () => void, summary?: string, error?: string | null, placement?: 'page' | 'inline', className? }`. Without `onPrimary` the main button is `type="submit"`. The secondary button shows only with both label and handler. `error` renders in a `role="alert"` region that is always present (empty without error). `placement="page"` (default): sticky above the tab bar below 1024 px, inline at the end from `lg`; it assumes it sits directly in `<main>` (uses `-mx-4`). Use `placement="inline"` inside cards, sheets and dialogs.
+`{ primaryLabel: string, onPrimary?: () => void, primaryIcon?: LucideIcon, primaryDisabled?: boolean, primaryBusy?: boolean, secondaryLabel?: string, onSecondary?: () => void, summary?: string, error?: string | null, placement?: 'page' | 'inline', className? }`. Without `onPrimary` the main button is `type="submit"`. The secondary button shows only with both label and handler. `error` renders in a `role="alert"` region that is always present (empty without error). `placement="page"` (default): sticky above the tab bar below 1024 px, inline at the end from `lg`; it assumes it sits directly in `<main>` (uses `-mx-4`). Use `placement="inline"` inside cards, sheets and dialogs. `primaryBusy` is the running save (spinner, label stays); `primaryDisabled` only means «nothing to save» or a missing field.
 
 ## Building blocks for a control the kit lacks (`Field.tsx`)
 `Field({ label, labelSuffix?, hint?, error?, info?, hideLabel?, optional?, id?, className?, children: (control) => ReactNode })` where `control = { id, 'aria-describedby', 'aria-invalid' }` is spread onto the input · `FieldGroup({ legend, hideLegend?, hint?, error?, disabled?, className?, children })` (fieldset) · `FieldError({ id, children })` · `InputBox({ controlId, invalid, disabled?, prefix?, suffix?, className?, children })` with `BOXED_INPUT_CLASS` for the input inside · `controlClass(invalid)` · `FIELD_LABEL_CLASS` · `ParsedField` and `useParsedText({ value, onChange, parse, format, problem, resetKey?, error?, required? })` → `{ ref, text, parsed, error, commit(text), set(text, value), onBlur, onInvalid, submitted }` · `useSubmitGuard(problem: string | null)` → `{ ref, submitted, onInvalid }` · helpers `joinIds`, `firstError`, `fieldLabelId`, `affixId`, `withoutTrailingMark`.

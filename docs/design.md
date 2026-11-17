@@ -37,8 +37,8 @@
 | Token | Hell | Dunkel | Wofür |
 | --- | --- | --- | --- |
 | `ground` | `#F9F5F0` | `#110A0B` | App-Hintergrund: ein Hauch Kork |
-| `surface` | `#FFFFFF` | `#1F1718` | Karten, Listen, Tab-Leiste |
-| `surface-muted` | `#F0EADF` | `#2F2525` | Segment-Spur, Symbol-Kacheln, ruhige Flächen |
+| `surface` | `#FFFFFF` | `#261D1F` | Karten, Listen, Tab-Leiste |
+| `surface-muted` | `#F0EADF` | `#352A2A` | Segment-Spur, Symbol-Kacheln, ruhige Flächen |
 | `line` | `#E3DACC` | `#3F3334` | Haarlinien |
 | `line-strong` | `#877F72` | `#837671` | Ränder, die man sehen muss: Eingabefelder, leere Kontrollkästchen (3:1) |
 | `cork` | `#E8D9C0` | `#E8D9C0` | Beschriftung und Auszeichnung auf Traube |
@@ -54,13 +54,14 @@ Kork gibt der App die Wärme einer Weinkarte, ohne nach Papier auszusehen: Karte
 | Farbe | Bedeutet | Token |
 | --- | --- | --- |
 | **Rotwein** | Was du tippst und was gewählt ist | `wine-700` |
-| **Zinnober** | Was falsch ist: abgelaufen, ausserhalb der Temperatur, abgeschrieben, über dem Ziel | `danger` `#C33701`, Text auf `today-bg` |
+| **Zinnober** | Was falsch ist: abgelaufen, ausserhalb der Temperatur, über dem Ziel | `danger` `#C33701` auf `danger-bg` `#FFEEE8`, mit feinem Rand und Warnsymbol |
+| **Rotwein, ruhig** | Heute zu tun: läuft heute ab, heute fällig. Nicht falsch, nur jetzt dran | `today` `#571825` auf `today-bg` `#FEF3F3` |
 | **Bernstein** | Bald: läuft in 1 bis 3 Tagen ab, knapp über dem Ziel | `soon` auf `soon-bg` |
 | **Grün** | In Ordnung: Temperatur stimmt, Marge im Ziel | `ok` auf `ok-bg` |
 | **Traube** | Ergebnis und Leitzahl: die eine dunkle Karte | `grape` |
 | **Kork** | Alles andere | `surface-muted`, `ink-muted` |
 
-**Die Marke ist rot, darum gilt:** Rotwein ist, was du tippst; Zinnober ist, was falsch ist. Zinnober ist klar heller und oranger als Rotwein (Farbton 36° statt 12°) und steht immer mit Wort oder Symbol («abgelaufen», Warndreieck). Ein Löschen-Knopf ist nur im Bestätigungsdialog zinnoberrot.
+**Die Marke ist rot, darum gilt:** Rotwein ist, was du tippst; Zinnober ist, was falsch ist. Zinnober ist klar heller und oranger als Rotwein (Farbton 36° statt 12°) und steht immer mit Wort oder Symbol («abgelaufen», Warndreieck). Ein Löschen-Knopf ist auf einer gewöhnlichen Seite ein Umriss mit Zinnober-Schrift (`danger`); gefüllt in Zinnober ist er nur im Bestätigungsdialog (`danger-solid`). «Heute» und «abgelaufen» unterscheiden sich in Farbe, Wort und Symbol (Design-Stufe 2, 16.11.2026).
 
 ### Lagerbereiche
 
@@ -72,7 +73,7 @@ Sechs Reihen in fester Folge (`chart-1` bis `chart-6`): Rotwein, Petrol, Senf, I
 
 ### Dunkelmodus
 
-Folgt dem Gerät (`prefers-color-scheme`). Dieselben Tokens bekommen nachts andere Werte; Flächen mit weisser Schrift bleiben Flächen, Text in Rotwein, Grün und Zinnober wird heller (`#E79EA6`, `#81D39F`, `#FD9376`). Schatten werden zu einer feinen hellen Kante.
+Folgt dem Gerät (`prefers-color-scheme`). Dieselben Tokens bekommen nachts andere Werte; Flächen mit weisser Schrift bleiben Flächen, Text in Rotwein, Grün und Zinnober wird heller (`#E79EA6`, `#81D39F`, `#FD9376`). Schatten werden zu einer feinen hellen Kante aus 10 % Weiss, damit Karten sich vom Grund lösen. Nachts: `today` `#B04A58` auf `#421F24`, `danger` `#CF3D07` auf `#3F1A12`.
 
 ## Schrift
 
@@ -91,6 +92,7 @@ Systemschrift (SF Pro, Roboto, Segoe UI): Es wird nichts geladen, die Grössen i
 - Radien: 12 px (Eingaben, Knöpfe), 16 px (Karten, Listen), 24 px (Sheets), Pille für Chips.
 - Karten weiss, ohne Rahmen, mit weichem Schatten (`shadow-card`); Schwebendes (`shadow-float`) etwas mehr.
 - Bewegung 150 bis 200 ms, ease-out; `prefers-reduced-motion` schaltet sie ab.
+- Ein Knopf, dessen Aktion läuft, behält Farbe und Wort, zeigt ein drehendes Symbol und bleibt fokussierbar (`busy`). Ausgegraut ist nur, was gerade nicht geht (`disabled`).
 - Symbole: Lucide, Linienstärke 1.75, 20 bis 22 px. Keine Emojis.
 
 ## iPhone, iPad, Web (ADR-0013)

@@ -1,6 +1,6 @@
 # Technische Schulden
 
-Schulden lassen sich nicht ganz vermeiden, aber sie dürfen nicht still wachsen. Jede bekannte Schuld steht hier, mit Grund, Risiko und Plan. Ein PR, der eine Schuld schafft, trägt sie ein. Ein PR, der eine abbaut, markiert sie als erledigt.
+Schulden lassen sich nicht ganz vermeiden, aber sie dürfen nicht still wachsen. Jede bekannte Schuld steht hier, mit Grund, Risiko und Plan. Ein PR, der eine Schuld schafft, trägt sie ein. Ein PR, der eine abbaut, markiert sie als erledigt. Fehler, die nicht gewollt sind, stehen nicht hier, sondern in [`fehler.md`](fehler.md).
 
 **Risiko:** hoch = kann Daten oder Vertrauen kosten · mittel = bremst die nächsten Schritte · tief = Schönheitsfehler.
 
