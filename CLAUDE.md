@@ -22,7 +22,7 @@ Kurzfassung der Regeln. Karte des Codes: [`AGENTS.md`](AGENTS.md) · Stand: [`do
 7. **Aus Rettich übernehmen** (Alban, 15.11.2026): Funktionen aus Rettich laufend kopieren und an die Küche anpassen, wenn sie nützen; Claude entscheidet nach Nützlichkeit und führt [`docs/rettich.md`](docs/rettich.md). Von Randen fliesst nichts zurück ins öffentliche Rettich-Repo.
 8. **Jede Küche wählt ihre Komplexität** (ADR-0014, ADR-0015): Die Betriebsart, die Herkunft der Ware und die Teamgrösse schlagen beim Einrichten die Funktionen vor; jede lässt sich unter «Betrieb › Funktionen» schalten. Jeder neue Einstieg gehört zum Kern oder zu einer Funktion (`useModule`), jede neue Auswertung zur Ansicht «Erweitert» (`useDetailed`).
 9. **Wenig technische Schulden:** Abkürzungen in `docs/schulden.md`, Nebenwirkungen in `docs/nebenwirkungen.md` (Test prüft), Lektionen in `docs/lernbuch.md`, Begriffe im Glossar.
-10. **Eine Version überall** (Alban, 17.11.2026): Jeder grüne Push geht auf den Arbeits-Branch und auf `main`; beide stehen immer auf demselben Commit. `main` ist die Production auf Cloudflare ([`docs/previews.md`](docs/previews.md)).
+10. **Eine Version überall** (Alban, 17.11.2026: «Main muss immer mitziehen»): Jeder grüne Push geht auf den Arbeits-Branch und auf `main`; beide stehen immer auf demselben Commit, mit `git push origin HEAD:claude/pensive-fermi-n01le6 HEAD:main`. `main` ist die Production auf Cloudflare ([`docs/previews.md`](docs/previews.md)).
 
 ## Harte Regeln
 - **Geld immer als Ganzzahl** in der kleinsten Einheit der Betriebswährung (CHF: Rappen), nie Float (ADR-0004). Stückpreise sind Rappen pro 1000 Basiseinheiten (pro kg, pro Liter, pro 1000 Stück). Mengen dürfen drei Nachkommastellen haben, Geld nie.
