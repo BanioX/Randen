@@ -20,15 +20,15 @@ Damit du jeden Stand am Handy und am Tablet anschauen kannst: `main` läuft unte
 
 5. **Deploy** tippen. Der erste Build baut `main`; solange dort nur die Start-Datei liegt, wird er rot. Das ist kein Fehler im Code.
 6. Im Projekt **Settings → Build → Branch control**:
-   - **Production branch** vorläufig auf den Arbeits-Branch `claude/pensive-fermi-n01le6` stellen (Stand 14.11.2026). So läuft unter der festen Adresse immer der neuste Stand.
-   - **Enable Preview Builds** einschalten.
+   - **Production branch** auf `main` stellen (Alban, 17.11.2026: eine Version überall). Bis zum 17.11.2026 stand hier der Arbeits-Branch `claude/pensive-fermi-n01le6`.
+   - **Enable Preview Builds** ausschalten. Arbeits-Branch und `main` stehen immer auf demselben Commit; eine Vorschau pro Branch wäre nur eine zweite Adresse mit demselben Stand.
 7. Der nächste Push auf den Arbeits-Branch startet den Build; nach ein bis zwei Minuten läuft Randen.
 
 Danach gibt es `https://randen.<dein-name>.workers.dev` (Production) und pro anderem Branch eine eigene Vorschau-Adresse. Die feste Adresse hängt am Projektnamen, nicht am Branch.
 
 **Namen bleiben:** Die Projektnamen `randen` und `fridgeai` (Rettich) und der Name des Kontos werden nie umbenannt, denn sie bilden die Adresse: Eine neue Adresse ist für den Browser eine andere App mit leerem Speicher, und die Daten blieben auf jedem Gerät an der alten Adresse liegen (ADR-0020).
 
-**Vor dem ersten Pilotbetrieb** wird `main` zur Production: Den Arbeits-Branch per PR nach `main` bringen und unter **Branch control** wieder `main` wählen. Die Adresse bleibt gleich, das Symbol auf dem Home-Bildschirm passt weiter.
+**Eine Version überall** (Alban, 17.11.2026): Jeder grüne Push geht auf den Arbeits-Branch und auf `main`, Cloudflare baut die feste Adresse aus `main`. GitHub, die feste Adresse und die installierte App zeigen damit denselben Stand. Die Adresse bleibt beim Wechsel des Branches gleich, das Symbol auf dem Home-Bildschirm passt weiter.
 
 ## So schaust du eine Vorschau an
 
