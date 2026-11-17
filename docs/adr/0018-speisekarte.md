@@ -1,6 +1,6 @@
 # ADR-0018: Speisekarte aus den Rezepten, Gästeansicht auf dem Gerät, Export als Datei
 
-- **Status:** angenommen
+- **Status:** angenommen, für Druck und Export in der installierten iOS-App ergänzt durch [ADR-0019](0019-drucken-und-sichern-ueber-pdf-und-teilen.md)
 - **Datum:** 2026-11-15
 - **Entscheid von:** Claude, als kleiner Entscheid nach [CLAUDE.md](../../CLAUDE.md), Arbeitsweise 1. Alban kann ihn ändern.
 - **Betrifft:** [ADR-0006](0006-data-stays-on-the-device.md) (nichts verlässt das Gerät), [ADR-0008](0008-computed-not-stored.md) (berechnet, nie gespeichert), [ADR-0011](0011-no-partner-integrations.md) (Anbindungen an Gäste-Geräte), [ADR-0015](0015-betriebsarten-und-funktionen.md) (Funktion `menu_card`)
@@ -22,7 +22,7 @@ Die digitale Speisekarte mit Allergenen gehört zum Kern des Versprechens. Gäst
 
 - `menu.get` lädt die Fotos der Gerichte für die Miniaturen im Editor. Die Abfrage ist schwerer als eine Liste (TD-38).
 - Die Texte der offenen Punkte stehen doppelt: im Export (`packages/core/src/modules/menu/html.ts`) und in `apps/web/src/features/menu/messages.ts`. Eine Änderung braucht beide Stellen (TD-41).
-- Gedruckt wird über den Druckdialog des Geräts (SE-07). Das Querformat auf dem iPad ist noch nicht geprüft (TD-40).
+- Gedruckt wird im Browser über den Druckdialog des Geräts, in der installierten iOS-App als PDF über das Teilen-Menü (SE-07, SE-08, ADR-0019). Das Querformat auf dem iPad ist noch nicht geprüft (TD-40).
 
 ## Nicht entschieden
 

@@ -2,15 +2,15 @@
 
 Stand 17.11.2026. Fehler, die gefunden, aber noch nicht behoben sind. Bewusste Abkürzungen stehen in [`schulden.md`](schulden.md), Lektionen im [`lernbuch.md`](lernbuch.md). Wer einen Fehler behebt, streicht ihn hier und nennt den Commit.
 
-**Woher:** Ein Code-Review vom 16.11.2026 über die Module, die beim Review der Welle 3 nicht dabei waren (Lager, Stammdaten, Rezepte, Produktion, Einkauf, Cockpit und Demo, Betrieb und Sicherung, Rahmen und Eingabefelder). Jeder Befund wurde von einer zweiten Prüfung gegengelesen, meist mit einem Test oder Skript, das den Fehler zeigt. Ein Befund wurde dabei widerlegt.
+**Woher:** Ein Code-Review vom 16.11.2026 über die Module, die beim Review der Welle 3 nicht dabei waren (Lager, Stammdaten, Rezepte, Produktion, Einkauf, Cockpit und Demo, Betrieb und Sicherung, Rahmen und Eingabefelder). Jeder Befund wurde von einer zweiten Prüfung gegengelesen, meist mit einem Test oder Skript, das den Fehler zeigt. Ein Befund wurde dabei widerlegt. F-30 kam bei der Prüfung der Doku vom 17.11.2026 dazu.
 
 **Risiko:** hoch = falsche Angaben zu Allergenen oder Selbstkontrolle, Datenverlust oder ein Hauptablauf, der nicht aufgeht · mittel = falsche Zahl oder irreführende Anzeige auf einem Nebenweg · tief = Schönheitsfehler.
 
-## Bestätigt (29)
+## Bestätigt (30)
 
 | Nr. | Bereich | Fehler | Risiko | Ort |
 | --- | --- | --- | --- | --- |
-| F-01 | Lager | Inventur: Zählungen, die in einem anderen Lagerbereich getippt wurden, gehen beim Abschliessen ohne Hinweis verloren | mittel | `apps/web/src/features/stock/CountPage.tsx:233` |
+| F-01 | Lager | Inventur: Zählungen, die in einem anderen Lagerbereich getippt wurden, gehen beim Abschliessen ohne Hinweis verloren | mittel | `apps/web/src/features/stock/CountPage.tsx:234` |
 | F-02 | Lager | Inventur: Gefundene Ware zählt in Zahlen und Cockpit nicht als Inventurdifferenz (Monatsbericht CHF 0.80 statt CHF 140.80) | mittel | `packages/core/src/modules/stock/use-cases.ts:847` |
 | F-03 | Lager | Eine Inventur mit früherem Datum setzt den heutigen Bestand auf den alten Zählwert zurück und macht spätere Entnahmen rückgängig | mittel | `packages/core/src/modules/stock/use-cases.ts:821` |
 | F-04 | Lager | Wareneingang «als Betrag»: Gebucht wird ein gerundeter Betrag, nicht der Betrag des Lieferscheins (drei Zeilen: CHF 1.35 Abweichung); ein Test hält CHF 9.99 statt CHF 10.00 fest | mittel | `packages/core/src/modules/stock/use-cases.ts:472` |
@@ -29,16 +29,17 @@ Stand 17.11.2026. Fehler, die gefunden, aber noch nicht behoben sind. Bewusste A
 | F-17 | Produktion | «Woche füllen» plant ablaufende Ware ein, die schon geplante Einträge brauchen | mittel | `packages/core/src/modules/production/plan-use-cases.ts:626` |
 | F-18 | Produktion | «Woche füllen» setzt im Notfall jedes Gericht in jede Mahlzeit, auch einen Hauptgang zum Frühstück | mittel | `packages/core/src/modules/production/suggest.ts:359` |
 | F-19 | Produktion | Code auf dem Etikett und rückverfolgter Code weichen ab, sobald die Charge einer Produktion verschoben wird | mittel | `packages/core/src/modules/production/production-runs.ts:464` |
-| F-20 | Einkauf | Der Bestell-Entwurf rundet eine Menge, die keine ganzen Packungen ergibt, und zeigt eine andere Bestellung als die gespeicherte und verschickte | mittel | `apps/web/src/features/purchasing/OrderPage.tsx:160` |
+| F-20 | Einkauf | Der Bestell-Entwurf rundet eine Menge, die keine ganzen Packungen ergibt, und zeigt eine andere Bestellung als die gespeicherte und verschickte | mittel | `apps/web/src/features/purchasing/OrderPage.tsx:161` |
 | F-21 | Einkauf | Die Preisbeobachtung zählt einen verschobenen Teil einer Aktionscharge als normalen Einkauf | mittel | `packages/core/src/modules/purchasing/rules.ts:353` |
 | F-22 | Einkauf | Einkauf im Markt: Jede Temperatur beim Abholen gilt als «in Ordnung», ohne dass jemand sie beurteilt | mittel | `packages/core/src/modules/purchasing/use-cases.ts:1094` |
 | F-23 | Einkauf | Eine Zeile der Einkaufsliste für einen gelöschten Markt lässt sich weder sehen noch abhaken noch entfernen | mittel | `packages/core/src/modules/purchasing/use-cases.ts:735` |
 | F-24 | Einkauf | Die Einkaufsliste zeigt Bestand 0 für eine Zeile, deren Artikel nicht im Vorschlag steht | tief | `packages/core/src/modules/purchasing/use-cases.ts:705` |
-| F-25 | Demo | **Die Demo hält einen Betrieb mit eigenen Aufzeichnungen der Selbstkontrolle für leer**, und «Demo entfernen» löscht diese Aufzeichnungen mit | hoch | `packages/core/src/modules/demo/use-cases.ts:184` |
+| F-25 | Demo | **Die Demo hält einen Betrieb mit eigenen Aufzeichnungen der Selbstkontrolle für leer**, und «Demo-Daten entfernen» löscht diese Aufzeichnungen mit | hoch | `packages/core/src/modules/demo/use-cases.ts:184` |
 | F-26 | Cockpit | Die Zeile «Unter Mindestbestand» rechnet anders als der Bestellvorschlag, auf den sie verweist | mittel | `packages/core/src/modules/cockpit/use-cases.ts:207` |
 | F-27 | Rahmen | «Heute» wechselt um Mitternacht nicht, solange die App offen und sichtbar bleibt | mittel | `apps/web/src/app/AppData.tsx:116` |
 | F-28 | Cockpit | Das leere Cockpit eines neuen Betriebs blendet die Zeilen der Selbstkontrolle aus | tief | `apps/web/src/features/cockpit/CockpitPage.tsx:53` |
 | F-29 | Demo | Das Einkaufsbudget des laufenden Monats in der Demo wird aus einem einzigen Tag hochgerechnet | tief | `packages/core/src/modules/demo/build.ts:976` |
+| F-30 | Zahlen | Die Verweise auf das Modul Verkauf führen auf «Nicht gefunden – Diesen Eintrag gibt es nicht mehr»: «Verkäufe erfassen» und «Margen» in den Zahlen (mit «Erweitert» auch «Menu-Engineering»), «Verkäufe» oder «Umsatz» unter «＋ Erfassen» und «Alle» bei den Gerichten im Cockpit. Für `/numbers/sales`, `/numbers/margins` und `/numbers/menu-engineering` gibt es keine Route, seit die Zahlen den Platzhalter `numbers/*` ersetzt haben. Betrifft jeden Betrieb mit der Funktion Zahlen oder Verkäufe und den Demo-Betrieb | mittel | `apps/web/src/features/numbers/routes.tsx:9` |
 
 ## Gefunden, Gegenprüfung offen (9)
 

@@ -16,7 +16,7 @@ Was gebaut ist und was entsteht: [`docs/plan.md`](docs/plan.md). Bekannte, noch 
 corepack enable
 pnpm install
 pnpm dev            # App unter http://localhost:5173
-pnpm check          # Format, Lint, Typen, Kontrast, Tests, Build
+pnpm check          # Lizenzen, Format, Lint, Typen, Kontrast, Tests, Build
 ```
 
 ## Aufbau
@@ -25,7 +25,7 @@ pnpm check          # Format, Lint, Typen, Kontrast, Tests, Build
 | --- | --- |
 | `packages/core` | Die Logik, reines TypeScript: Modell, Rechenregeln (Einheiten, Ablauf, FEFO, Kalkulation, Deklaration, Break-even), Lager-Ledger, Schnittstelle, Module |
 | `apps/web` | Die App: React, Tailwind, IndexedDB; UI-Kit, Seiten pro Bereich |
-| `docs` | Entscheide (`adr/`, Index in [`adr/README.md`](docs/adr/README.md)), Design, Regeln, Fakten mit Quellen, Glossar, Schulden, bekannte Fehler, Lernbuch |
+| `docs` | Plan, Entscheide (`adr/`, Index in [`adr/README.md`](docs/adr/README.md)), Design und UI-Kit, Regeln, Fakten mit Quellen, Glossar, Schulden, Nebenwirkungen, bekannte Fehler, Lernbuch, Vorschau-Links |
 
 Karte für alle, die am Code arbeiten: [`AGENTS.md`](AGENTS.md). Regeln: [`CLAUDE.md`](CLAUDE.md).
 

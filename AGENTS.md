@@ -6,7 +6,7 @@ Randen ist eine local-first PWA für Gastrobetriebe: Lager, Rezepte, Kalkulation
 
 1. [`CLAUDE.md`](./CLAUDE.md): Sprache, Arbeitsweise, harte Regeln, Befehle, Definition of Done.
 2. [`docs/regeln.md`](./docs/regeln.md): wie Texte, Zahlen und Screens aussehen müssen.
-3. [`docs/design.md`](./docs/design.md): Farben, Schrift, Bausteine. Der Styleguide läuft unter `/styleguide`.
+3. [`docs/design.md`](./docs/design.md): Farben, Schrift, Bausteine; jeder Baustein mit seinen Props in [`docs/ui-kit.md`](./docs/ui-kit.md). Der Styleguide läuft unter `/styleguide`.
 4. [`docs/lernbuch.md`](./docs/lernbuch.md) und [`docs/schulden.md`](./docs/schulden.md).
 5. Das passende ADR in [`docs/adr/`](./docs/adr/README.md).
 
@@ -14,9 +14,9 @@ Randen ist eine local-first PWA für Gastrobetriebe: Lager, Rezepte, Kalkulation
 
 | Schicht | Ort | Darf importieren | Inhalt |
 | --- | --- | --- | --- |
-| Logik | `packages/core/src` | nur sich selbst und `zod` | `model/` Zeilen jeder Tabelle (Zod) · `domain/` reine Regeln: Einheiten und Preise, Ablauf, FEFO, Kalkulation, Deklaration, Menu-Engineering, Betriebsarten und Funktionen (`business-profiles.ts`), Preisänderung (`price-change.ts`) · `contract/` Schnittstelle v1 · `application/` Command-Kit, Lager-Ledger, Bootstrap · `modules/<name>/` Befehle und Abfragen eines Moduls (`contract.ts`, `use-cases.ts`) · `ports/` Speicher · `testing/` Test-Küche |
-| Daten | `apps/web/src/data` | core, Dexie | `db.ts` (IndexedDB), `dexie-storage.ts` (Ports auf IndexedDB) |
-| Präsentation | `apps/web/src/features/<bereich>`, `apps/web/src/ui`, `apps/web/src/app` | core, `app/hooks`, `ui`; nie `data/` oder `dexie` (ESLint) | Seiten pro Bereich (`routes.tsx`, `messages.ts`) · UI-Kit · Shell, Navigation, Pfade · Funktionen des Betriebs (`app/modules.ts`) und Ansicht des Geräts (`app/view.ts`) |
+| Logik | `packages/core/src` | nur sich selbst und `zod` | `model/` Zeilen jeder Tabelle (Zod) · `domain/` reine Regeln: Einheiten und Preise, Ablauf, FEFO, Kalkulation und Break-even (`costing.ts`), Deklaration, Allergene (`allergens.ts`), Warengruppen (`categories.ts`), Mehrwertsteuer (`vat.ts`), Bedarf eines Rezepts (`requirements.ts`), Wareneinsatz und Mahlzeiten für Cockpit und Zahlen (`meals.ts`), Menu-Engineering, Betriebsarten und Funktionen (`business-profiles.ts`), Preisänderung (`price-change.ts`) · `money.ts`, `currency.ts`, `dates.ts`, `format.ts`, `ids.ts`: Geld, Währung, Kalendertage, Zahlen lesen und zeigen, IDs · `contract/` Schnittstelle v1 · `application/` Command-Kit, Lager-Ledger, Bootstrap · `modules/<name>/` Befehle und Abfragen eines Moduls (`contract.ts`, `use-cases.ts`) · `ports/` Speicher · `testing/` Test-Küche |
+| Daten | `apps/web/src/data` | core, Dexie | `db.ts` (IndexedDB), `dexie-storage.ts` (Ports auf IndexedDB), `adapters.ts` (Uhr und IDs des Browsers), `persistence.ts` (dauerhafter Speicher) |
+| Präsentation | `apps/web/src/features/<bereich>`, `apps/web/src/ui`, `apps/web/src/app` | `features/` und `ui/`: core, `app/hooks`, `ui`; nie `data/` oder `dexie` (ESLint). `app/` verbindet die Schichten: `AppData.tsx` baut die Ports aus `data/`, `hooks.ts` liest mit `dexie-react-hooks` | Seiten pro Bereich (`routes.tsx`, `messages.ts`) · UI-Kit · Shell, Navigation, Pfade · Funktionen des Betriebs (`app/modules.ts`) und Ansicht des Geräts (`app/view.ts`) |
 | Tests | `packages/core/test`, `apps/web/src/**/*.test.ts(x)`, `apps/web/e2e` | – | Vitest (Logik auf `createMemoryStorage`, Seiten auf fake-indexeddb über `renderApp`), Playwright mit axe |
 
 ## Ein Modul
@@ -39,8 +39,8 @@ apps/web/src/features/<name>/*.tsx              Seiten und ihre Tests
 
 ## Funktionen und Ansicht (ADR-0015)
 
-- Eine **Funktion des Betriebs** (Speisekarte, Einkauf im Markt, Produktion, Menüplan, Mahlzeiten, Auslieferung, Verkäufe, Zahlen, Wo ist was?, Team) ist optional. Ein Einstieg, der nur dann gilt, prüft `useModule('market')` oder `useModules()`. Die Navigation filtert über `NavItem.modules` (`app/nav.ts`). Der Kern ist immer da: Cockpit, Lager, Artikel, Rezepte, Selbstkontrolle.
-- **Auswertungen** (Verlauf, Journal, Diagramme, Menu-Engineering, Break-even) zeigt nur die Ansicht «Erweitert»: `useDetailed()`. Die Ansicht gehört dem Gerät und steht nicht in der Sicherung (SE-13).
+- Eine **Funktion des Betriebs** (elf, `MODULE_IDS`: Speisekarte, Bestellen bei Lieferanten, Einkauf im Markt, Produktion, Menüplan, Mahlzeiten, Auslieferung, Verkäufe, Zahlen, Wo ist was?, Team) ist optional. Ein Einstieg, der nur dann gilt, prüft `useModule('market')` oder `useModules()`. Die Navigation filtert über `NavItem.modules` (`app/nav.ts`). Der Kern ist immer da: Cockpit, Lager, Artikel, Rezepte, Selbstkontrolle.
+- **Auswertungen** (Diagramme, Zeitraum und Break-even in den Zahlen, Menu-Engineering, Verlauf der Temperaturen) zeigt nur die Ansicht «Erweitert»: `useDetailed()`. Ausnahme heute: Das Journal und die Bewegungen eines Artikels im Lager zeigt jede Ansicht, obwohl ADR-0015 sie unter «Erweitert» stellt. Die Ansicht gehört dem Gerät und steht nicht in der Sicherung (SE-13).
 - Ausgeschaltete Funktionen blenden nur ihre Einstiege aus; ihre Daten bleiben und ihre Adressen funktionieren weiter.
 - Das Einrichten (`/setup`, `business.setup`) schlägt die Funktionen aus drei Antworten vor: Betriebsart, Herkunft der Ware, Teamgrösse (`proposeSetup` in `domain/business-profiles.ts`).
 

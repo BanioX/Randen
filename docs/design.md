@@ -73,7 +73,7 @@ Sechs Reihen in fester Folge (`chart-1` bis `chart-6`): Rotwein, Petrol, Senf, I
 
 ### Dunkelmodus
 
-Folgt dem Gerät (`prefers-color-scheme`). Dieselben Tokens bekommen nachts andere Werte; Flächen mit weisser Schrift bleiben Flächen, Text in Rotwein, Grün und Zinnober wird heller (`#E79EA6`, `#81D39F`, `#FD9376`). Schatten werden zu einer feinen hellen Kante aus 10 % Weiss, damit Karten sich vom Grund lösen. Nachts: `today` `#B04A58` auf `#421F24`, `danger` `#CF3D07` auf `#3F1A12`.
+Folgt dem Gerät (`prefers-color-scheme`). Dieselben Tokens bekommen nachts andere Werte. Rotwein als Fläche wird etwas heller, damit Knöpfe auf dem dunklen Grund stehen: `wine-700` `#892E3F` (Weiss darauf 8.3:1), `wine-800` `#6D1F2F`, `wine-900` `#571825`, `wine-600` (Fokusring) `#D67884`, `wine-100` `#421F24`, `wine-50` `#2C171A`; Traube `#42151D`. Flächen mit weisser Schrift bleiben Flächen. Text in Rotwein und «heute» wird `#E79EA6`, Grün `#81D39F`, Zinnober `#FD9376`. Schatten werden zu einer feinen hellen Kante aus 10 % Weiss, damit Karten sich vom Grund lösen. Nachts ist `today` `#B04A58` als Punkt und Fläche; als Schrift steht es in `#E79EA6` auf `today-bg` `#421F24`. `danger` ist `#CF3D07` als Fläche; als Schrift steht es in `#FD9376` auf `danger-bg` `#3F1A12`.
 
 ## Schrift
 
@@ -99,11 +99,11 @@ Systemschrift (SF Pro, Roboto, Segoe UI): Es wird nichts geladen, die Grössen i
 
 | Gerät | Breite | Rahmen | Inhalt |
 | --- | --- | --- | --- |
-| iPhone | unter 768 px | Tab-Leiste unten mit fünf Zielen: Cockpit, Lager, ＋ Erfassen, Rezepte, Mehr | eine Spalte, höchstens `max-w-xl` |
-| iPad hochkant | 768 bis 1023 px | schmale Leiste in Traube, 96 px: Symbol mit kleinem Wort für jeden Bereich | die volle Breite, Kennzahlen zu viert, Tabellen |
+| iPhone | unter 768 px | Tab-Leiste unten mit fünf Zielen: Cockpit, Lager, ＋ Erfassen, Rezepte, Mehr. Eine Küche, die nur im Markt einkauft und nichts bestellt, hat Einkauf statt Rezepte (ADR-0015) | eine Spalte, höchstens `max-w-xl` |
+| iPad hochkant | 768 bis 1023 px | schmale Leiste in Traube, 96 px: Symbol mit kleinem Wort für jeden Bereich | höchstens `max-w-3xl`, Kennzahlen nebeneinander, so viele, wie es sind (bis vier, `KpiGrid`), Tabellen |
 | iPad quer, Web | ab 1024 px | Seitenleiste in Traube, 256 px, mit allen Bereichen in Gruppen | bis `max-w-6xl`, Karten nebeneinander, Tabellen mit allen Spalten |
 
-Die Seitenleiste gruppiert: Übersicht · Küche (Rezepte, Produktion, Menüplan, Speisekarte) · Lager (Lager, Einkauf, Wo ist was?, Artikel, Lieferanten) · Kontrolle (Zahlen, Selbstkontrolle) · Betrieb. Zuoberst steht «＋ Erfassen» in Kork.
+Die Seitenleiste gruppiert: Cockpit · Küche (Rezepte, Produktion, Menüplan, Auslieferung, Speisekarte) · Lager (Lager, Einkauf, Wo ist was?, Artikel; die Lieferanten erreicht man über Artikel) · Kontrolle (Zahlen, Selbstkontrolle) · zuletzt Betrieb. Ein Eintrag, der zu einer Funktion gehört, steht nur da, wenn der Betrieb sie nutzt; leere Gruppen fallen weg (`visibleNavGroups`, ADR-0015). Zuoberst steht «＋ Erfassen» in Kork.
 
 Für Seiten heisst das: Klassen ohne Präfix sind das iPhone, `md:` ist das iPad hochkant, `lg:` das iPad quer und das Web. Ziele sind überall mindestens 44 px, Felder nie kleiner als 16 px, sichere Ränder sind eingerechnet.
 
@@ -113,11 +113,13 @@ Eine weisse Rande mit rosa Schulter und drei Blättern auf Rotwein `#6D1F2F` (`a
 
 ## Druck
 
-Berichte, Bestellungen, Rezeptkarten und Speisekarten drucken über den Browser (`@media print`): ohne Navigation, schwarz auf weiss, mit Betrieb und Datum, Tabellen mit Haarlinien.
+Im Browser drucken Berichte, Bestellungen, Rezeptkarten und Speisekarten über den Druckdialog (`@media print`, `print:`-Klassen): ohne Navigation, schwarz auf weiss, mit Betrieb und Datum, Tabellen mit Haarlinien. In der installierten App auf iPhone und iPad öffnet sich kein Druckdialog (ADR-0019). Dort baut die Seite ihr PDF auf dem Gerät und gibt es ins Teilen-Menü («Drucken», «In Dateien sichern»). Jeder Druckknopf ist `PrintButton`.
+
+Das PDF entsteht mit dem Kit `apps/web/src/ui/pdf/` in den hellen Werten dieses Dokuments (`PDF_COLOR`, `PDF_SERIES`): A4 hoch, Ränder 18 mm, Helvetica, kleine Überschrift in Rotwein und Versalien, Titel in Traube, eine Linie in Rotwein darunter, Fusszeile mit Seitenzahl und Druckdatum. Es bleibt hell, auch im Dunkelmodus, weil es für Papier ist. Bisher hat die Speisekarte für Gäste ein PDF; die übrigen Seiten sagen in der installierten App, dass ihr PDF folgt (TD-56).
 
 ## Gemeinsam mit Rettich
 
-Randen und Rettich sind getrennte Apps derselben Firma (ADR-0020): Jede hat ihre Leitfarbe, beide folgen denselben Regeln für Gestaltung und Sprache. Geprüft am 16.11.2026 gegen dieses Dokument, [`regeln.md`](regeln.md), `apps/web/src/index.css` und `apps/web/public/icon.svg` beider Apps sowie das Markenbuch und die Design-Doku von Rettich (`docs/marke.md`, `docs/design.md`, Stand von `main` am 15.11.2026). Wo die Apps abweichen, steht, was jede tut.
+Randen und Rettich sind getrennte Apps derselben Firma (ADR-0020, Entwurf): Jede hat ihre Leitfarbe, beide folgen denselben Regeln für Gestaltung und Sprache. Geprüft am 16.11.2026 gegen dieses Dokument, [`regeln.md`](regeln.md), `apps/web/src/index.css` und `apps/web/public/icon.svg` beider Apps sowie das Markenbuch und die Design-Doku von Rettich (`docs/marke.md`, `docs/design.md`, Stand von `main` am 15.11.2026). Wo die Apps abweichen, steht, was jede tut.
 
 | Wert | Rettich | Randen |
 | --- | --- | --- |

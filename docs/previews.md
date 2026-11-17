@@ -32,7 +32,7 @@ Danach gibt es `https://randen.<dein-name>.workers.dev` (Production) und pro and
 
 ## So schaust du eine Vorschau an
 
-- Link öffnen. Der Betrieb ist leer. Unter **Mehr → Demo-Betrieb laden** gibt es (sobald das Modul gebaut ist) eine eingerichtete Küche mit Lager, Rezepten, Speisekarte und Zahlen.
+- Link öffnen. Der Betrieb ist leer, und das Cockpit bietet «Randen einrichten» an. Eine eingerichtete Küche, ein Bistro mit acht Wochen Geschichte (Lager, Rezepte, Speisekarte, Menüplan und Zahlen), lädst du unter **Mehr → Demo-Betrieb → Demo-Betrieb laden** (auf iPad und Web unter **Betrieb**) oder im Einrichten mit «Erst das Demo-Bistro ansehen». «Demo-Daten entfernen» räumt sie wieder ab.
 - Am iPhone und iPad: **Teilen → Zum Home-Bildschirm**. Dann öffnet sich Randen im Vollbild mit eigenem Symbol.
 - Der Styleguide mit allen Bausteinen liegt unter `/styleguide`.
 - Jede Vorschau-Adresse hat ihren eigenen Speicher im Browser. Nichts geht an einen Server.

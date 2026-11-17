@@ -49,9 +49,9 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Mahlzeiten zählen | `cockpit.today`, Zeile «Mahlzeiten zählen» | Die Mahlzeiten von heute, die noch nicht als ausgegeben erfasst sind |
 | Demo-Betrieb | `demo.load` | Eine eingerichtete Beispielküche zum Ausprobieren, mit erfundenen Namen und Preisen |
 | Gewinner, Renner, Schläfer, Verlierer | `MenuClass` | Die vier Felder des Menu-Engineerings: beliebt und rentabel, beliebt, rentabel, weder noch |
-| Selbstkontrolle | `haccp` | Temperaturen, Reinigungsplan, Wareneingangskontrolle |
+| Selbstkontrolle | `haccp` | Temperaturen, Reinigungsplan, Wareneingangskontrolle und der Bericht für die Kontrolle |
 | Richtwert | – | Ein Vorschlag ohne rechtliche Verbindlichkeit, den der Betrieb ändern kann (ADR-0012) |
-| Sicherung | `settings.export` | Der ganze Betrieb als eine Datei, optional mit Passwort (ADR-0017) | Der ganze Betrieb als eine Datei |
+| Sicherung | `settings.export` | Der ganze Betrieb als eine Datei, optional mit Passwort (ADR-0017) |
 | Teilen-Menü | `navigator.share`, `ui/share-file.ts` | Das Menü des Geräts, das eine Datei an eine App oder einen Ort gibt, etwa «Drucken» oder «In Dateien sichern». In der installierten App auf iPhone und iPad der Weg für Drucken und Sichern (ADR-0019) |
 | Installierte App | `isInstalledIos` | Randen vom Home-Bildschirm gestartet, nicht in einem Tab des Browsers. Auf iPhone und iPad druckt sie über ein PDF und das Teilen-Menü (ADR-0019) |
 | Betriebsart | `BusinessKind` | Was für ein Betrieb das ist, vom Imbiss bis zur Produktionsküche; schlägt die Funktionen vor (ADR-0015) |
@@ -72,7 +72,11 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Abschnitt | `menu.setSections` | Eine Gruppe der Speisekarte, zum Beispiel Vorspeisen oder Desserts, mit ihren Gerichten in einer Reihenfolge |
 | Ohne … (Filter) | Adresse der Gästeansicht | Ausschluss eines Allergens in der Gästeansicht; die Gerichte mit diesem Allergen erscheinen nicht. Der Filter steht in der Adresse |
 | Reinigungsplan | `hygiene.tasks` | Die Aufgaben der Selbstkontrolle: täglich, wöchentlich am festen Wochentag oder monatlich, mit einem Standardplan von zehn Aufgaben |
+| Messung | `TemperatureLog` | Eine gemessene Temperatur der Selbstkontrolle, mit dem Bereich, der beim Messen galt |
+| Lagerung, Wareneingang, Kerntemperatur, Heisshalten, Abkühlen | `TemperatureKind` (`storage`, `receiving`, `cooking`, `hot_holding`, `cooling`) | Wofür eine Temperatur gemessen wurde |
+| Massnahme | `TemperatureLog.action` | Was getan wurde, als ein Wert ausserhalb des Bereichs lag; erscheint im Bericht unter «Abweichungen» |
+| Bericht für die Kontrolle | `haccp.report` | Die Selbstkontrolle eines Zeitraums zum Drucken für die Lebensmittelkontrolle: Lagerung je Tag, Abweichungen, Lebensmittel, Reinigung. Er ersetzt das Selbstkontrollkonzept nicht (ADR-0012) |
 | Monatsbericht | `numbers.monthReport` | Der ganze Monat in einer Ansicht zum Drucken: Einkauf, Budget, Break-even, Abschreiber, Gerichte |
-| Firma | – | Die Firma hinter Randen und Rettich; ihr Name ist offen, bis dahin «die Firma». Sie ist ruhiger Absender: «Randen · von `<Firma>`» steht nur unter «Über Randen», auf der Startseite der Firma und in rechtlichen Texten. Wo eine App die andern nennt: «Apps der Firma», nie «Suite» (ADR-0020) |
-| Startseite der Firma | `docs/intern/suite/` | Eine statische Seite der Firma mit einer Karte pro App und dem Weg zur Installation; ohne Skript, Speicher und Cookies, nicht installierbar. Heute ein privater Entwurf, nicht ausgeliefert (ADR-0020) |
-| Herkunft (Origin) | `location.origin` | Schema, Host und Port einer Adresse. An ihr hängen Speicher, Service Worker, CSP und die installierte App; jede App der Firma hat ihre eigene, und eine neue Adresse ist eine neue, leere App (ADR-0020). Nicht zu verwechseln mit der Herkunft einer Zutat |
+| Firma | – | Die Firma hinter Randen und Rettich; ihr Name ist offen, bis dahin «die Firma». Sie ist ruhiger Absender: «Randen · von `<Firma>`» steht nur unter «Über Randen», auf der Startseite der Firma und in rechtlichen Texten. Wo eine App die andern nennt: «Apps der Firma», nie «Suite» (ADR-0020, Entwurf) |
+| Startseite der Firma | `docs/intern/suite/` | Eine statische Seite der Firma mit einer Karte pro App und dem Weg zur Installation; ohne Skript, Speicher und Cookies, nicht installierbar. Heute ein privater Entwurf, nicht ausgeliefert (ADR-0020, Entwurf) |
+| Herkunft (Origin) | `location.origin` | Schema, Host und Port einer Adresse. An ihr hängen Speicher, Service Worker, CSP und die installierte App; jede App der Firma hat ihre eigene, und eine neue Adresse ist eine neue, leere App (ADR-0020, Entwurf). Nicht zu verwechseln mit der Herkunft einer Zutat |

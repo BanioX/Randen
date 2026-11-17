@@ -14,7 +14,7 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | Preisänderung durchrechnen | Was ein neuer Einkaufspreis eines Artikels mit den Gerichten macht: Wareneinsatz und Ampel vorher und nachher, mit denselben Regeln wie die Rezeptkarte. Nur lesend, nichts wird gespeichert (ADR-0016) |
 | Lager-Ledger | Eingang, Verbrauch nach FEFO, Abschreiben, Inventur, Verschieben; jede Mengenänderung als Bewegung; Eigenschaftstest über beliebige Buchungsfolgen |
 | Schnittstelle | Befehle und Abfragen mit Zod, pro Modul; Idempotenz, Domain Events, JSON Schema |
-| App-Rahmen | IndexedDB-Adapter, `useQuery` und `useCommand`, Seitenleiste ab 1024 px und fünf Tabs darunter, Pfade, Textkataloge mit Test auf «du» und «ss» |
+| App-Rahmen | IndexedDB-Adapter, `useQuery` und `useCommand`, Tab-Leiste mit fünf Zielen unter 768 px, schmale Leiste in Traube auf dem iPad hochkant (768 bis 1023 px), Seitenleiste ab 1024 px, Pfade, Textkataloge mit Test auf «du» und «ss» |
 | Design | Rotwein, Traube, Kork; hell und dunkel; 118 Farbpaare bewiesen (`pnpm contrast`); App-Symbol; Entwurf in [`design/`](design/) |
 | UI-Kit | Felder für Menge, Geld, Stückpreis, Prozent, Temperatur, Datum und Foto; Auswahlfelder; Seitenkopf, Listen, Tabelle, Sheet, Toast, Badges, sechs Diagramm-Arten; Styleguide unter `/styleguide`. Design-Stufe 2 im Kit (16.11.2026): Kennzahlen stehen auf einer Linie und füllen ihre Reihe, «heute zu tun» in Rotwein und Zinnober nur für Falsches, Ladezustand statt ausgegrauter Knöpfe, Löschen als Umriss und gefüllt nur im Bestätigungsdialog, ruhigere dunkle Flächen |
 | Werkzeuge | `pnpm check`, E2E mit axe auf iPhone, iPad und Web (hell und dunkel), Vorschaubilder in vier Ansichten, CI, Register der Nebenwirkungen mit Test, Cloudflare-Vorschau |
@@ -29,18 +29,18 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | Drucken und Sichern (ADR-0019) | Am Computer und im Safari-Tab der Druckdialog; in der installierten App auf iPhone und iPad, wo `window.print()` seit iOS 27 nichts tut, ein PDF auf dem Gerät, das ins Teilen-Blatt geht («Drucken», «In Dateien sichern»). Alle 13 Druckknöpfe laufen über einen Weg; die Speisekarte für Gäste ist das erste PDF. Sicherung und Export gehen dort ebenfalls übers Teilen-Blatt und gelten erst als gesichert, wenn die Datei weitergegeben ist. jsPDF wird nur bei Bedarf geladen |
 | Betrieb, Team, Sicherung | Betrieb bearbeiten, Team, Sicherung mit optionalem Passwort und Wiederherstellen mit Prüfung, Alles löschen, Über Randen (ADR-0017) |
 | Cockpit | Heute: was verfällt, was heute fällig ist, Temperaturen, Selbstkontrolle, Mindestbestand; Lagerwert, Weggeworfen diesen Monat, Suche über Artikel, Rezepte, Lieferanten und Plätze; Erfassen nach Funktionen (ADR-0015) |
-| Doku | Entscheide 0001 bis 0020 (0020 als Entwurf für die Suite), bekannte Fehler ([`fehler.md`](fehler.md)), Regeln für Texte und Screens, Fakten mit Quellen, Glossar, Schulden, Lernbuch, Vorschau-Links |
+| Doku | Entscheide 0001 bis 0020 (0017 und 0020 als Entwurf zur Bestätigung durch Alban), bekannte Fehler ([`fehler.md`](fehler.md)), Regeln für Texte und Screens, Fakten mit Quellen, Glossar, Schulden, Lernbuch, Vorschau-Links |
 
 ## In Arbeit
 
 | Teil | Inhalt |
 | --- | --- |
 | Druck-PDFs für die übrigen Seiten | In der installierten App auf iPhone und iPad zeigen zehn Druckseiten (Rezeptkarte, Bericht der Selbstkontrolle, Allergenmatrix, Etikett, Produktionsplan, Rundgang, Monatsbericht, Journal, Zählblatt, Bestellung) einen Hinweis statt eines stummen Knopfs; ihr PDF folgt (TD-56). Noch auf einem echten iPhone zu prüfen: Teilen-Blatt mit «Drucken», Sicherung in zwei Tipps, PDF offline (TD-40) |
-| Bekannte Fehler | 29 bestätigte Befunde aus dem Code-Review vom 16.11.2026, fünf davon mit hohem Risiko (Allergene beim Import, Märkte nur über die Demo, Wochenbedarf mit abgelaufener Ware, Demo löscht eigene Aufzeichnungen, «Drucken» auf dem iPhone); neun warten auf die Gegenprüfung ([`fehler.md`](fehler.md)) |
+| Bekannte Fehler | 30 bestätigte Befunde, 29 davon aus dem Code-Review vom 16.11.2026, vier mit hohem Risiko (Allergene beim Import, Märkte nur über die Demo, Wochenbedarf mit abgelaufener Ware, Demo löscht eigene Aufzeichnungen); neun warten auf die Gegenprüfung, einer davon mit hohem Risiko (das Formular «Betrieb» kann das Einrichten zurücksetzen). «Drucken» auf dem iPhone ist teilweise behoben (G-01) ([`fehler.md`](fehler.md)) |
 | Design-Stufe 2 auf den Seiten | Das Kit ist gebaut; fünf Pakete folgen: Cockpit und Rahmen, Lager und Einkauf, Rezepte mit Plan und Produktion, Zahlen und Speisekarte, Selbstkontrolle und Betrieb |
 | App und Desktop | Aus der Prüfung vom 16.11.2026: Fenstertitel je Seite, Hinweis auf eine neue Version, Anleitung zum Installieren, Erinnerung an die erste Sicherung, Druckseiten mit eigenem Seitenformat, Rückweg oben in der Gästeansicht, breiterer Inhalt auf grossen Bildschirmen, Tastenkürzel |
-| Module, Welle 3 | Verkauf mit Slot (Mittag, Abend; offen, TD-25) · Auslieferung an Aussenstellen und Anlässe mit Lieferschein und Etikett |
-| Demo-Betrieb | Gebaut; die Verweise auf Verkauf und Auslieferung führen noch auf Platzhalter (TD-44) |
+| Module, Welle 3 | Verkauf mit Slot (Mittag, Abend; offen, TD-26) · Auslieferung an Aussenstellen und Anlässe mit Lieferschein und Etikett |
+| Demo-Betrieb | Gebaut. Die Auslieferung (`/dispatch`) zeigt noch einen Platzhalter; die Verweise auf Verkäufe, Margen und Menu-Engineering führen auf «Nicht gefunden», bis das Modul Verkauf gebaut ist (TD-44, F-30 in [`fehler.md`](fehler.md)) |
 
 ## Danach
 
@@ -69,3 +69,4 @@ Dieses Dokument sagt, was gebaut ist, was gerade entsteht und was danach kommt. 
 | Startseite der Firma sichtbar | Entwurf in `docs/intern/suite/`, nicht ausgeliefert und nicht in `wrangler.jsonc`, bis Alban Randen zeigen will (ADR-0020) |
 | Desktop und Stores | Gebaut ist die PWA, aus dem Browser installiert, mit dem Rahmen ab 1024 px. App Store und Google Play kosten Geld, der Microsoft Store laut Microsoft keine Registrierungsgebühr; Beträge mit Quellen in `docs/intern/suite.md` (ADR-0020) |
 | Cloudflare-Vorschau | Projekt `randen` eingerichtet (15.11.2026), Production vorläufig auf dem Arbeits-Branch ([`previews.md`](previews.md)) |
+| Sicherung: Format und Verschlüsselung | Gebaut nach dem Entwurf ADR-0017: eine JSON-Datei des ganzen Betriebs, auf Wunsch mit Passwort verschlüsselt (PBKDF2 mit 600'000 Runden, AES-GCM mit 256 Bit). Datenformat und Verschlüsselung entscheidet Alban; bis dahin bleibt das ADR ein Entwurf |

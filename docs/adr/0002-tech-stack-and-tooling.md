@@ -1,6 +1,6 @@
 # ADR-0002: Tech-Stack und Tooling
 
-- **Status:** angenommen
+- **Status:** angenommen, für den Druck ergänzt durch [ADR-0019](0019-drucken-und-sichern-ueber-pdf-und-teilen.md)
 - **Datum:** 2026-11-14
 
 ## Kontext
@@ -30,5 +30,5 @@ Derselbe Stack wie Rettich, ohne Abweichung, damit Wissen und Bausteine zwischen
 
 ## Konsequenzen
 
-- Keine Diagramm- und keine PDF-Bibliothek heisst: weniger Gewicht im Bundle und keine fremden Lizenzen, dafür eigene Pflege der Diagramme.
+- Keine Diagramm-Bibliothek und für den Browser keine PDF-Bibliothek heisst: weniger Gewicht im Bundle und keine fremden Lizenzen, dafür eigene Pflege der Diagramme. jsPDF (MIT) lädt nur in der installierten iOS-App, wenn ein PDF entsteht (ADR-0019).
 - Lokal läuft teils Node 22; massgebend ist die CI mit Node 24.

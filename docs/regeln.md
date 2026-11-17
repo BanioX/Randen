@@ -50,7 +50,7 @@ Was über 300 PRs von Rettich darüber gelehrt haben, wie ein Produkt von Alban 
 
 1. Apples Human Interface Guidelines sind der Massstab (R-ADR-0021): Systemschrift, grosser Titel, ruhige Flächen, klare Hierarchie.
 2. **Eine Hauptaktion pro Seite**, als gefüllter Knopf in Rotwein. Alles andere ist ruhig.
-3. **Eine Bedeutung pro Farbe** (ADR-0009; R-ADR-0075): Rotwein = tippen und gewählt · Zinnober = falsch · Bernstein = bald · Grün = in Ordnung · Traube = die eine dunkle Karte mit der Leitzahl · Kork = alles andere. Farbe nie ohne Wort oder Symbol.
+3. **Eine Bedeutung pro Farbe** (ADR-0009; R-ADR-0075): Rotwein = tippen und gewählt · Rotwein, ruhig (`today`) = heute zu tun · Zinnober = falsch · Bernstein = bald · Grün = in Ordnung · Traube = die eine dunkle Karte mit der Leitzahl · Kork = alles andere. «Heute» und «abgelaufen» unterscheiden sich in Farbe, Wort und Symbol. Farbe nie ohne Wort oder Symbol.
 4. **Ruhiger Start** (R-ADR-0074): Das Cockpit zeigt zuerst, was heute zu tun ist, dann die Zahlen. Hinweise sind ruhige Zeilen, keine bunten Kästen.
 5. **Aktion zuerst auf Detailseiten** (R-ADR-0079): Was man hier am häufigsten tut, steht oben.
 6. **Eine Stelle pro Aktion** (R-ADR-0060): Dieselbe Aktion steht nicht zweimal auf einem Screen.
@@ -127,7 +127,7 @@ Jede Seite von Randen folgt einem von fünf Mustern. Wer eine Seite baut, wählt
 1. `PageHeader` mit Rücklink («‹ Artikel»), Titel und einer Hauptaktion.
 2. Zuoberst das Wichtigste als Kennzahlen (`StatTile`) oder eine Karte; auf Seiten mit einer Leitzahl die eine dunkle Karte (`Card variant="premium"`).
 3. Inhalt in Karten; ab dem iPad hochkant zwei Spalten, wo es dem Lesen dient (`md:grid md:grid-cols-2 md:gap-4`), ab 1024 px Haupt- und Nebenteil (`lg:grid-cols-3`, Hauptteil zwei Spalten).
-4. Weitere Aktionen als ruhige Knöpfe am Ende. Löschen steht zuletzt, ist rot nur im Bestätigungsdialog (`ConfirmDialog`) und sagt, was verloren geht.
+4. Weitere Aktionen als ruhige Knöpfe am Ende. Löschen steht zuletzt, als Umriss mit Zinnober-Schrift (`Button variant="danger"`). Gefüllt in Zinnober ist es nur im Bestätigungsdialog (`ConfirmDialog tone="danger"`, `danger-solid`), und der sagt, was verloren geht.
 5. Ein Eintrag, den es nicht mehr gibt (`useQueryResult` meldet `not_found`): `NotFoundPage`.
 
 ### H3. Formular
@@ -135,7 +135,7 @@ Jede Seite von Randen folgt einem von fünf Mustern. Wer eine Seite baut, wählt
 1. `PageHeader` mit Rücklink und Titel («Artikel erfassen», «Artikel bearbeiten»).
 2. Ein Formular, höchstens `max-w-2xl`, in `Section`-Blöcken mit Überschrift. Pflichtfelder zuerst, Seltenes unter «Weitere Angaben».
 3. Vorschläge sind vorbelegt (Lagerbereich und Haltbarkeit aus der Warengruppe, Mehrwertsteuer aus dem Betrieb) und als Vorschlag erkennbar.
-4. `FormActions` mit «Sichern». Fehler stehen am Feld; die Meldung eines abgelehnten Befehls (`errorText`) steht über den Aktionen mit `role="alert"`.
+4. `FormActions` mit «Sichern». Läuft der Befehl, dreht der Knopf (`primaryBusy`) und behält sein Wort; ausgegraut (`primaryDisabled`) ist er nur, wenn nichts zu sichern ist oder eine Angabe fehlt. Fehler stehen am Feld; die Meldung eines abgelehnten Befehls (`errorText`) steht über den Aktionen mit `role="alert"`.
 5. Nach dem Sichern: zurück zur Detailseite, Toast «Gesichert».
 
 ### H4. Erfassen (Wareneingang, Abschreiber, Inventur, Produktion, Temperatur, Verkauf)
@@ -152,7 +152,7 @@ Jede Seite von Randen folgt einem von fünf Mustern. Wer eine Seite baut, wählt
 2. Jedes Diagramm hat einen Titel, der die Aussage nennt, und eine Zusammenfassung in Worten (`summary`).
 3. Zeiträume mit `SegmentedControl` («7 Tage», «30 Tage», «Monat»), in der Adresse gehalten.
 4. Unvollständige Grundlagen stehen dabei («3 Gerichte ohne Preis»), nie eine schöne Zahl auf lückenhaften Daten (ADR-0008).
-5. Druckansicht über `window.print()` mit `print:`-Klassen: ohne Navigation, schwarz auf weiss, mit Betrieb und Datum.
+5. Drucken nur über `PrintButton` oder `usePrintAction`, nie `window.print()` direkt (ADR-0019). Im Browser öffnet der Knopf den Druckdialog mit den `print:`-Klassen: ohne Navigation, schwarz auf weiss, mit Betrieb und Datum. In der installierten App auf iPhone und iPad gibt er das PDF der Seite ins Teilen-Menü; das PDF entsteht mit dem Kit aus `ui/pdf/` und liest dieselbe Abfrage wie die Seite (`pdf={{ buildPdf, fileName }}`). Eine Seite ohne PDF steht in TD-56.
 
 ### H6. Immer
 
@@ -162,7 +162,8 @@ Jede Seite von Randen folgt einem von fünf Mustern. Wer eine Seite baut, wählt
 - Am iPhone liegt das Ende jeder Seite frei über der Tab-Leiste; nichts scrollt seitwärts bei 390 px. Ab `md:` gibt es keine Tab-Leiste mehr, sondern die Leiste links.
 - Seiten laden über `lazy` in `routes.tsx`, ausser dem Cockpit.
 - Während eine Abfrage lädt, steht der Kopf der Seite; es flackert kein Ladezeichen.
+- Dateien verlassen die App nur über `shareOrDownload` aus `ui/share-file.ts` (Teilen-Menü, sonst Download). Als gesichert gilt eine Datei erst nach `fileHandedOver`.
 
-## I. Alle Apps der Firma
+## I. Alle Apps der Firma (Entwurf)
 
-Randen und Rettich sind getrennte Apps derselben Firma (ADR-0020). Die Regeln für Sprache und Ton (Abschnitt A) gelten für alle Apps der Firma. Das Wort «Suite» steht in keinem Text einer App; wo eine App die andern nennt, heisst es «Apps der Firma». Die Firma steht nur unter «Über …», auf ihrer Startseite und in rechtlichen Texten, nie im Kopf einer App.
+Randen und Rettich sind getrennte Apps. Nach dem Entwurf ADR-0020, den Alban noch bestätigt, gehören sie derselben Firma. Bis dahin gilt: Die Regeln für Sprache und Ton (Abschnitt A) gelten für alle Apps der Firma. Das Wort «Suite» steht in keinem Text einer App; wo eine App die andern nennt, heisst es «Apps der Firma». Die Firma steht nur unter «Über …», auf ihrer Startseite und in rechtlichen Texten, nie im Kopf einer App.

@@ -16,11 +16,11 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | [0010](0010-du-in-a-business-product.md) | «du» auch im Geschäftsprodukt | angenommen (Albans Bestätigung offen) | 2026-11-14 |
 | [0011](0011-no-partner-integrations.md) | Keine Anbindungen an Kasse, Lieferanten und Gäste-Geräte | angenommen | 2026-11-14 |
 | [0012](0012-facts-with-sources.md) | Rechtliche Angaben nur mit Quelle, Richtwerte heissen Richtwerte | angenommen | 2026-11-14 |
-| [0013](0013-iphone-ipad-web.md) | Eine App für iPhone, iPad und Web | angenommen | 2026-11-14 |
+| [0013](0013-iphone-ipad-web.md) | Eine App für iPhone, iPad und Web | angenommen, ergänzt durch 0019 | 2026-11-14 |
 | [0014](0014-essentials-and-extras.md) | Grundfunktionen zuerst, alles Weitere zum Einschalten | teilweise ersetzt durch 0015 | 2026-11-15 |
 | [0015](0015-betriebsarten-und-funktionen.md) | Betriebsarten und Funktionen: jede Küche wählt ihre Komplexität | angenommen | 2026-11-15 |
 | [0016](0016-preisaenderung-durchrechnen.md) | Preisänderung durchrechnen: eine Frage, kein Eingriff | angenommen | 2026-11-15 |
 | [0017](0017-sicherung-format-und-verschluesselung.md) | Sicherung: Format und Verschlüsselung | Entwurf, zur Bestätigung durch Alban | 2026-11-15 |
-| [0018](0018-speisekarte.md) | Speisekarte: aus den Rezepten, Gästeansicht auf dem Gerät, Export als Datei | angenommen | 2026-11-15 |
+| [0018](0018-speisekarte.md) | Speisekarte: aus den Rezepten, Gästeansicht auf dem Gerät, Export als Datei | angenommen, ergänzt durch 0019 | 2026-11-15 |
 | [0019](0019-drucken-und-sichern-ueber-pdf-und-teilen.md) | Drucken und Sichern über PDF und Teilen | angenommen | 2026-11-16 |
 | [0020](0020-suite-der-firma.md) | Suite der Firma: getrennte Apps, eine Herkunft pro Produkt, ein ruhiger Absender | Entwurf, zur Bestätigung durch Alban | 2026-11-16 |

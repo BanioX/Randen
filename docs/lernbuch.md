@@ -19,6 +19,7 @@ Was wir aus Fehlern gelernt haben, mit Beleg. Neue Arbeit liest zuerst diese Lis
 | L-R19 | axe mass den Kontrast mitten in einer Überblendung | axe nur über den wartenden `AxeBuilder` aus `e2e/test.ts` |
 | L-R20 | Ein natives Datumsfeld zeigt das Format des Geräts | Datum als Textfeld TT.MM.JJJJ mit Kalender-Knopf |
 | L-R27 | Preis und Gewicht der Packung standen am Stück | Preise haben eine einzige Bezugsgrösse (`pricePer1000`, ADR-0004) |
+| L-R28 | Eine Geste ging in Chromium, auch mit echtem Touch, auf dem iPhone aber nicht: Safari bricht beim langen Drücken auf einen Link oder ein Bild den Zeiger ab (`pointercancel`) | Was Safari anders macht, auf dem echten Gerät abnehmen lassen; Chromium ist nicht Safari (TD-11, L-22) |
 | L-R29 | Zehn Funktionen fertig, aber keine im Auszug | Definition of Done: jede Funktion auf allen Flächen nachziehen |
 | L-R30 | Unter Last fielen Tests zufällig aus | Tests warten auf das Ende einer Aktion; `asyncUtilTimeout` 5 s |
 | L-R31 | Etwas wurde aus zwei Feldern erraten statt gespeichert | Was die Person sagt, wird gespeichert; was sich berechnen lässt, wird berechnet (ADR-0008) |

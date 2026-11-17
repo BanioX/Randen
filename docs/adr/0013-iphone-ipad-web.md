@@ -1,6 +1,6 @@
 # ADR-0013: Eine App für iPhone, iPad und Web
 
-- **Status:** angenommen
+- **Status:** angenommen, für das Drucken in der installierten iOS-App ergänzt durch [ADR-0019](0019-drucken-und-sichern-ueber-pdf-und-teilen.md)
 - **Datum:** 2026-11-14
 
 ## Kontext
