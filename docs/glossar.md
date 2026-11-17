@@ -52,6 +52,8 @@ Begriffe in der App (deutsch), im Code (englisch) und was sie bedeuten. Neue Beg
 | Selbstkontrolle | `haccp` | Temperaturen, Reinigungsplan, Wareneingangskontrolle |
 | Richtwert | – | Ein Vorschlag ohne rechtliche Verbindlichkeit, den der Betrieb ändern kann (ADR-0012) |
 | Sicherung | `settings.export` | Der ganze Betrieb als eine Datei, optional mit Passwort (ADR-0017) | Der ganze Betrieb als eine Datei |
+| Teilen-Menü | `navigator.share`, `ui/share-file.ts` | Das Menü des Geräts, das eine Datei an eine App oder einen Ort gibt, etwa «Drucken» oder «In Dateien sichern». In der installierten App auf iPhone und iPad der Weg für Drucken und Sichern (ADR-0019) |
+| Installierte App | `isInstalledIos` | Randen vom Home-Bildschirm gestartet, nicht in einem Tab des Browsers. Auf iPhone und iPad druckt sie über ein PDF und das Teilen-Menü (ADR-0019) |
 | Betriebsart | `BusinessKind` | Was für ein Betrieb das ist, vom Imbiss bis zur Produktionsküche; schlägt die Funktionen vor (ADR-0015) |
 | Funktion | `ModuleId`, `useModule` | Womit der Betrieb arbeitet, unter «Betrieb › Funktionen» schaltbar: Speisekarte, Bestellen, Einkauf im Markt, Produktion, Menüplan, Mahlzeiten zählen, Auslieferung, Verkäufe, Budget und Zahlen, Wo ist was?, Team. Im Entscheid «Baustein» (ADR-0015) |
 | Randen einrichten | `business.setup`, `/setup` | Die Fragen nach Betriebsart, Ware, Team und Name, die die Funktionen vorschlagen |

@@ -5,7 +5,7 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | Nr. | Titel | Status | Datum |
 | --- | --- | --- | --- |
 | [0001](0001-record-architecture-decisions.md) | Architekturentscheide festhalten | angenommen | 2026-11-14 |
-| [0002](0002-tech-stack-and-tooling.md) | Tech-Stack und Tooling | angenommen | 2026-11-14 |
+| [0002](0002-tech-stack-and-tooling.md) | Tech-Stack und Tooling | angenommen, für den Druck ergänzt durch 0019 | 2026-11-14 |
 | [0003](0003-three-layers-local-first.md) | Drei Schichten, local-first, eigene IDs und Soft-Delete | angenommen | 2026-11-14 |
 | [0004](0004-money-units-and-prices.md) | Geld als Ganzzahl, Stückpreise pro 1000 Basiseinheiten | angenommen | 2026-11-14 |
 | [0005](0005-contract-first-modules.md) | Contract-first, und jedes Modul besitzt seinen Teil | angenommen | 2026-11-14 |
@@ -22,4 +22,5 @@ Jeder Entscheid mit Folgen steht hier als eigene Datei `NNNN-titel.md` (ADR-0001
 | [0016](0016-preisaenderung-durchrechnen.md) | Preisänderung durchrechnen: eine Frage, kein Eingriff | angenommen | 2026-11-15 |
 | [0017](0017-sicherung-format-und-verschluesselung.md) | Sicherung: Format und Verschlüsselung | Entwurf, zur Bestätigung durch Alban | 2026-11-15 |
 | [0018](0018-speisekarte.md) | Speisekarte: aus den Rezepten, Gästeansicht auf dem Gerät, Export als Datei | angenommen | 2026-11-15 |
+| [0019](0019-drucken-und-sichern-ueber-pdf-und-teilen.md) | Drucken und Sichern über PDF und Teilen | angenommen | 2026-11-16 |
 | [0020](0020-suite-der-firma.md) | Suite der Firma: getrennte Apps, eine Herkunft pro Produkt, ein ruhiger Absender | Entwurf, zur Bestätigung durch Alban | 2026-11-16 |

@@ -8,13 +8,14 @@ import {
   type PlanEntryView,
   type PlanSlot,
 } from '@randen/core';
-import { ChevronLeft, ChevronRight, Copy, Plus, Printer, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Copy, Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { errorText, useCommand, useMoney, useQuery, useToday } from '../../app/hooks';
 import { useDetailed } from '../../app/view';
 import { useModule } from '../../app/modules';
 import { Button } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { ConfirmDialog } from '../../ui/Sheet';
 import { PageHeader } from '../../ui/PageHeader';
 import { useToast } from '../../ui/Toast';
@@ -245,15 +246,7 @@ export function PlanPage() {
             </Button>
           </>
         ) : null}
-        <Button
-          variant="ghost"
-          icon={Printer}
-          onClick={() => {
-            window.print();
-          }}
-        >
-          {t.plan.print}
-        </Button>
+        <PrintButton variant="ghost" label={t.plan.print} />
       </div>
 
       {planning && week?.entries === 0 ? (

@@ -1,21 +1,51 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import type * as Core from '@randen/core';
 import { paths } from '../../app/paths';
 import { renderApp, type AppView } from '../../app/test-helpers';
 import type { Id } from '@randen/core';
+import { pretendInstalledIphone } from '../../ui/test-helpers';
+import { ToastProvider } from '../../ui/Toast';
 import { addDishTo, goTo, makeCard } from './test-helpers';
 import { MenuCardPage } from './MenuCardPage';
 import { menuMessages } from './messages';
 
 const t = menuMessages;
+
+/** Switched on by a test: the export of the card fails, as a broken photo could make it. */
+const exportBreaks = vi.hoisted(() => ({ times: 0 }));
+
+vi.mock('@randen/core', async (importOriginal) => {
+  const core = await importOriginal<typeof Core>();
+  return {
+    ...core,
+    createUseCases: (...args: Parameters<typeof core.createUseCases>) => {
+      const cases = core.createUseCases(...args);
+      const exportCard = cases['menu.export'];
+      return {
+        ...cases,
+        'menu.export': (input: Parameters<typeof exportCard>[0]) => {
+          if (exportBreaks.times > 0) {
+            exportBreaks.times -= 1;
+            return Promise.reject(new Error('The photo could not be read'));
+          }
+          return exportCard(input);
+        },
+      };
+    },
+  };
+});
 const NOT_A_CARD = '00000000-0000-7000-8000-000000000000';
 
 /** Renders the editor of a card made by `build` on the page's own database. */
 async function renderEditor(build: (view: AppView) => Promise<string>) {
-  const view = await renderApp(<MenuCardPage />, {
-    route: `/menu/${NOT_A_CARD}`,
-    path: '/menu/:cardId',
-  });
+  // With the toasts of the shell: what a file action says is part of what it does.
+  const view = await renderApp(
+    <ToastProvider>
+      <MenuCardPage />
+    </ToastProvider>,
+    { route: `/menu/${NOT_A_CARD}`, path: '/menu/:cardId' },
+  );
   const cardId = await build(view);
   await goTo(view, paths.menuCard(cardId));
   await screen.findByRole('heading', { level: 1, name: 'Abendkarte' });
@@ -239,9 +269,136 @@ describe('MenuCardPage', () => {
       const html = await created[0]?.text();
       expect(html).toContain('<html lang="de-CH">');
       expect(html).not.toContain('<script');
+      // In a browser the download saves the file.
+      expect(await screen.findByText(t.actions.fileSaved)).toBeTruthy();
     } finally {
       Reflect.deleteProperty(URL, 'createObjectURL');
       Reflect.deleteProperty(URL, 'revokeObjectURL');
+    }
+  });
+
+  it('in the app installed on an iPhone, prepares the file with one tap and shares it with a second', async () => {
+    const share = vi.fn((_data: ShareData) => Promise.resolve());
+    const undo = pretendInstalledIphone({ share, canShare: () => true });
+    try {
+      const { user } = await renderEditor(dinnerCard);
+      expect(screen.queryByRole('button', { name: t.actions.file })).toBeNull();
+      await user.click(screen.getByRole('button', { name: t.actions.filePrepare }));
+      const shareButton = await screen.findByRole('button', { name: t.actions.fileShare });
+      expect(screen.getByText(t.actions.filePrepared)).toBeTruthy();
+      expect(share).not.toHaveBeenCalled();
+      await user.click(shareButton);
+      await waitFor(() => {
+        expect(share).toHaveBeenCalledTimes(1);
+      });
+      const shared = share.mock.calls[0]?.[0].files?.[0];
+      expect(shared?.name).toBe('speisekarte-abendkarte.html');
+      expect(await shared?.text()).toContain('<html lang="de-CH">');
+      expect(await screen.findByText(t.actions.fileShared)).toBeTruthy();
+      expect(screen.getByRole('button', { name: t.actions.filePrepare })).toBeTruthy();
+    } finally {
+      undo();
+    }
+  });
+
+  it('in the app installed on an iPhone, drops a prepared file once the card changes', async () => {
+    const share = vi.fn((_data: ShareData) => Promise.resolve());
+    const undo = pretendInstalledIphone({ share, canShare: () => true });
+    try {
+      const { user } = await renderEditor(dinnerCard);
+      await user.click(screen.getByRole('button', { name: t.actions.filePrepare }));
+      await screen.findByRole('button', { name: t.actions.fileShare });
+      const form = screen.getByRole('button', { name: t.settings.save }).closest('form');
+      if (form === null) {
+        throw new Error('The settings form is missing');
+      }
+      const name = within(form).getByRole('textbox', { name: /Name/ });
+      await user.clear(name);
+      await user.type(name, 'Sommerkarte');
+      await user.click(within(form).getByRole('button', { name: t.settings.save }));
+      await screen.findByRole('heading', { level: 1, name: 'Sommerkarte' });
+      // The file of the old card is gone: it has to be prepared again.
+      expect(await screen.findByRole('button', { name: t.actions.filePrepare })).toBeTruthy();
+      expect(screen.queryByRole('button', { name: t.actions.fileShare })).toBeNull();
+      expect(screen.queryByText(t.actions.filePrepared)).toBeNull();
+      await user.click(screen.getByRole('button', { name: t.actions.filePrepare }));
+      await user.click(await screen.findByRole('button', { name: t.actions.fileShare }));
+      await waitFor(() => {
+        expect(share).toHaveBeenCalledTimes(1);
+      });
+      const shared = share.mock.calls[0]?.[0].files?.[0];
+      expect(shared?.name).toBe('speisekarte-sommerkarte.html');
+      expect(await shared?.text()).toContain('Sommerkarte');
+    } finally {
+      undo();
+    }
+  });
+
+  it('in the app installed on an iPhone, does not call a download that only opens a preview saved', async () => {
+    const undo = pretendInstalledIphone({ share: vi.fn(), canShare: () => false });
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined);
+    Object.defineProperty(URL, 'createObjectURL', {
+      value: vi.fn(() => 'blob:menu'),
+      configurable: true,
+      writable: true,
+    });
+    Object.defineProperty(URL, 'revokeObjectURL', {
+      value: vi.fn(),
+      configurable: true,
+      writable: true,
+    });
+    try {
+      const { user } = await renderEditor(dinnerCard);
+      await user.click(screen.getByRole('button', { name: t.actions.filePrepare }));
+      await user.click(await screen.findByRole('button', { name: t.actions.fileShare }));
+      expect(await screen.findByText(t.actions.filePreviewOnly)).toBeTruthy();
+      expect(click).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText(t.actions.fileSaved)).toBeNull();
+      // The file stays ready for a share.
+      expect(screen.getByRole('button', { name: t.actions.fileShare })).toBeTruthy();
+    } finally {
+      undo();
+      Reflect.deleteProperty(URL, 'createObjectURL');
+      Reflect.deleteProperty(URL, 'revokeObjectURL');
+    }
+  });
+
+  it('says when the file could not be prepared, stops turning, and tries again', async () => {
+    const share = vi.fn((_data: ShareData) => Promise.resolve());
+    const undo = pretendInstalledIphone({ share, canShare: () => true });
+    exportBreaks.times = 1;
+    try {
+      const { user } = await renderEditor(dinnerCard);
+      const prepare = screen.getByRole('button', { name: t.actions.filePrepare });
+      await user.click(prepare);
+      expect(await screen.findByText(t.actions.fileExportFailed)).toBeTruthy();
+      expect(prepare.getAttribute('aria-busy')).toBeNull();
+      expect(screen.queryByRole('button', { name: t.actions.fileShare })).toBeNull();
+      await user.click(screen.getByRole('button', { name: t.actions.fileRetry }));
+      const shareButton = await screen.findByRole('button', { name: t.actions.fileShare });
+      expect(screen.queryByText(t.actions.fileExportFailed)).toBeNull();
+      await user.click(shareButton);
+      await waitFor(() => {
+        expect(share).toHaveBeenCalledTimes(1);
+      });
+    } finally {
+      exportBreaks.times = 0;
+      undo();
+    }
+  });
+
+  it('in a browser, says when the file could not be prepared instead of turning for good', async () => {
+    exportBreaks.times = 1;
+    try {
+      const { user } = await renderEditor(dinnerCard);
+      const button = screen.getByRole('button', { name: t.actions.file });
+      await user.click(button);
+      expect(await screen.findByText(t.actions.fileExportFailed)).toBeTruthy();
+      expect(button.getAttribute('aria-busy')).toBeNull();
+    } finally {
+      exportBreaks.times = 0;
     }
   });
 

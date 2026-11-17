@@ -1,7 +1,9 @@
 import { screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderApp } from '../../app/test-helpers';
-import { encryptBackup } from './backup-crypto';
+import { pretendInstalledIphone } from '../../ui/test-helpers';
+import { ToastProvider } from '../../ui/Toast';
+import { decryptBackup, encryptBackup, readEnvelope } from './backup-crypto';
 import { DataPage } from './DataPage';
 import { reloadApp } from './reload';
 
@@ -54,7 +56,13 @@ afterEach(() => {
 });
 
 async function renderData() {
-  return renderApp(<DataPage />, { route: '/more/data', path: '/more/data' });
+  // With the toasts of the shell: what a backup says is part of what it does.
+  return renderApp(
+    <ToastProvider>
+      <DataPage />
+    </ToastProvider>,
+    { route: '/more/data', path: '/more/data' },
+  );
 }
 
 describe('Daten und Sicherung (ADR-0006)', () => {
@@ -77,6 +85,8 @@ describe('Daten und Sicherung (ADR-0006)', () => {
     expect(document).toMatchObject({ format: 'randen-backup', business: { name: 'Testküche' } });
     expect(document.counts.articles).toBe(10);
     expect(await screen.findByText('Letzte Sicherung heute.')).toBeTruthy();
+    // In a browser the download saves the file: it counts.
+    expect(screen.getByText('Sicherung heruntergeladen.')).toBeTruthy();
     expect(window.localStorage.getItem('randen:last-backup')).toBe('2026-11-14');
     expect(document.business.id).toBe(t.businessId);
   });
@@ -106,6 +116,116 @@ describe('Daten und Sicherung (ADR-0006)', () => {
     expect(file).not.toContain('Rotwein');
     // 600 000 PBKDF2 rounds take a moment, and the password is typed key by key.
   }, 20_000);
+
+  it('in the app installed on an iPhone, builds the backup with one tap and shares it with a second', async () => {
+    const share = vi.fn((_data: ShareData) => Promise.resolve());
+    const undo = pretendInstalledIphone({ share, canShare: () => true });
+    try {
+      const { user } = await renderData();
+      await user.click(await screen.findByRole('button', { name: 'Sicherung erstellen' }));
+      const shareButton = await screen.findByRole('button', { name: 'Sicherung teilen' });
+      expect(screen.getByText(/Sicherung bereit\. Tippe auf «Sicherung teilen»/)).toBeTruthy();
+      expect(share).not.toHaveBeenCalled();
+      expect(window.localStorage.getItem('randen:last-backup')).toBeNull();
+      await user.click(shareButton);
+      await waitFor(() => {
+        expect(share).toHaveBeenCalledTimes(1);
+      });
+      const shared = share.mock.calls[0]?.[0].files?.[0];
+      expect(shared?.name).toBe('randen-sicherung-2026-11-14.json');
+      expect(JSON.parse((await shared?.text()) ?? '{}')).toMatchObject({ format: 'randen-backup' });
+      expect(await screen.findByText('Letzte Sicherung heute.')).toBeTruthy();
+      expect(screen.getByText('Die Sicherung ist weitergegeben.')).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Sicherung erstellen' })).toBeTruthy();
+      expect(saved).toHaveLength(0);
+    } finally {
+      undo();
+    }
+  });
+
+  it('in the app installed on an iPhone, does not count a download that only opens a preview', async () => {
+    // The share sheet refuses (the tap was too long ago): the file is downloaded, which iOS
+    // shows as a preview there. Nothing is saved yet.
+    const share = vi.fn<(data: ShareData) => Promise<void>>(() =>
+      Promise.reject(new DOMException('no tap', 'NotAllowedError')),
+    );
+    const undo = pretendInstalledIphone({ share, canShare: () => true });
+    try {
+      const { user } = await renderData();
+      await user.click(await screen.findByRole('button', { name: 'Sicherung erstellen' }));
+      await user.click(await screen.findByRole('button', { name: 'Sicherung teilen' }));
+      expect(await screen.findByText(/nur als Vorschau geöffnet/)).toBeTruthy();
+      expect(screen.getByText(/Teilen-Symbol und wähle «In Dateien sichern»/)).toBeTruthy();
+      expect(saved).toHaveLength(1);
+      expect(window.localStorage.getItem('randen:last-backup')).toBeNull();
+      expect(screen.getByText('Noch nie gesichert.')).toBeTruthy();
+      expect(screen.queryByText('Sicherung heruntergeladen.')).toBeNull();
+      expect(screen.getByRole('button', { name: 'Als gesichert vermerken' })).toBeTruthy();
+      // The file stays ready: a second tap can still hand it to the share sheet.
+      share.mockResolvedValueOnce(undefined);
+      await user.click(screen.getByRole('button', { name: 'Sicherung teilen' }));
+      expect(await screen.findByText('Letzte Sicherung heute.')).toBeTruthy();
+      expect(screen.queryByText(/nur als Vorschau geöffnet/)).toBeNull();
+    } finally {
+      undo();
+    }
+  });
+
+  it('in the app installed on an iPhone, remembers the day when the person saved the backup from the preview', async () => {
+    const share = vi.fn<(data: ShareData) => Promise<void>>(() =>
+      Promise.reject(new DOMException('no tap', 'NotAllowedError')),
+    );
+    const undo = pretendInstalledIphone({ share, canShare: () => true });
+    try {
+      const { user } = await renderData();
+      await user.click(await screen.findByRole('button', { name: 'Sicherung erstellen' }));
+      await user.click(await screen.findByRole('button', { name: 'Sicherung teilen' }));
+      await user.click(await screen.findByRole('button', { name: 'Als gesichert vermerken' }));
+      expect(
+        await screen.findByText('Vermerkt. Randen erinnert dich in 14 Tagen wieder.'),
+      ).toBeTruthy();
+      expect(screen.getByText('Letzte Sicherung heute.')).toBeTruthy();
+      expect(window.localStorage.getItem('randen:last-backup')).not.toBeNull();
+    } finally {
+      undo();
+    }
+  });
+
+  it('locks the switch and the password while the protected backup is built', async () => {
+    const share = vi.fn((_data: ShareData) => Promise.resolve());
+    const undo = pretendInstalledIphone({ share, canShare: () => true });
+    try {
+      const { user } = await renderData();
+      const protect = await screen.findByRole<HTMLInputElement>('switch', {
+        name: /Mit Passwort schützen/,
+      });
+      await user.click(protect);
+      const password = screen.getByLabelText<HTMLInputElement>('Passwort');
+      const repeat = screen.getByLabelText<HTMLInputElement>('Passwort wiederholen');
+      await user.type(password, 'geheim-geheim');
+      await user.type(repeat, 'geheim-geheim');
+      await user.click(screen.getByRole('button', { name: 'Sicherung erstellen' }));
+      // Encrypting takes a moment: no edit can slip in and leave a file with the old password.
+      expect(password.disabled).toBe(true);
+      expect(repeat.disabled).toBe(true);
+      expect(protect.disabled).toBe(true);
+      await user.click(
+        await screen.findByRole('button', { name: 'Sicherung teilen' }, { timeout: 15_000 }),
+      );
+      expect(password.disabled).toBe(false);
+      await waitFor(() => {
+        expect(share).toHaveBeenCalledTimes(1);
+      });
+      const shared = await share.mock.calls[0]?.[0].files?.[0]?.text();
+      const envelope = readEnvelope(JSON.parse(shared ?? '{}'));
+      if (envelope === 'invalid' || envelope === 'plain') {
+        throw new Error('The shared backup is not protected');
+      }
+      expect(await decryptBackup(envelope, 'geheim-geheim')).toContain('randen-backup');
+    } finally {
+      undo();
+    }
+  }, 30_000);
 
   it('reminds calmly once the last backup is 14 days old or more', async () => {
     window.localStorage.setItem('randen:last-backup', '2026-10-30');

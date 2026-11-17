@@ -44,6 +44,19 @@ describe('texts of the app (de-CH)', () => {
     }
   });
 
+  it('opens no sentence about saving, sharing or printing with «Sie», which reads as formal', () => {
+    const files = all.filter(
+      ([path]) =>
+        path.includes('messages.files') ||
+        path.includes('settings/messages.ts.settingsMessages.data') ||
+        path.includes('menu/messages.ts.menuMessages.actions'),
+    );
+    expect(files.length).toBeGreaterThan(20);
+    for (const [path, text] of files) {
+      expect(text, path).not.toMatch(/(^|[.:?]\s+|[`'"«]\s*)Sie\b/);
+    }
+  });
+
   it('uses «ss» instead of «ß»', () => {
     for (const [path, text] of all) {
       expect(text, path).not.toContain('ß');

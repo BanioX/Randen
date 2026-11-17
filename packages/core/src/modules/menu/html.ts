@@ -64,8 +64,11 @@ export function escapeHtml(text: string): string {
     .replace(/'/g, '&#39;');
 }
 
-/** «Speisekarte Bistro» → «speisekarte-bistro»; umlauts become their two-letter forms. */
-export function fileNameOf(cardName: string): string {
+/**
+ * «Speisekarte Bistro» → «speisekarte-bistro.html»; umlauts become their two-letter forms. The
+ * PDF of the guest card (ADR-0019) takes the same name with `pdf`.
+ */
+export function fileNameOf(cardName: string, extension: 'html' | 'pdf' = 'html'): string {
   const slug = cardName
     .toLocaleLowerCase('de-CH')
     .replace(/ä/g, 'ae')
@@ -76,7 +79,7 @@ export function fileNameOf(cardName: string): string {
     .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
-  return `speisekarte-${slug === '' ? 'karte' : slug}.html`;
+  return `speisekarte-${slug === '' ? 'karte' : slug}.${extension}`;
 }
 
 function dishHtml(dish: GuestDish, input: GuestFileInput): string {

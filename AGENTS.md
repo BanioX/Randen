@@ -35,6 +35,7 @@ apps/web/src/features/<name>/*.tsx              Seiten und ihre Tests
 - Module rufen einander nicht auf. Gemeinsames liegt im Kern: `domain/` (rechnen), `createStockLedger` (Bestand ändern), `lookup.*` (leichte Listen für Auswahlfelder).
 - Seiten lesen mit `useQuery('modul.abfrage', {…})`, schreiben mit `useCommand()`; Links nur über `paths` (`app/paths.ts`).
 - Geld zeigen mit `useMoney().format`, Mengen mit `formatQuantity`, Stückpreise mit `formatUnitPrice`, Anteile mit `formatPercent`.
+- Drucken nur über `PrintButton` (`ui/PrintButton.tsx`) oder `usePrintAction` (`ui/print.ts`), nie `window.print()` direkt: In der installierten iOS-App tut es nichts. Ein PDF baut eine Seite mit dem Kit aus `ui/pdf/` und übergibt es als `pdf={{ buildPdf, fileName }}`. Dateien verlassen die App nur über `ui/share-file.ts` (ADR-0019).
 
 ## Funktionen und Ansicht (ADR-0015)
 

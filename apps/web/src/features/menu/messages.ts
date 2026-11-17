@@ -98,6 +98,18 @@ export const menuMessages = {
     remove: 'Löschen',
     duplicated: (name: string) => `${name} angelegt`,
     fileSaved: 'Datei gesichert',
+    fileShared: 'Datei weitergegeben',
+    fileFailed: 'Die Datei liess sich nicht sichern. Versuche es noch einmal.',
+    /** In the installed iOS app (ADR-0019): one tap prepares the file, a second shares it. */
+    filePrepare: 'Datei vorbereiten',
+    fileShare: 'Datei teilen',
+    filePrepared:
+      'Die Datei ist bereit. Tippe auf «Datei teilen» und wähle im Teilen-Menü «In Dateien sichern».',
+    fileExportFailed: 'Die Datei liess sich nicht vorbereiten.',
+    fileRetry: 'Noch einmal',
+    /** In the installed iOS app a download only opens a preview: the file is not saved yet. */
+    filePreviewOnly:
+      'Die Datei hat sich nur als Vorschau geöffnet und ist noch nicht gesichert. Tippe in der Vorschau auf das Teilen-Symbol und wähle «In Dateien sichern». Ist die Vorschau schon zu, tippe hier noch einmal auf «Datei teilen».',
   },
   removeCard: {
     title: 'Speisekarte löschen?',
@@ -158,6 +170,9 @@ export const menuMessages = {
     close: 'Schliessen',
     photoOf: (name: string) => `${name} gross anzeigen`,
     allergensCaption: 'Allergene nach Verordnung',
+    /** The PDF of the card (ADR-0019): the legend of the allergens with their official names. */
+    pdfLegendShort: 'Allergen',
+    pdfLegendOfficial: 'Bezeichnung nach LIV, Anhang 6',
     notFoundTitle: 'Diese Karte gibt es nicht',
     notFoundText: 'Die Karte ist nicht veröffentlicht oder nicht mehr da.',
     allergenPicker: 'Allergene ausschliessen',

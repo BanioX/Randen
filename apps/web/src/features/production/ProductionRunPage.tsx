@@ -15,6 +15,8 @@ import { NotFoundPage } from '../../app/NotFoundPage';
 import { paths } from '../../app/paths';
 import { useDetailed } from '../../app/view';
 import { Button } from '../../ui/Button';
+import { usePrintAction } from '../../ui/print';
+import { PrintNoticeSheet } from '../../ui/PrintButton';
 import { Card } from '../../ui/Card';
 import { DataTable, type DataTableColumn } from '../../ui/DataTable';
 import { ExpiryChip } from '../../ui/badges';
@@ -49,6 +51,9 @@ export function ProductionRunPage() {
   const printRequested = params.get('print') === '1';
   const labelReady = label !== undefined && detail.data?.output !== undefined;
   const printed = useRef(false);
+  // The label has no PDF yet (ADR-0019): in the installed iOS app the print says so.
+  const printing = usePrintAction();
+  const { printFromAddress } = printing;
 
   // «Etikett drucken» on the result of a production: the label prints as soon as it is on the
   // page, once (StrictMode runs effects twice). The address forgets the request, so a reload
@@ -66,8 +71,8 @@ export function ProductionRunPage() {
       },
       { replace: true },
     );
-    window.print();
-  }, [printRequested, labelReady, setParams]);
+    printFromAddress();
+  }, [printRequested, labelReady, setParams, printFromAddress]);
 
   if (!enabled || (detail.status === 'error' && isNotFound(detail.error))) {
     return <NotFoundPage text={t.runPage.notFoundText} />;
@@ -128,13 +133,7 @@ export function ProductionRunPage() {
           back={{ to: paths.production(), label: t.runPage.back }}
           actions={
             label === undefined || data?.output === undefined ? undefined : (
-              <Button
-                variant="primary"
-                icon={Printer}
-                onClick={() => {
-                  window.print();
-                }}
-              >
+              <Button variant="primary" icon={Printer} onClick={printing.print}>
                 {t.runPage.labelAction}
               </Button>
             )
@@ -220,6 +219,7 @@ export function ProductionRunPage() {
       </div>
 
       {label === undefined || data?.output === undefined ? null : <LabelCard label={label} />}
+      <PrintNoticeSheet action={printing} />
     </div>
   );
 }

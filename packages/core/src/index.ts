@@ -15,6 +15,7 @@ export * from './modules/stock/contract';
 export * from './modules/recipes/contract';
 export * from './modules/production/contract';
 export * from './modules/menu/contract';
+export { fileNameOf as menuFileName } from './modules/menu/html';
 export * from './modules/purchasing/contract';
 export * from './modules/numbers/contract';
 export * from './modules/cockpit/contract';

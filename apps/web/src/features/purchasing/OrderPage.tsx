@@ -12,7 +12,7 @@ import {
   type OperationOutput,
   type Unit,
 } from '@randen/core';
-import { Ban, Copy, PackageCheck, Printer, Send, Share2, Trash2, X } from 'lucide-react';
+import { Ban, Copy, PackageCheck, Send, Share2, Trash2, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import {
@@ -26,6 +26,7 @@ import {
 import { NotFoundPage } from '../../app/NotFoundPage';
 import { paths } from '../../app/paths';
 import { Button, ButtonLink } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { Card } from '../../ui/Card';
 import { DateField } from '../../ui/DateField';
 import { Notice } from '../../ui/Notice';
@@ -640,17 +641,7 @@ function OrderDetail({ detail, onLeaving }: OrderDetailProps) {
                     {t.text.share}
                   </Button>
                 ) : null}
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  icon={Printer}
-                  disabled={dirty}
-                  onClick={() => {
-                    window.print();
-                  }}
-                >
-                  {t.text.print}
-                </Button>
+                <PrintButton variant="secondary" size="sm" disabled={dirty} label={t.text.print} />
               </div>
             </Card>
           </Section>

@@ -1,10 +1,20 @@
-import { ALLERGEN_IDS, allergenLabel, IdSchema, type AllergenId, type Id } from '@randen/core';
-import { Printer } from 'lucide-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  ALLERGEN_IDS,
+  allergenLabel,
+  IdSchema,
+  menuFileName,
+  type AllergenId,
+  type Id,
+} from '@randen/core';
+import { LoaderCircle, Printer } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router';
-import { errorText, isNotFound, useQueryResult } from '../../app/hooks';
+import { errorText, isNotFound, useMoney, useQueryResult, useToday } from '../../app/hooks';
 import { paths } from '../../app/paths';
 import { AllergenPicker } from '../../ui/AllergenPicker';
+import { fileMessages } from '../../ui/messages.files';
+import { usePrintAction } from '../../ui/print';
+import { PrintNoticeSheet } from '../../ui/PrintButton';
 import { Sheet } from '../../ui/Sheet';
 import { GuestDishRow } from './GuestDish';
 import {
@@ -63,18 +73,46 @@ export function GuestPage() {
   const [params, setParams] = useSearchParams();
   const preview = params.get('preview') === '1';
   const result = useQueryResult('menu.guest', { cardId, preview }, { enabled: parsed.success });
-  const filter = readFilter(params);
+  const search = params.toString();
+  const filter = useMemo(() => readFilter(new URLSearchParams(search)), [search]);
   const [allergenSheet, setAllergenSheet] = useState(false);
   const printed = useRef(false);
   const data = result.status === 'ready' ? result.data : undefined;
   const wantsPrint = params.get('drucken') === '1';
+  const money = useMoney();
+  const today = useToday();
+
+  // The PDF of the card (ADR-0019), from the same query and filter as the page. Only the app
+  // installed on an iPhone or iPad builds it; a browser prints the page itself.
+  const buildPdf = useMemo(() => {
+    if (data === undefined) {
+      return undefined;
+    }
+    const input = {
+      businessName: data.businessName,
+      card: data.card,
+      groups: data.sections
+        .map((section) => ({ section, entries: filterDishes(section.dishes, filter) }))
+        .filter((group) => group.entries.length > 0),
+      hasSections: data.sections.length > 0,
+      money,
+      printedOn: today,
+    };
+    return () => import('./guest-pdf').then((pdf) => pdf.buildGuestPdf(input));
+  }, [data, filter, money, today]);
+  const printing = usePrintAction({
+    buildPdf,
+    fileName: menuFileName(data?.card.name ?? '', 'pdf'),
+    title: data?.card.name,
+  });
+  const { printFromAddress } = printing;
 
   useEffect(() => {
     if (wantsPrint && data !== undefined && !printed.current) {
       printed.current = true;
-      window.print();
+      printFromAddress();
     }
-  }, [wantsPrint, data]);
+  }, [wantsPrint, data, printFromAddress]);
 
   function change(next: GuestFilter) {
     setParams(writeFilter(params, next), { replace: true });
@@ -115,6 +153,28 @@ export function GuestPage() {
   const hasDiet = (value: DietFilter) =>
     value === 'all' ||
     diets.some((diet) => (value === 'vegan' ? diet === 'vegan' : diet !== 'omnivore'));
+  const printButton = (
+    <button
+      type="button"
+      onClick={printing.print}
+      aria-busy={printing.busy ? 'true' : undefined}
+      aria-disabled={printing.busy ? 'true' : undefined}
+      className={`inline-flex min-h-11 items-center gap-2 rounded-xl border border-line-strong bg-surface px-4 font-semibold ${
+        printing.busy ? 'cursor-progress' : ''
+      }`}
+    >
+      {printing.busy ? (
+        <LoaderCircle
+          size={18}
+          aria-hidden="true"
+          className="animate-spin motion-reduce:animate-none"
+        />
+      ) : (
+        <Printer size={18} aria-hidden="true" />
+      )}
+      {t.print}
+    </button>
+  );
 
   return shell(
     <>
@@ -140,6 +200,16 @@ export function GuestPage() {
           <p role="status" className="rounded-2xl bg-surface px-4 py-3 text-ink-muted print:hidden">
             {t.previewNotice}
           </p>
+        ) : null}
+
+        {wantsPrint && printing.mode === 'share' ? (
+          // The installed iOS app cannot print by itself: the share sheet needs a tap.
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-surface px-4 py-3 print:hidden">
+            <p role="status" className="min-w-0 flex-1 text-ink">
+              {fileMessages.print.fromAddress}
+            </p>
+            {printButton}
+          </div>
         ) : null}
 
         {allergens.length + traces.length + diets.length === 0 ? null : (
@@ -253,17 +323,9 @@ export function GuestPage() {
           >
             {t.back}
           </Link>
-          <button
-            type="button"
-            onClick={() => {
-              window.print();
-            }}
-            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line-strong bg-surface px-4 font-semibold"
-          >
-            <Printer size={18} aria-hidden="true" />
-            {t.print}
-          </button>
+          {printButton}
         </div>
+        <PrintNoticeSheet action={printing} />
       </footer>
     </>,
   );

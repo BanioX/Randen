@@ -1,6 +1,8 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderApp } from '../../app/test-helpers';
+import { fileMessages } from '../../ui/messages.files';
+import { pretendInstalledIphone } from '../../ui/test-helpers';
 import { JournalPage } from './JournalPage';
 
 afterEach(() => {
@@ -120,5 +122,20 @@ describe('JournalPage', () => {
     await user.click(screen.getByRole('button', { name: 'Drucken' }));
     expect(print).toHaveBeenCalledTimes(1);
     expect(screen.getByText('Testküche · 16.10.2026 bis 14.11.2026')).toBeTruthy();
+  });
+
+  it('in the app installed on an iPhone, says the PDF follows instead of doing nothing', async () => {
+    const print = vi.spyOn(window, 'print').mockImplementation(() => undefined);
+    const undo = pretendInstalledIphone();
+    try {
+      const { user } = await renderApp(<JournalPage />, { route: '/stock/journal' });
+      await journal();
+      await user.click(screen.getByRole('button', { name: 'Drucken' }));
+      const dialog = await screen.findByRole('dialog', { name: fileMessages.print.sheetTitle });
+      expect(within(dialog).getByText(fileMessages.print.pending)).toBeTruthy();
+      expect(print).not.toHaveBeenCalled();
+    } finally {
+      undo();
+    }
   });
 });

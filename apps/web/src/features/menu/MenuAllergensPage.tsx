@@ -1,10 +1,10 @@
 import { dietLabel, IdSchema, type AllergenState, type Id } from '@randen/core';
-import { ClipboardList, Printer } from 'lucide-react';
+import { ClipboardList } from 'lucide-react';
 import { useParams } from 'react-router';
 import { errorText, isNotFound, useQueryResult } from '../../app/hooks';
 import { NotFoundPage } from '../../app/NotFoundPage';
 import { paths } from '../../app/paths';
-import { Button } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { EmptyState } from '../../ui/EmptyState';
 import { PageHeader } from '../../ui/PageHeader';
 import { menuMessages } from './messages';
@@ -64,16 +64,7 @@ export function MenuAllergensPage() {
         back={{ to: paths.menuCard(card.id), label: card.name }}
         actions={
           <div className="print:hidden">
-            <Button
-              variant="secondary"
-              size="sm"
-              icon={Printer}
-              onClick={() => {
-                window.print();
-              }}
-            >
-              {t.print}
-            </Button>
+            <PrintButton variant="secondary" size="sm" label={t.print} />
           </div>
         }
       />

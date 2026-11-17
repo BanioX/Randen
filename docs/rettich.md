@@ -23,6 +23,7 @@
 | Zurückwischen vom linken Rand (installierte App) | 0091 | übernommen | 15.11.2026 |
 | Kurzbefehle am App-Symbol | 0094 | übernommen: «Wareneingang», «Abschreiben», «Temperatur» (Android und Rechner; iOS kennt sie nicht) | 15.11.2026 |
 | Sicherung mit Passwort | 0087 | übernehmen | Modul «Betrieb» |
+| PDF auf dem Gerät mit jsPDF, Teilen mit Download als Rückfall, PDFs hell für Papier | 0030, 0081, TD-15 | übernommen: Kit in Randens Farben (`ui/pdf/`), Teilen-Menü statt Druckdialog und Download in der installierten iOS-App (`ui/share-file.ts`, `ui/print.ts`); erstes PDF ist die Speisekarte für Gäste | ADR-0019, 16.11.2026 |
 | App-Sperre mit Face ID | 0086 | später: sinnvoll, sobald Mitarbeitende dasselbe Gerät nutzen | offen |
 | Quittung lesen (Texterkennung, PDF) | 0027, 0028 | anpassen: Lieferschein und Rechnung des Grosshändlers lesen | nach den Modulen |
 | Barcode scannen | 0014 | übernehmen: Wareneingang und Inventur | nach den Modulen |

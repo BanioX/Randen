@@ -6,11 +6,10 @@ import {
   movementTypeLabel,
   type LocalDate,
 } from '@randen/core';
-import { Printer } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { useBusiness, useMoney, useQuery, useToday } from '../../app/hooks';
 import { paths } from '../../app/paths';
-import { Button } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { ChoiceChips } from '../../ui/ChoiceChips';
 import { PageHeader } from '../../ui/PageHeader';
 import { Section } from '../../ui/Section';
@@ -76,15 +75,7 @@ export function JournalPage() {
         back={{ to: paths.stock(), label: stockMessages.back }}
         actions={
           <span className="print:hidden">
-            <Button
-              variant="secondary"
-              icon={Printer}
-              onClick={() => {
-                window.print();
-              }}
-            >
-              {t.print}
-            </Button>
+            <PrintButton variant="secondary" label={t.print} />
           </span>
         }
       />

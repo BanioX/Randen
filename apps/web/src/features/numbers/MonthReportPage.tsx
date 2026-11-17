@@ -7,11 +7,10 @@ import {
   type MonthReport,
   type YearMonth,
 } from '@randen/core';
-import { Printer } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { errorText, useMoney, useQueryResult, useToday } from '../../app/hooks';
 import { paths } from '../../app/paths';
-import { Button } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { DataTable, type DataTableColumn } from '../../ui/DataTable';
 import { Notice } from '../../ui/Notice';
 import { PageHeader } from '../../ui/PageHeader';
@@ -52,17 +51,7 @@ export function MonthReportPage() {
         <PageHeader
           title={t.report.title}
           back={{ to: paths.numbers(), label: t.report.back }}
-          actions={
-            <Button
-              variant="secondary"
-              icon={Printer}
-              onClick={() => {
-                window.print();
-              }}
-            >
-              {t.report.print}
-            </Button>
-          }
+          actions={<PrintButton variant="secondary" label={t.report.print} />}
         />
         <div className="mt-6">
           <MonthSwitch

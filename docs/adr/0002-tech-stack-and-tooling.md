@@ -22,7 +22,7 @@ Derselbe Stack wie Rettich, ohne Abweichung, damit Wissen und Bausteine zwischen
 | Build, UI | Vite 8, React 19, React Router 8 (SPA), Tailwind CSS 4, `vite-plugin-pwa` |
 | Daten | Dexie (IndexedDB), Zod 4 für jede Zeile und jede Operation |
 | Diagramme | eigene SVG-Bausteine, keine Bibliothek |
-| Druck | Druckansichten mit CSS (`@media print`), keine PDF-Bibliothek |
+| Druck | Druckansichten mit CSS (`@media print`), keine PDF-Bibliothek; in der installierten iOS-App ein PDF mit jsPDF, dynamisch geladen ([ADR-0019](0019-drucken-und-sichern-ueber-pdf-und-teilen.md)) |
 
 **Lieferkette:** `minimumReleaseAge: 4320` in `pnpm-workspace.yaml`: Es wird nur installiert, was mindestens drei Tage veröffentlicht ist. Dependabot wartet ebenso lang.
 

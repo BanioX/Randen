@@ -4,9 +4,21 @@ import { paths } from '../../app/paths';
 import { renderApp } from '../../app/test-helpers';
 import { GuestPage } from './GuestPage';
 import { menuMessages } from './messages';
+import { fileMessages } from '../../ui/messages.files';
+import { readPdf } from '../../ui/pdf/test-helpers';
+import { pretendInstalledIphone } from '../../ui/test-helpers';
 import { addDishTo, makeCard } from './test-helpers';
 
 const t = menuMessages.guest;
+
+/** The element at a position of a list of found elements; the test fails when there is none. */
+function nth<TElement>(elements: TElement[], index: number): TElement {
+  const element = elements[index];
+  if (element === undefined) {
+    throw new Error(`No element at ${String(index)}`);
+  }
+  return element;
+}
 const NOT_A_CARD = '00000000-0000-7000-8000-000000000000';
 
 /**
@@ -156,6 +168,38 @@ describe('GuestPage', () => {
       expect(print).toHaveBeenCalledTimes(1);
     });
   });
+
+  it('in the app installed on an iPhone, shares the PDF of the card instead of the dead dialog', async () => {
+    const share = vi.fn((_data: ShareData) => Promise.resolve());
+    const print = vi.spyOn(window, 'print').mockImplementation(() => undefined);
+    const undo = pretendInstalledIphone({ share, canShare: () => true });
+    try {
+      const { user } = await renderGuest({ search: '?drucken=1' });
+      expect(screen.getByText(fileMessages.print.fromAddress)).toBeTruthy();
+      const buttons = screen.getAllByRole('button', { name: t.print });
+      expect(buttons).toHaveLength(2);
+      const button = nth(buttons, 0);
+      await waitFor(
+        () => {
+          expect(button.getAttribute('aria-busy')).toBeNull();
+        },
+        { timeout: 10_000 },
+      );
+      await user.click(button);
+      await waitFor(() => {
+        expect(share).toHaveBeenCalledTimes(1);
+      });
+      const file = share.mock.calls[0]?.[0].files?.[0];
+      expect(file?.name).toBe('speisekarte-abendkarte.pdf');
+      expect(file?.type).toBe('application/pdf');
+      const { lines } = await readPdf(file ?? new Blob());
+      expect(lines).toContain('Entrecôte mit Rotweinjus und Kartoffelstock');
+      expect(lines).toContain('CHF 42.00');
+      expect(print).not.toHaveBeenCalled();
+    } finally {
+      undo();
+    }
+  }, 20_000);
 
   it('says an empty card has no dishes yet, and does not speak of a filter', async () => {
     const view = await renderApp(<GuestPage />, {

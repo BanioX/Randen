@@ -24,20 +24,3 @@ export function problemLine(problems: readonly string[]): string {
 export function countsLine(sections: number, dishes: number): string {
   return `${t.count.sections(sections)} · ${t.count.dishes(dishes)}`;
 }
-
-/**
- * Saves a text as a file the person keeps («Als Datei sichern»): a Blob link that is clicked
- * once and released again. Only the file leaves the page, nothing is sent anywhere.
- */
-export function saveTextFile(fileName: string, text: string, type: string): void {
-  const url = URL.createObjectURL(new Blob([text], { type }));
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.setTimeout(() => {
-    URL.revokeObjectURL(url);
-  }, 1000);
-}

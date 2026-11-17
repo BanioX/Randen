@@ -231,6 +231,19 @@ export const settingsMessages = {
     downloading: 'Die Sicherung wird vorbereitet …',
     downloaded: 'Sicherung heruntergeladen.',
     downloadFailed: 'Die Sicherung liess sich nicht speichern. Versuche es noch einmal.',
+    /** In the installed iOS app the backup is prepared with one tap and shared with a second. */
+    prepare: 'Sicherung erstellen',
+    preparing: 'Die Sicherung wird erstellt …',
+    prepared:
+      'Sicherung bereit. Tippe auf «Sicherung teilen» und wähle im Teilen-Menü «In Dateien sichern».',
+    share: 'Sicherung teilen',
+    shared: 'Die Sicherung ist weitergegeben.',
+    /** In the installed iOS app a download only opens a preview: the backup is not saved yet. */
+    previewOnly:
+      'Die Sicherung hat sich nur als Vorschau geöffnet und ist noch nicht gesichert. Tippe in der Vorschau auf das Teilen-Symbol und wähle «In Dateien sichern». Ist die Vorschau schon zu, tippe hier noch einmal auf «Sicherung teilen». Hast du sie aus der Vorschau gesichert, vermerke es hier.',
+    /** The person saved the file from the preview and says so: the day is remembered. */
+    markSaved: 'Als gesichert vermerken',
+    markedSaved: 'Vermerkt. Randen erinnert dich in 14 Tagen wieder.',
     restoreTitle: 'Sicherung zurückholen',
     restoreIntro: 'Wähle eine Sicherungsdatei von Randen. Vorher siehst du, was drin ist.',
     chooseFile: 'Sicherungsdatei wählen',

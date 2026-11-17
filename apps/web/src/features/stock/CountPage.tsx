@@ -13,7 +13,7 @@ import {
   type Rappen,
   type Unit,
 } from '@randen/core';
-import { ClipboardCheck, Plus, Printer, X } from 'lucide-react';
+import { ClipboardCheck, Plus, X } from 'lucide-react';
 import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import {
@@ -27,6 +27,7 @@ import {
 } from '../../app/hooks';
 import { paths } from '../../app/paths';
 import { Button } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { Card } from '../../ui/Card';
 import { ChoiceChips } from '../../ui/ChoiceChips';
 import { DateField } from '../../ui/DateField';
@@ -248,17 +249,7 @@ export function CountPage() {
           title={t.title}
           subtitle={t.subtitle}
           back={{ to: paths.stock(), label: stockMessages.back }}
-          actions={
-            <Button
-              variant="secondary"
-              icon={Printer}
-              onClick={() => {
-                window.print();
-              }}
-            >
-              {t.print}
-            </Button>
-          }
+          actions={<PrintButton variant="secondary" label={t.print} />}
         />
         <form
           ref={form}

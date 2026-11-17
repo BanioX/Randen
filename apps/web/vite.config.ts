@@ -1,10 +1,21 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { staticHeaders } from './scripts/static-headers.ts';
 
+/** Optional parts of jsPDF that Randen never calls (ADR-0019): an empty module instead. */
+const unusedPdfPart = fileURLToPath(new URL('src/ui/pdf/unused-part.ts', import.meta.url));
+
 export default defineConfig({
+  resolve: {
+    alias: {
+      html2canvas: unusedPdfPart,
+      canvg: unusedPdfPart,
+      dompurify: unusedPdfPart,
+    },
+  },
   build: {
     rolldownOptions: {
       output: {

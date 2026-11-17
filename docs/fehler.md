@@ -62,7 +62,7 @@ Ein zehnter Fund (Mitternacht im Rahmen) ist derselbe Fehler wie F-27.
 
 | Nr. | Fehler | Stand |
 | --- | --- | --- |
-| G-01 | «Drucken» tut in der installierten App auf iPhone und iPad nichts. Ursache ist ein Fehler von Apple seit iOS 27 (WebKit-Bug 327504): `window.print()` bleibt dort stumm, im Safari-Tab druckt dieselbe Seite. Betroffen sind alle 13 Druckknöpfe (Alban, 16.11.2026) | in Arbeit: PDF auf dem Gerät und Teilen-Blatt, Speisekarte zuerst (ADR-0019) |
+| G-01 | «Drucken» tut in der installierten App auf iPhone und iPad nichts. Ursache ist ein Fehler von Apple seit iOS 27 (WebKit-Bug 327504): `window.print()` bleibt dort stumm, im Safari-Tab druckt dieselbe Seite. Betroffen sind alle 13 Druckknöpfe (Alban, 16.11.2026) | teilweise behoben (17.11.2026, ADR-0019): Kein Knopf ist mehr stumm. Die Speisekarte druckt über ein PDF und das Teilen-Blatt; zehn weitere Druckseiten zeigen einen Hinweis, bis ihr PDF folgt (TD-56). Noch auf einem echten iPhone zu bestätigen |
 
 ## Noch nicht geprüft
 

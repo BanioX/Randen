@@ -1,37 +1,216 @@
 import { IdSchema, type Id } from '@randen/core';
-import { ClipboardList, Copy, Eye, FileDown, Printer, Trash2, TriangleAlert } from 'lucide-react';
+import {
+  ClipboardList,
+  Copy,
+  Eye,
+  FileDown,
+  Printer,
+  Share,
+  Trash2,
+  TriangleAlert,
+} from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { errorText, isNotFound, useCommand, useQuery, useQueryResult } from '../../app/hooks';
+import { errorText, isNotFound, useCommand, useQueryResult } from '../../app/hooks';
 import { NotFoundPage } from '../../app/NotFoundPage';
 import { paths } from '../../app/paths';
 import { Button, ButtonLink } from '../../ui/Button';
 import { Notice } from '../../ui/Notice';
 import { PageHeader } from '../../ui/PageHeader';
 import { ConfirmDialog } from '../../ui/Sheet';
+import { downloadFile, fileHandedOver, isInstalledIos, shareOrDownload } from '../../ui/share-file';
 import { useToast } from '../../ui/Toast';
 import { CardSettings } from './CardSettings';
 import { menuMessages } from './messages';
-import { saveTextFile } from './shared';
 import { SectionsEditor } from './SectionsEditor';
 
 const t = menuMessages;
 const NO_CARD = IdSchema.parse('00000000-0000-7000-8000-000000000000');
 
-/** Asks for the card as a file, saves it once the data is there, and steps aside. */
-function FileExport({ cardId, onDone }: { cardId: Id; onDone: () => void }) {
-  const exported = useQuery('menu.export', { cardId });
-  const toast = useToast();
-  const saved = useRef(false);
+/** The export of the card as one HTML file (ADR-0018), as a `File` the device can hand out. */
+function exportFile(exported: { fileName: string; html: string }): File {
+  return new File([exported.html], exported.fileName, { type: 'text/html;charset=utf-8' });
+}
+
+/**
+ * Reads the card as a file once, hands it back, and steps aside. It mounts only while a file is
+ * prepared: the HTML with its photos is built at the tap, not after every edit. An error is
+ * reported, so the button never turns for good.
+ */
+function FileExport({
+  cardId,
+  onReady,
+  onFail,
+}: {
+  cardId: Id;
+  onReady: (file: File) => void;
+  onFail: () => void;
+}) {
+  const result = useQueryResult('menu.export', { cardId });
+  const handled = useRef(false);
   useEffect(() => {
-    if (exported === undefined || saved.current) {
+    if (handled.current || result.status === 'loading') {
       return;
     }
-    saved.current = true;
-    saveTextFile(exported.fileName, exported.html, 'text/html;charset=utf-8');
-    toast({ text: t.actions.fileSaved, tone: 'ok' });
-    onDone();
-  }, [exported, onDone, toast]);
+    handled.current = true;
+    if (result.status === 'error') {
+      onFail();
+    } else {
+      onReady(exportFile(result.data));
+    }
+  }, [result, onReady, onFail]);
+  return null;
+}
+
+/** What the page says about the file: ready to share, only a preview, or what went wrong. */
+type FileNote = 'exportFailed' | 'failed' | 'previewOnly';
+
+interface FileAction {
+  installedIos: boolean;
+  /** The card is being read as a file. */
+  exporting: boolean;
+  /** In the installed iOS app: the file, ready for «Datei teilen». */
+  prepared: File | null;
+  sharing: boolean;
+  note: FileNote | null;
+  /** Reads the card as a file (again). */
+  start: () => void;
+  /** Hands the prepared file to the share sheet; call it in the tap itself. */
+  share: (file: File) => void;
+  ready: (file: File) => void;
+  failed: () => void;
+  /** The card changed: a prepared file shows the old card and is dropped. */
+  discard: () => void;
+}
+
+/**
+ * «Als Datei sichern» (ADR-0018, ADR-0019). In a browser one tap reads the card and downloads
+ * it. In the app installed on an iPhone or iPad the share sheet needs a tap of its own, as for
+ * the backup: the first tap «Datei vorbereiten» reads the card, a second «Datei teilen» hands
+ * the file out. There a download only opens a preview, so only a share counts as saved.
+ */
+function useFileAction(): FileAction {
+  const [installedIos] = useState(() => isInstalledIos());
+  const [exporting, setExporting] = useState(false);
+  const [prepared, setPrepared] = useState<File | null>(null);
+  const [sharing, setSharing] = useState(false);
+  const [note, setNote] = useState<FileNote | null>(null);
+  const toast = useToast();
+
+  const start = useCallback(() => {
+    setNote(null);
+    setPrepared(null);
+    setExporting(true);
+  }, []);
+  const ready = useCallback(
+    (file: File) => {
+      setExporting(false);
+      if (installedIos) {
+        setPrepared(file);
+      } else if (downloadFile(file, file.name)) {
+        toast({ text: t.actions.fileSaved, tone: 'ok' });
+      } else {
+        setNote('failed');
+      }
+    },
+    [installedIos, toast],
+  );
+  const failed = useCallback(() => {
+    setExporting(false);
+    setNote('exportFailed');
+  }, []);
+  const discard = useCallback(() => {
+    setPrepared(null);
+    setNote((current) => (current === 'previewOnly' ? null : current));
+  }, []);
+  const share = useCallback(
+    (file: File) => {
+      setSharing(true);
+      setNote(null);
+      void shareOrDownload(file).then((outcome) => {
+        setSharing(false);
+        if (fileHandedOver(outcome, installedIos)) {
+          setPrepared(null);
+          toast({
+            text: outcome === 'shared' ? t.actions.fileShared : t.actions.fileSaved,
+            tone: 'ok',
+          });
+        } else if (outcome === 'downloaded') {
+          // Only a preview: the file stays ready for a share.
+          setNote('previewOnly');
+        } else if (outcome === 'failed') {
+          setNote('failed');
+        }
+        // `cancelled`: the sheet was closed; the file stays ready for another tap.
+      });
+    },
+    [installedIos, toast],
+  );
+  return { installedIos, exporting, prepared, sharing, note, start, share, ready, failed, discard };
+}
+
+/** The button of the file: prepare (or download), then share in the installed iOS app. */
+function FileButton({ action }: { action: FileAction }) {
+  const { prepared } = action;
+  if (prepared !== null) {
+    return (
+      <Button
+        variant="secondary"
+        icon={Share}
+        busy={action.sharing}
+        onClick={() => {
+          action.share(prepared);
+        }}
+      >
+        {t.actions.fileShare}
+      </Button>
+    );
+  }
+  return (
+    <Button variant="secondary" icon={FileDown} busy={action.exporting} onClick={action.start}>
+      {action.installedIos ? t.actions.filePrepare : t.actions.file}
+    </Button>
+  );
+}
+
+/** The calm line under the actions: what happened to the file, and what to do. */
+function FileNotice({ action }: { action: FileAction }) {
+  if (action.note === 'exportFailed') {
+    return (
+      <Notice
+        tone="danger"
+        variant="row"
+        action={
+          <Button size="sm" variant="secondary" onClick={action.start}>
+            {t.actions.fileRetry}
+          </Button>
+        }
+      >
+        {t.actions.fileExportFailed}
+      </Notice>
+    );
+  }
+  if (action.note === 'failed') {
+    return (
+      <Notice tone="danger" variant="row">
+        {t.actions.fileFailed}
+      </Notice>
+    );
+  }
+  if (action.note === 'previewOnly') {
+    return (
+      <Notice tone="soon" variant="row">
+        {t.actions.filePreviewOnly}
+      </Notice>
+    );
+  }
+  if (action.prepared !== null) {
+    return (
+      <Notice tone="ok" variant="row">
+        {t.actions.filePrepared}
+      </Notice>
+    );
+  }
   return null;
 }
 
@@ -44,16 +223,21 @@ export function MenuCardPage() {
   const parsed = IdSchema.safeParse(cardParam);
   /** An address that is not an id asks for a card that cannot exist: the queries wait for it. */
   const cardId: Id = parsed.success ? parsed.data : NO_CARD;
-  const [exporting, setExporting] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const result = useQueryResult('menu.get', { cardId }, { enabled: parsed.success });
   const run = useCommand();
   const navigate = useNavigate();
   const toast = useToast();
-  const finishExport = useCallback(() => {
-    setExporting(false);
-  }, []);
+  const fileAction = useFileAction();
+  const { discard } = fileAction;
+  const shown = result.data;
+  // Every change of the card reaches this page as new data: an edit here, a dish whose recipe
+  // changed, or the copy after «Duplizieren» on the same page. A file prepared before it shows
+  // the old card and must never be shared (ADR-0019).
+  useEffect(() => {
+    discard();
+  }, [shown, discard]);
 
   if (!parsed.success || (result.status === 'error' && isNotFound(result.error))) {
     return <NotFoundPage />;
@@ -139,15 +323,7 @@ export function MenuCardPage() {
           <ButtonLink to={printAddress} variant="secondary" icon={Printer}>
             {t.actions.print}
           </ButtonLink>
-          <Button
-            variant="secondary"
-            icon={FileDown}
-            onClick={() => {
-              setExporting(true);
-            }}
-          >
-            {t.actions.file}
-          </Button>
+          <FileButton action={fileAction} />
           <Button variant="secondary" icon={Copy} onClick={duplicate}>
             {t.actions.duplicate}
           </Button>
@@ -161,6 +337,7 @@ export function MenuCardPage() {
             {t.removeCard.confirm}
           </Button>
         </section>
+        <FileNotice action={fileAction} />
         {error === null ? null : (
           <p role="alert" className="text-sm font-semibold text-danger">
             {error}
@@ -168,7 +345,9 @@ export function MenuCardPage() {
         )}
       </div>
 
-      {exporting ? <FileExport cardId={card.id} onDone={finishExport} /> : null}
+      {fileAction.exporting ? (
+        <FileExport cardId={card.id} onReady={fileAction.ready} onFail={fileAction.failed} />
+      ) : null}
 
       <ConfirmDialog
         open={removing}

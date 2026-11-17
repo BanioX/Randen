@@ -6,7 +6,8 @@ const t = productionMessages;
 
 /**
  * The label of a component: a small card that a label printer or a strip of paper takes
- * (`window.print`). On the screen it is a card; in print the page around it is left out.
+ * (the print dialog, `usePrintAction`). On the screen it is a card; in print the page around
+ * it is left out.
  */
 export function LabelCard({ label }: { label: ProductionLabel }) {
   const allergens = label.allergens.map(allergenLabel).join(', ');

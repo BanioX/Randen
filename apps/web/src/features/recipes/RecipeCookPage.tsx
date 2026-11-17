@@ -5,7 +5,7 @@ import {
   IdSchema,
   type OperationOutput,
 } from '@randen/core';
-import { Check, Printer } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { isNotFound, useQueryResult, useToday } from '../../app/hooks';
@@ -13,7 +13,7 @@ import { NotFoundPage } from '../../app/NotFoundPage';
 import { paths } from '../../app/paths';
 import { DietBadge } from '../../ui/badges';
 import { BackLink } from '../../ui/BackLink';
-import { Button } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { DishPhoto } from '../../ui/DishPhoto';
 import { Notice } from '../../ui/Notice';
 import { PageHeader } from '../../ui/PageHeader';
@@ -124,16 +124,7 @@ function CookView({ card, onPortions }: CookViewProps) {
           size="large"
         />
         <span className="text-xl text-ink-muted">{component ? t.batches : t.portions}</span>
-        <Button
-          variant="secondary"
-          icon={Printer}
-          onClick={() => {
-            window.print();
-          }}
-          className="ml-auto"
-        >
-          {t.print}
-        </Button>
+        <PrintButton variant="secondary" className="ml-auto" label={t.print} />
       </div>
 
       <div className="flex flex-col gap-8 lg:grid lg:grid-cols-5 lg:items-start lg:gap-10 print:block print:space-y-6">

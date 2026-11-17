@@ -7,6 +7,7 @@ interface PasswordFieldProps {
   hint?: string | undefined;
   error?: string | null | undefined;
   autoComplete?: 'new-password' | 'current-password';
+  disabled?: boolean | undefined;
 }
 
 /** A password in a field that hides it; the kit has no such field, so it is built from `Field`. */
@@ -17,6 +18,7 @@ export function PasswordField({
   hint,
   error,
   autoComplete = 'new-password',
+  disabled = false,
 }: PasswordFieldProps) {
   return (
     <Field label={label} hint={hint} error={error}>
@@ -26,6 +28,7 @@ export function PasswordField({
           type="password"
           value={value}
           autoComplete={autoComplete}
+          disabled={disabled}
           onChange={(event) => {
             onChange(event.target.value);
           }}

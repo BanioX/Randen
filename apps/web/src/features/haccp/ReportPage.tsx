@@ -1,9 +1,8 @@
-import { Printer } from 'lucide-react';
 import { addDays, addMonths, formatDecimal, type LocalDate } from '@randen/core';
 import { useSearchParams } from 'react-router';
 import { useBusiness, useQuery, useToday } from '../../app/hooks';
 import { paths } from '../../app/paths';
-import { Button } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { Card } from '../../ui/Card';
 import { ChoiceChips } from '../../ui/ChoiceChips';
 import { DataTable, type DataTableColumn } from '../../ui/DataTable';
@@ -53,7 +52,7 @@ function periodOf(key: PeriodKey, today: LocalDate): { from: LocalDate; to: Loca
 
 /**
  * «Bericht für die Kontrolle» (H5): the answer first, then the tables an inspector reads. The
- * period is in the address; the print view (`window.print`) keeps the tables and drops the rest.
+ * period is in the address; the print view (`PrintButton`, ADR-0019) keeps the tables and drops the rest.
  */
 export function ReportPage() {
   const [params, setParams] = useSearchParams();
@@ -70,15 +69,7 @@ export function ReportPage() {
         back={{ to: paths.haccp(), label: t.back }}
         actions={
           <span className="print:hidden">
-            <Button
-              variant="secondary"
-              icon={Printer}
-              onClick={() => {
-                window.print();
-              }}
-            >
-              {t.report.print}
-            </Button>
+            <PrintButton variant="secondary" label={t.report.print} />
           </span>
         }
       />

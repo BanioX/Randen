@@ -129,6 +129,9 @@ describe('fileNameOf and escapeHtml', () => {
     expect(fileNameOf('Ölküche & Grill')).toBe('speisekarte-oelkueche-grill.html');
     expect(fileNameOf('Straße')).toBe('speisekarte-strasse.html');
     expect(fileNameOf('!!!')).toBe('speisekarte-karte.html');
+    expect(fileNameOf('Sommerkarte für Gäste', 'pdf')).toBe(
+      'speisekarte-sommerkarte-fuer-gaeste.pdf',
+    );
   });
 
   it('keeps the line breaks of the intro and the footer, on the screen and in the file', () => {

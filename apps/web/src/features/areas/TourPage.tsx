@@ -5,13 +5,14 @@ import {
   type TourArea,
   type TourSpot,
 } from '@randen/core';
-import { Camera, CircleCheck, Footprints, MapPin, Plus, Printer } from 'lucide-react';
+import { Camera, CircleCheck, Footprints, MapPin, Plus } from 'lucide-react';
 import { useEffect, useId, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useBusiness, useQuery, useToday } from '../../app/hooks';
 import { paths } from '../../app/paths';
 import { AreaBadge, areaLooks } from '../../ui/badges';
 import { Button, ButtonLink } from '../../ui/Button';
+import { PrintButton } from '../../ui/PrintButton';
 import { Card } from '../../ui/Card';
 import { ProgressBar } from '../../ui/charts';
 import { DishPhoto } from '../../ui/DishPhoto';
@@ -282,16 +283,7 @@ export function TourPage() {
       back={{ to: paths.areas(), label: t.back }}
       actions={
         data === undefined || stops.length === 0 ? undefined : (
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={Printer}
-            onClick={() => {
-              window.print();
-            }}
-          >
-            {t.print}
-          </Button>
+          <PrintButton variant="secondary" size="sm" label={t.print} />
         )
       }
     />
